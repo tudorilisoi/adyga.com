@@ -1,0 +1,14 @@
+mysql-data
+
+wp-root/wp-content/languages/themes/blocksy*.json
+wp-root/wp-content/plugins/complianz-gdpr/settings/build/*
+wp-root/wp-content/cache/
+wp-root/wp-content/wpo-cache/
+wp-root/wp-content/advanced-cache.php
+wp-root/wp-content/wpo-cache/config/config-localhost-port8000.php
+docker/docker-compose.env
+
+wp-root/wp-content/plugins/*
+!wp-root/wp-content/plugins/snapshots/
+
+

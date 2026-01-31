@@ -1,0 +1,5 @@
+FROM hsheth2/mysql-low-memory:8.0.37@sha256:1bff1114613f4440ab1a58ae4b5ba45bb8a2db5365167717748b92f0fa1ac1ba
+
+# NOTE use this when mysql upgrade fails 
+# COPY low-memory.cnf /etc/mysql/conf.d/
+

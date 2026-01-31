@@ -1,0 +1,118 @@
+FROM php:8.3-fpm@sha256:806f20f27c8b5111797142241dd1cc6fb474340fecae5f32f327252a5737e8ce
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG HOST_UID
+ARG HOST_GID
+
+# Install system dependencies including rsyslog for cron logging and logrotate
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    nginx \
+    nginx-extras \
+    mariadb-client \
+    less \
+    cron \
+    rsyslog \
+    logrotate \
+    procps \
+    htop \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    libicu-dev \
+    # libmagickwand-dev \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+
+# RUN curl -L https://github.com/Imagick/imagick/archive/refs/tags/3.8.0.zip -o /tmp/imagick.zip && \
+#     unzip /tmp/imagick.zip -d /tmp/ && \
+#     rm /tmp/imagick.zip && \
+#     cd /tmp/imagick-3.8.0 && \
+#     phpize && \
+#     ./configure && \
+#     make && \
+#     make install && \
+#     docker-php-ext-enable imagick
+
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mysqli exif gd zip intl
+
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
+
+# run any command as www-data (for example wp)
+COPY change_host.sh /change_host.sh
+RUN chmod +x /change_host.sh    
+
+# Configure Nginx
+COPY nginx-wordpress.conf /etc/nginx/conf.d/default.conf
+
+
+# Map www-data to host
+
+# RUN usermod -u $HOST_UID www-data && \
+#     groupmod -g $HOST_GID www-data && \
+#     chown -R www-data:www-data /var/www/html &&\
+#     chown -R 0777 /var/www/html
+
+# Configure PHP-FPM
+RUN echo "pm = dynamic" >> /usr/local/etc/php-fpm.d/www.conf \
+&& echo "pm.max_children = 5" >> /usr/local/etc/php-fpm.d/www.conf \
+&& echo "pm.start_servers = 2" >> /usr/local/etc/php-fpm.d/www.conf \
+&& echo "pm.min_spare_servers = 1" >> /usr/local/etc/php-fpm.d/www.conf \
+&& echo "pm.max_spare_servers = 3" >> /usr/local/etc/php-fpm.d/www.conf && \
+sed -i 's/www-data/root/g' /usr/local/etc/php-fpm.d/www.conf
+
+# WordPress cron script
+COPY run_wp_cron.sh /run_wp_cron.sh
+RUN chmod +x /run_wp_cron.sh
+
+
+# Create log directories and files
+RUN mkdir -p /var/log/nginx /var/log/cron \
+    && touch /var/log/nginx/access.log \
+    && touch /var/log/nginx/error.log \
+    && touch /var/log/cron/wp-cron.log \
+    && touch /var/log/cron.log \
+    && chown -R www-data:www-data /var/log/nginx \
+    && chown -R www-data:www-data /var/log/cron
+
+# Setup WordPress cron job with proper logging
+RUN echo "*/10 * * * * root /bin/bash -l -c '/run_wp_cron.sh >> /var/log/cron/wp-cron.log 2>&1'" > /etc/cron.d/wp-cron \
+    && chmod 0600 /etc/cron.d/wp-cron \
+    && chown root:root /etc/cron.d/wp-cron
+    
+# Configure logrotate - set to run daily instead of hourly
+COPY logrotate-cron /etc/logrotate.d/cron
+RUN rm -f /etc/cron.hourly/logrotate \
+    && echo '#!/bin/sh' > /etc/cron.daily/logrotate \
+    && echo '/usr/sbin/logrotate /etc/logrotate.conf' >> /etc/cron.daily/logrotate \
+    && chmod 755 /etc/cron.daily/logrotate
+
+# Secure cron-related directories and files
+RUN chmod 600 /etc/crontab && chown root:root /etc/crontab \
+    && chmod 755 /etc/cron.d && chown root:root /etc/cron.d \
+    && chmod 755 /etc/cron.hourly && chown root:root /etc/cron.hourly \
+    && chmod 755 /etc/cron.daily && chown root:root /etc/cron.daily \
+    && chmod 755 /etc/cron.weekly && chown root:root /etc/cron.weekly \
+    && chmod 755 /etc/cron.monthly && chown root:root /etc/cron.monthly \
+    && find /etc/cron.* -type f -exec chmod 644 {} \; -exec chown root:root {} \;
+
+# Secure cron spool
+RUN chmod 1730 /var/spool/cron/crontabs \
+    && find /var/spool/cron/crontabs -type f -exec chmod 600 {} \; \
+    && chown -R root:crontab /var/spool/cron/crontabs    
+
+# Configure rsyslog for cron logging
+RUN echo "cron.*    /var/log/cron.log" >> /etc/rsyslog.d/50-default.conf
+
+# Startup script
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
+
+CMD ["/run.sh"]

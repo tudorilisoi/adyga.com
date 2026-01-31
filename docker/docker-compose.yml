@@ -1,0 +1,66 @@
+version: "3"
+name: ${CONTAINER_PREFIX}-wp
+# Defines which compose version to use
+services:
+  # Services line define which Docker images to run. In this case, it will be MySQL server and WordPress image.
+  db:
+    container_name: "${CONTAINER_PREFIX}-mysql"
+    tty: true  # This enables TTY
+    stdin_open: true  # This keeps STDIN open (often used with tty)
+    build:
+      context: .
+      dockerfile: ./Dockerfile.mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: lUnkeTibEMbI
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: lUnkeTibEMbI
+      # Previous four lines define the main variables needed for the MySQL container to work: database, database username, database user password, and the MySQL root password.
+    mem_limit: 256m
+    mem_reservation: 128m
+    volumes:
+      - ../mysql-data:/var/lib/mysql
+      - ./low-memory.cnf:/etc/mysql/conf.d/low-memory.cnf
+      - ./init-mysql-auth.sql:/docker-entrypoint-initdb.d/init-auth.sql
+  wordpress:
+    container_name: "${CONTAINER_PREFIX}-http"
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: ./Dockerfile.http
+      args:
+        ROOTLESS_DOCKER: ${ROOTLESS_DOCKER}
+        HOST_GID: ${HOST_GID}
+        HOST_UID: ${HOST_UID}
+        WP_BASE_URL: ${WP_BASE_URL}
+        WP_ENV: ${WP_ENV}
+    ports:
+      - "8000:80"
+      - "8020:9000"
+      # The previous line defines the port that the WordPress container will use. After successful installation, the full path will look like this: http://localhost:8000
+    environment:
+      WP_CLI_ALLOW_ROOT: 1
+      ROOTLESS_DOCKER: ${ROOTLESS_DOCKER}
+      WP_ENV: ${WP_ENV:-'production'}
+      DB_HOST: db:3306
+      DB_USER: wordpress
+      DB_PASSWORD: lUnkeTibEMbI
+      DB_NAME: wordpress
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: lUnkeTibEMbI
+      WORDPRESS_DB_NAME: wordpress
+      WP_HOME: '${WP_BASE_URL:-http://localhost:8000}'
+      WP_SITEURL: '${WP_BASE_URL:-http://localhost:8000}'
+      FS_METHOD: 'direct'      
+    mem_limit: 512m
+    mem_reservation: 128m
+
+    # Similar to MySQL image variables, the last four lines define the main variables needed for the WordPress container to work properly with the MySQL container.
+    volumes:
+      - "../wp-root:/var/www/html"
+      - "./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
+volumes:
+  mysql: {}

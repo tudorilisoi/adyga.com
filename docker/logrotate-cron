@@ -1,0 +1,18 @@
+/var/log/cron.log
+/var/log/cron/wp-cron.log
+/var/log/nginx/access.log
+/var/log/nginx/error.log
+{
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 644 www-data www-data
+    postrotate
+        # Signal processes instead of restarting services
+        killall -HUP rsyslogd 2>/dev/null || true
+        killall -HUP cron 2>/dev/null || true
+    endrotate
+}

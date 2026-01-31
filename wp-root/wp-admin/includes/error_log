@@ -1,0 +1,8 @@
+[06-Oct-2025 16:50:26 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function get_locale() in /home3/adygaro/public_html/wp-admin/includes/admin.php:16
+Stack trace:
+#0 {main}
+  thrown in /home3/adygaro/public_html/wp-admin/includes/admin.php on line 16
+[06-Oct-2025 16:54:36 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function get_locale() in /home3/adygaro/public_html/wp-admin/includes/admin.php:16
+Stack trace:
+#0 {main}
+  thrown in /home3/adygaro/public_html/wp-admin/includes/admin.php on line 16

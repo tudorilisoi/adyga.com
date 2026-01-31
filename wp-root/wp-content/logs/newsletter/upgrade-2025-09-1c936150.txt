@@ -1,0 +1,40 @@
+11-09-2025 16:08:51 - INFO  - 8.8.5 - 8,9 Mo/512 Mo -  > Start upgrade from 7.0.0
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter_emails`] => Created table `wprg_newsletter_emails`
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter_sent`] => Created table `wprg_newsletter_sent`
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter`] => Created table `wprg_newsletter`
+    [wprg_newsletter.source] => Added column wprg_newsletter.source
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter_user_logs`] => Created table `wprg_newsletter_user_logs`
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter_user_meta`] => Created table `wprg_newsletter_user_meta`
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter_stats`] => Created table `wprg_newsletter_stats`
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Array
+(
+    [`wprg_newsletter_logs`] => Created table `wprg_newsletter_logs`
+)
+
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,6 Mo/512 Mo -  > Backing up options of 7.0.0
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,7 Mo/512 Mo -  > Migration to 7.8.0
+11-09-2025 16:08:52 - INFO  - 8.8.5 - 9,8 Mo/512 Mo -  > End

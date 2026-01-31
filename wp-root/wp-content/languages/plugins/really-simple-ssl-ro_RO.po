@@ -1,0 +1,2203 @@
+# Translation of Plugins - Really Simple SSL - Stable (latest release) in Romanian
+# This file is distributed under the same license as the Plugins - Really Simple SSL - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-07-14 09:13:53+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n == 0 || n % 100 >= 2 && n % 100 <= 19) ? 1 : 2);\n"
+"X-Generator: GlotPress/4.0.0-alpha.1\n"
+"Language: ro\n"
+"Project-Id-Version: Plugins - Really Simple SSL - Stable (latest release)\n"
+
+#: grid/templates/other-plugins.php:40
+msgid "Self-hosted, Privacy-friendly analytics tool"
+msgstr "Instrument de analiză auto-găzduit, care respectă confidențialitatea"
+
+#: upgrade/upgrade-to-pro.php:549
+msgid "Your license key has reached its activation limit."
+msgstr "Cheia ta de licență a ajuns la limita de activare."
+
+#: upgrade/upgrade-to-pro.php:546
+msgid "This appears to be an invalid license key for this plugin."
+msgstr "Se pare că această cheie de licență nu este validă pentru acest modul."
+
+#: upgrade/upgrade-to-pro.php:543
+msgid "Your license is not active for this URL."
+msgstr "Cheia ta de licență nu este activă pentru acest URL."
+
+#: upgrade/upgrade-to-pro.php:540
+msgid "Invalid license."
+msgstr "Licența nu este validă."
+
+#: upgrade/upgrade-to-pro.php:537
+msgid "Missing license."
+msgstr "Licența lipsește."
+
+#: upgrade/upgrade-to-pro.php:534
+msgid "Your license key has been disabled."
+msgstr "Cheia de licență a fost dezactivată."
+
+#: upgrade/upgrade-to-pro.php:528
+msgid "Your license key expired on %s."
+msgstr "Cheia ta de licență a expirat pe %s."
+
+#: upgrade/upgrade-to-pro.php:520 upgrade/upgrade-to-pro.php:552
+msgid "An error occurred, please try again."
+msgstr "A apărut o eroare, te rog încearcă din nou."
+
+#: upgrade/upgrade-to-pro.php:420
+msgid "Plugin already installed!"
+msgstr "Modulul este deja instalat!"
+
+#: upgrade/upgrade-to-pro.php:363
+msgid "Check your %slicense%s."
+msgstr "Verifică-ți %slicența%s."
+
+#: upgrade/upgrade-to-pro.php:362
+msgid "Install %sManually%s."
+msgstr "Instalează %smanual%s."
+
+#: upgrade/upgrade-to-pro.php:362 upgrade/upgrade-to-pro.php:363
+msgid "An Error Occurred:"
+msgstr "A apărut o eroare:"
+
+#: upgrade/upgrade-to-pro.php:357
+msgid "Visit Dashboard"
+msgstr "Du-te la Panou control"
+
+#: upgrade/upgrade-to-pro.php:346
+msgid "Installing"
+msgstr "Instalez"
+
+#: upgrade/upgrade-to-pro.php:321
+msgid "Recommended by Really Simple Plugins"
+msgstr "Recomandat de Really Simple Plugins"
+
+#: upgrade/upgrade-to-pro.php:223
+msgid "Installation finished"
+msgstr "Am finalizat instalarea"
+
+#: upgrade/upgrade-to-pro.php:169
+msgid "Really Simple SSL automatically detects your settings and configures your website to run over HTTPS. To keep it lightweight, we kept the options to a minimum. Your website will move to SSL with one click."
+msgstr "Really Simple SSL detectează automat setările și configurează site-ul web să ruleze folosind HTTPS. Pentru un nivel optim de resurse am redus opțiunile la minimum. Site-ul tău va trece la SSL cu un singur clic."
+
+#: upgrade/upgrade-to-pro.php:165
+msgid "One click SSL optimization"
+msgstr "Optimizare SSL cu un singur clic"
+
+#: upgrade/upgrade-to-pro.php:152
+msgid "Configure your Cookie Notice, Cookie Consent and Cookie Policy with our Wizard and Cookie Scan. Supports GDPR, DSGVO, TTDSG, LGPD, POPIA, RGPD, CCPA and PIPEDA."
+msgstr "Configurează Notificarea privind cookie-urile, Consimțământul privind cookie-urile și Politica privind cookie-urile cu ajutorul Expertului și Scannerului de cookie-uri. Suportă GDPR, DSGVO, TTDSG, LGPD, POPIA, RGPD, CCPA și PIPEDA."
+
+#: upgrade/upgrade-to-pro.php:148
+msgid "GDPR/CCPA Privacy Suite"
+msgstr "Suită de confidențialitate GDPR/CCPA"
+
+#: upgrade/upgrade-to-pro.php:139
+msgid "Get detailed insights into visitors' behaviour with Burst Statistics, the privacy-friendly analytics dashboard from Really Simple Plugins."
+msgstr "Primești informații detaliate despre comportamentul vizitatorilor cu Burst Statistics, panoul control de analiză oferit de Really Simple Plugins, care respectă confidențialitatea."
+
+#: upgrade/upgrade-to-pro.php:135
+msgid "Self-hosted and privacy-friendly analytics tool."
+msgstr "Instrument de analiză auto-găzduit, care respectă confidențialitatea."
+
+#: upgrade/upgrade-to-pro.php:102
+msgid "Failed to activate plugin"
+msgstr "Activarea modulului a eșuat"
+
+#: upgrade/upgrade-to-pro.php:101
+msgid "Plugin activated"
+msgstr "Modulul este activat"
+
+#: upgrade/upgrade-to-pro.php:100
+msgid "Activating plugin..."
+msgstr "Activez modulul..."
+
+#: upgrade/upgrade-to-pro.php:95
+msgid "Failed to install plugin"
+msgstr "Instalarea modulului a eșuat"
+
+#: upgrade/upgrade-to-pro.php:94
+msgid "Plugin installed"
+msgstr "Modul instalat"
+
+#: upgrade/upgrade-to-pro.php:93
+msgid "Installing plugin..."
+msgstr "Instalez modulul..."
+
+#: upgrade/upgrade-to-pro.php:88
+msgid "Failed to gather package information"
+msgstr "Colectarea informațiilor despre pachet a eșuat"
+
+#: upgrade/upgrade-to-pro.php:87
+msgid "Package information retrieved"
+msgstr "Am recuperat informațiile despre pachet"
+
+#: upgrade/upgrade-to-pro.php:86
+msgid "Retrieving package information..."
+msgstr "Preiau informațiile despre pachet..."
+
+#: upgrade/upgrade-to-pro.php:81
+msgid "License invalid"
+msgstr "Licența nu este validă"
+
+#: upgrade/upgrade-to-pro.php:80
+msgid "License valid"
+msgstr "Licența este validă"
+
+#: upgrade/upgrade-to-pro.php:79
+msgid "Validating license..."
+msgstr "Validez licența..."
+
+#: upgrade/upgrade-to-pro.php:74
+msgid "Destination folder already exists"
+msgstr "Dosarul de destinație deja există"
+
+#: upgrade/upgrade-to-pro.php:73
+msgid "Able to create destination folder"
+msgstr "Pot să creez dosarul de destinație"
+
+#: upgrade/upgrade-to-pro.php:72
+msgid "Checking if plugin folder exists..."
+msgstr "Verific dacă există dosarul modulului..."
+
+#: class-admin.php:3375
+msgid "Improve security with Really Simple SSL Pro."
+msgstr "Îmbunătățește securitatea cu Really Simple SSL Pro."
+
+#: class-admin.php:3168
+msgid "Check manually"
+msgstr "Verifică manual"
+
+#: class-admin.php:3165
+msgid "Could not test certificate"
+msgstr "Nu am putut să testez certificatul"
+
+#: class-admin.php:3106
+msgid "Remember to change your URLs in external services like Google Analytics, Search Console and others. This should prevent any data loss resulting from the switch to https."
+msgstr "Nu uita să schimbi URL-urile pentru serviciile externe, cum ar fi Google Analytics, Search Console și altele. Astfel vei împiedica pierderile de date în urma comutării la https."
+
+#: class-admin.php:607
+msgid "This detection method is not 100% accurate."
+msgstr "Această metodă de detectare nu este 100% precisă."
+
+#: class-admin.php:602 class-admin.php:607
+msgid "If you’re certain an SSL certificate is present, please check “Override SSL detection” to continue activating SSL."
+msgstr "Dacă nu știi sigur că există un certificat SSL, te rog bifează „Contramandează detectarea SSL” pentru a continua activarea SSL."
+
+#: class-admin.php:601 class-admin.php:3166
+msgid "Automatic certificate detection is not possible on your server."
+msgstr "Detectarea automată a certificatelor nu este posibilă pe serverul tău."
+
+#: class-admin.php:601
+msgid "Could not test certificate."
+msgstr "Nu am putut să testez certificatul."
+
+#: lets-encrypt/wizard/config/steps.php:67
+msgid "Checking host..."
+msgstr "Verific gazda..."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1099
+msgid "After completing the installation, you can let Really Simple SSL automatically configure your site for SSL by using the 'Activate SSL' button."
+msgstr "După finalizarea instalării, poți lăsa modulul Really Simple SSL să-ți configureze automat site-ul pentru SSL folosind butonul „Activează SSL”."
+
+#: class-admin.php:3546
+msgid "%sEnable%s"
+msgstr "%sActivează%s"
+
+#: class-admin.php:3152
+msgid "The wp-config.php file is not writable, and needs to be edited. Please set this file to writable."
+msgstr "Fișierul wp-config.php nu poate fi scris, dar el trebuie să fie editat. Te rog să setezi acest fișier ca să poată fi scris."
+
+#: grid/templates/tips-tricks.php:55
+msgid "Install a Let's Encrypt SSL Certificate with Really Simple SSL"
+msgstr "Instalează un certificat SSL Let's Encrypt cu Really Simple SSL"
+
+#: grid/templates/tips-tricks.php:7
+msgid "Improve security: Add Cross-Site Protection Headers to prevent malicious attacks"
+msgstr "Îmbunătățește securitatea: adaugă anteturi de protecție între site-uri pentru a preveni atacurile rău intenționate"
+
+#: class-site-health.php:76
+msgid "Your website does not send all recommended security headers."
+msgstr "Site-ul tău web nu trimite toate anteturile de securitate recomandate."
+
+#: class-site-health.php:58 class-site-health.php:102
+msgid "Security"
+msgstr "Securitate"
+
+#: class-admin.php:3364
+msgid "Recommended security headers enabled."
+msgstr "Anteturile de securitate recomandate au fost activate."
+
+#: class-admin.php:3357
+msgid "The following recommended security headers are not detected:"
+msgstr "Următoarele anteturi de securitate recomandate nu sunt detectate:"
+
+#: lets-encrypt/wizard/config/questions.php:64
+msgid "Disable OCSP Stapling"
+msgstr "Dezactivează OCSP Stapling"
+
+#: lets-encrypt/wizard/config/questions.php:63
+msgid "OCSP Stapling"
+msgstr "OCSP Stapling"
+
+#: lets-encrypt/wizard/config/questions.php:62
+msgid "OCSP stapling should be enabled by default. You can disable if this is not supported by your hosting provider."
+msgstr "OCSP stapling ar trebui să fie activată în mod implicit. Poți să dezactivezi extensia dacă nu este acceptată de furnizorul tău de găzduire."
+
+#: lets-encrypt/functions.php:504
+msgid "For more information, please read this %sarticle%s"
+msgstr "Pentru mai multe informații, te rugăm să citești acest %sarticol%s"
+
+#: class-admin.php:4195
+msgid "Enable High Contrast mode"
+msgstr "Activează modul Contrast mare"
+
+#: class-admin.php:4194
+msgid "If enabled, all the Really Simple SSL pages within the WordPress admin will be in high contrast"
+msgstr "Dacă activezi, toate paginile Really Simple SSL din administrarea WordPress vor avea un contrast mare"
+
+#: class-admin.php:3430
+msgid "Black Friday sale! Get 40% Off Really Simple SSL Pro"
+msgstr "Reducere de Black Friday! Ai o reducere de 40% la Really Simple SSL Pro"
+
+#: lets-encrypt/wizard/templates/content.php:18
+msgid "Reset Let's Encrypt"
+msgstr "Resetează Let's Encrypt"
+
+#: lets-encrypt/wizard/templates/content.php:18
+msgid "This will clear all settings for Really Simple SSL Let\\'s Encrypt, and will clear the order in the ssl/keys directory."
+msgstr "Aceasta va șterge toate setările pentru Really Simple SSL Let\\'s Encrypt și va reseta ordinea din directorul ssl/keys."
+
+#: lets-encrypt/wizard/config/steps.php:129
+msgid "Checking if Terms & Conditions are accepted..."
+msgstr "Verific dacă Termenii și condițiile sunt acceptate..."
+
+#: lets-encrypt/wizard/class-wizard.php:823
+msgid "Save and continue"
+msgstr "Salvează și continuă"
+
+#: lets-encrypt/class-letsencrypt-handler.php:941
+msgid "The Terms & Conditions were not accepted. Please accept in the general settings."
+msgstr "Nu ai acceptat termenii și condițiile. Te rugăm să accepți în setările generale."
+
+#: lets-encrypt/class-letsencrypt-handler.php:937
+msgid "Terms & Conditions are accepted."
+msgstr "Ai acceptat termenii și condițiile."
+
+#: class-admin.php:3322
+msgid "HttpOnly Secure cookies have been set automatically!"
+msgstr "Cookie-urile securizate HttpOnly au fost setate automat!"
+
+#: lets-encrypt/wizard/templates/dns-verification.php:21
+msgid "Value"
+msgstr "Valoare"
+
+#: lets-encrypt/wizard/templates/dns-verification.php:20
+msgid "domain"
+msgstr "domeniu"
+
+#: class-admin.php:3414
+msgid "As Really Simple SSL handles all the functionality this plugin provides, we recommend to disable this plugin to prevent unexpected behaviour."
+msgstr "Deoarece Really Simple SSL gestionează toate funcționalitățile oferite de acest modul, recomandăm să dezactivezi modulul pentru a evita un comportament neașteptat."
+
+#: class-admin.php:3414
+msgid "We have detected the %s plugin on your website."
+msgstr "Am detectat modulul %s pe site-ul tău."
+
+#: class-admin.php:606
+msgid "Please %srefresh detection%s if a certificate has been installed recently."
+msgstr "Te rog %sreîmprospătează detectarea%s dacă ai instalat recent un certificat."
+
+#: class-admin.php:605
+msgid "No SSL certificate has been detected."
+msgstr "Nu a fost detectat niciun certificat SSL."
+
+#: lets-encrypt/wizard/notices.php:99
+msgid "Read more about this add on."
+msgstr "Citește mai multe despre acest supliment."
+
+#: lets-encrypt/wizard/notices.php:96
+msgid "Your server provides shell functionality, which offers additional methods to install SSL. If installing SSL using the default methods is not possible, you can install the shell add on."
+msgstr "Serverul tău oferă funcționalități shell, care oferă metode suplimentare pentru a instala SSL. Dacă nu este posibilă instalarea SSL folosind metodele implicite, poți instala modulul adițional pentru shell."
+
+#: lets-encrypt/class-letsencrypt-handler.php:450
+msgid "If you entered your DNS records before, they need to be changed."
+msgstr "Dacă ai introdus anterior înregistrările tale DNS, ele trebuie modificate."
+
+#: lets-encrypt/class-letsencrypt-handler.php:447
+msgid "Order ID mismatch, regenerate order."
+msgstr "ID-ul comenzii nu corespunde, regenerează comanda."
+
+#: class-admin.php:4667 class-multisite.php:238
+msgid "Improve security - Upgrade to Pro"
+msgstr "Îmbunătățește securitatea - actualizează la Pro"
+
+#: class-admin.php:3543
+msgid "%sMore info%s"
+msgstr "%sMai multe informații%s"
+
+#: class-admin.php:3091
+msgid "Really Simple SSL pro is not up to date. Update Really Simple SSL pro to ensure compatibility."
+msgstr "Modulul Really Simple SSL Pro nu este actualizat. Pentru a asigura compatibilitatea, actualizează Really Simple SSL Pro."
+
+#: lets-encrypt/wizard/templates/other-plugins.php:38
+msgid "Our Plugins"
+msgstr "Modulele noastre"
+
+#: lets-encrypt/wizard/templates/other-plugins.php:29
+msgid "Beautiful recipes optimized for Google."
+msgstr "Rețete atrăgătoare, optimizate pentru Google."
+
+#: lets-encrypt/wizard/templates/other-plugins.php:21
+msgid "The Privacy Suite for WordPress"
+msgstr "Suita de confidențialitate pentru WordPress"
+
+#: lets-encrypt/wizard/templates/other-plugins.php:12
+msgid "Easily migrate your website to SSL."
+msgstr "Îți migrezi cu ușurință site-ul la SSL."
+
+#: lets-encrypt/wizard/templates/installation.php:42
+msgid "The CA Bundle will sometimes be automatically detected. If not, you can use this file."
+msgstr "Uneori, pachetul CA este detectat automat. Dacă nu a fost detectat, poți să folosești acest fișier."
+
+#: lets-encrypt/wizard/templates/installation.php:41
+msgid "Certificate Authority Bundle (CABUNDLE)"
+msgstr "Certificate Authority Bundle (CABUNDLE)"
+
+#: lets-encrypt/wizard/templates/installation.php:35
+msgid "The private key can be uploaded or pasted in the appropriate field on your hosting dashboard."
+msgstr "Cheia privată poate fi încărcată sau plasată în câmpul corespunzător din panoul de control al serviciului tău de găzduire."
+
+#: lets-encrypt/wizard/templates/installation.php:34
+msgid "Private Key (KEY)"
+msgstr "Cheie privată (KEY)"
+
+#: lets-encrypt/wizard/templates/installation.php:31
+#: lets-encrypt/wizard/templates/installation.php:39
+#: lets-encrypt/wizard/templates/installation.php:46
+msgid "Copy content"
+msgstr "Copiază conținutul"
+
+#: lets-encrypt/wizard/templates/installation.php:30
+#: lets-encrypt/wizard/templates/installation.php:38
+#: lets-encrypt/wizard/templates/installation.php:45
+msgid "Download"
+msgstr "Descarcă"
+
+#: lets-encrypt/wizard/templates/installation.php:26
+msgid "This is the certificate, which you need to install in your hosting dashboard."
+msgstr "Acesta este certificatul pe care trebuie să-l instalezi în panoul de control al serviciului tău de găzduire."
+
+#: lets-encrypt/wizard/templates/installation.php:25
+msgid "Certificate (CRT)"
+msgstr "Certificat (CRT)"
+
+#: lets-encrypt/wizard/templates/installation.php:22
+msgid "Install your certificate."
+msgstr "Instalează certificatul tău."
+
+#: lets-encrypt/wizard/templates/installation.php:14
+msgid "copied!"
+msgstr "copiat!"
+
+#: lets-encrypt/wizard/templates/generation.php:16
+msgid "Skip DNS check"
+msgstr "Sari peste verificarea DNS"
+
+#: lets-encrypt/wizard/templates/generation.php:13
+msgid "If you're sure it's set correctly, you can click the button to skip the DNS check."
+msgstr "Dacă știi sigur că este setat corect, poți să dai clic pe buton pentru a sări peste verificarea DNS."
+
+#: lets-encrypt/wizard/templates/generation.php:12
+msgid "You can manually check the DNS records in an %sonline tool%s."
+msgstr "Poți să verifici manual înregistrările DNS printr-un %sinstrument online%s."
+
+#: lets-encrypt/wizard/templates/generation.php:11
+msgid "We could not check the DNS records. If you just added the record, please check in a few minutes."
+msgstr "Nu am putut verifica înregistrările DNS. Dacă tocmai ai adăugat înregistrarea, te rugăm să verifici în câteva minute."
+
+#: lets-encrypt/wizard/templates/dns-verification.php:8
+msgid "Add the following token as text record to your DNS records. We recommend to use a short TTL during installation, in case you need to change it."
+msgstr "Adaugă următorul token ca înregistrare text la înregistrările tale DNS. Îți recomandăm să utilizezi un TTL scurt în timpul instalării, în cazul în care trebuie să îl modifici."
+
+#: lets-encrypt/wizard/templates/directories.php:76
+msgid "Inside the folder called “ssl” create a new folder called “certs”, with 644 writing permissions."
+msgstr "Creează un dosar nou în dosarul „ssl”, numit „certs”, cu permisiuni de scriere 644."
+
+#: lets-encrypt/wizard/templates/directories.php:66
+msgid "The certificate will get stored in this directory."
+msgstr "Certificatul va fi stocat în acest director."
+
+#: lets-encrypt/wizard/templates/directories.php:65
+msgid "Create a certs directory"
+msgstr "Creează un director certs"
+
+#: lets-encrypt/wizard/templates/directories.php:57
+msgid "Inside the folder called “ssl” create a new folder called “keys”, with 644 writing permissions."
+msgstr "Creează un dosar nou în dosarul „ssl”, numit „keys”, cu permisiuni de scriere 644."
+
+#: lets-encrypt/wizard/templates/directories.php:54
+#: lets-encrypt/wizard/templates/directories.php:73
+msgid "Create a folder called “ssl”"
+msgstr "Creează un dosar numit „ssl”"
+
+#: lets-encrypt/wizard/templates/directories.php:50
+#: lets-encrypt/wizard/templates/directories.php:69
+msgid "Navigate in FTP or File Manager to one level above the root of your WordPress installation:"
+msgstr "Navighează în FTP sau File Manager la un nivel deasupra rădăcinii instalării tale WordPress:"
+
+#: lets-encrypt/wizard/templates/directories.php:47
+#: lets-encrypt/wizard/templates/directories.php:66
+msgid "By placing it outside the root folder, it is not accessible over the internet."
+msgstr "Plasându-l în afara folderului rădăcină, acesta nu este accesibil pe internet."
+
+#: lets-encrypt/wizard/templates/directories.php:47
+msgid "The key directory is needed to store the generated keys."
+msgstr "Directorul key este necesar pentru a stoca cheile generate."
+
+#: lets-encrypt/wizard/templates/directories.php:46
+msgid "Create a key directory"
+msgstr "Creează un director key"
+
+#: lets-encrypt/wizard/templates/directories.php:41
+msgid "If the challenge directory cannot be created, you can either remove the server limitation, or change to DNS verification."
+msgstr "Dacă directorul challenge nu poate fi creat, poți fie să înlături limitarea serverului, fie să treci la verificarea DNS."
+
+#: lets-encrypt/wizard/templates/directories.php:39
+msgid "Or you can switch to DNS verification"
+msgstr "Sau poți trece la verificarea DNS"
+
+#: lets-encrypt/wizard/templates/directories.php:35
+#: lets-encrypt/wizard/templates/directories.php:60
+#: lets-encrypt/wizard/templates/directories.php:79
+msgid "Click the refresh button."
+msgstr "Dă clic pe butonul Reîmprospătează."
+
+#: lets-encrypt/wizard/templates/directories.php:32
+msgid "Inside the folder called “.well-known” create a new folder called “acme-challenge”, with 644 writing permissions."
+msgstr "Creează un dosar nou în dosarul „.well-known”, numit „acme-challenge”, cu permisiuni de scriere 644."
+
+#: lets-encrypt/wizard/templates/directories.php:29
+msgid "Create a folder called “.well-known”"
+msgstr "Creează un dosar numit „.well-known”"
+
+#: lets-encrypt/wizard/templates/directories.php:25
+msgid "Navigate in FTP or File Manager to the root of your WordPress installation:"
+msgstr "Navighează în FTP sau File Manager la rădăcina instalării tale WordPress:"
+
+#: lets-encrypt/wizard/templates/directories.php:22
+msgid "The challenge directory is used to verify the domain ownership."
+msgstr "Directorul challenge este folosit pentru a verifica dreptul de proprietate asupra domeniului."
+
+#: lets-encrypt/wizard/templates/directories.php:21
+msgid "Create a challenge directory"
+msgstr "Creează un director challenge"
+
+#: lets-encrypt/wizard/templates/directories.php:15
+msgid "If the challenge directory cannot be created, or is not reachable, you can either remove the server limitation, or change to DNS verification."
+msgstr "Dacă directorul challenge nu poate fi creat sau nu este accesibil, poți fie să înlături limitarea serverului, fie să treci la verificarea DNS."
+
+#: lets-encrypt/wizard/templates/directories.php:9
+#: lets-encrypt/wizard/templates/dns-verification.php:7
+#: lets-encrypt/wizard/templates/installation.php:18
+msgid "Next step"
+msgstr "Pasul următor"
+
+#: lets-encrypt/wizard/templates/content.php:22
+msgid "Notifications"
+msgstr "Notificări"
+
+#: lets-encrypt/wizard/templates/activate.php:60
+msgid "No SSL certificate has been detected yet. In some cases this takes a few minutes."
+msgstr "Nu a fost detectat încă niciun certificat SSL. În unele cazuri, durează câteva minute."
+
+#: lets-encrypt/wizard/templates/activate.php:42
+msgid "Almost ready to activate SSL!"
+msgstr "Ești aproape gata să activezi SSL!"
+
+#: lets-encrypt/wizard/templates/activate.php:21
+msgid "SSL was already activated on your website!"
+msgstr "Certificatul SSL a fost deja activat pe site-ul tău!"
+
+#: lets-encrypt/wizard/templates/activate.php:16
+msgid "If you just activated SSL, please check for: "
+msgstr "Dacă tocmai ai activat SSL, te rog verifică:"
+
+#: lets-encrypt/wizard/templates/activate.php:13
+#: lets-encrypt/wizard/templates/activate.php:42
+msgid "In some cases it takes a few minutes for the certificate to get detected. In that case, check back in a few minutes."
+msgstr "În unele cazuri, este nevoie de câteva minute pentru ca certificatul să fie detectat. În acest caz, revino în câteva minute."
+
+#: lets-encrypt/wizard/templates/activate.php:13
+msgid "Your site is secured with a valid SSL certificate!"
+msgstr "Site-ul tău este securizat cu un certificat SSL valid!"
+
+#: lets-encrypt/wizard/notices.php:155
+#: lets-encrypt/wizard/templates/directories.php:17
+#: lets-encrypt/wizard/templates/directories.php:42
+msgid "Switch to DNS verification"
+msgstr "Treci la verificarea DNS"
+
+#: lets-encrypt/wizard/notices.php:154
+msgid "Please note that auto-renewal with a DNS challenge might not be possible."
+msgstr "Te rugăm să reții că reînnoirea automată cu o provocare DNS ar putea să nu fie posibilă."
+
+#: lets-encrypt/wizard/notices.php:153
+msgid "If you also want to secure subdomains like mail.domain.com, cpanel.domain.com, you have to use the %sDNS%s challenge."
+msgstr "Dacă dorești să asiguri și subdomenii precum mail.domain.com sau cpanel.domain.com, trebuie să utilizezi verificarea %sDNS%s."
+
+#: lets-encrypt/wizard/notices.php:150
+msgid "Switch to directory verification"
+msgstr "Treci la verificarea directorului"
+
+#: lets-encrypt/wizard/notices.php:149
+msgid "You can switch back to directory verification here."
+msgstr "Aici poți să comuți înapoi la verificarea directorului."
+
+#: lets-encrypt/wizard/notices.php:148
+msgid "You have switched to DNS verification."
+msgstr "Ai comutat la verificarea DNS."
+
+#: lets-encrypt/wizard/notices.php:116
+msgid "Your Key and Certificate directories are not properly protected."
+msgstr "Directoarele tale pentru chei și certificate nu sunt protejate corespunzător."
+
+#: lets-encrypt/wizard/notices.php:81
+msgid "Your certificate will be renewed and installed automatically."
+msgstr "Certificatul tău va fi reînnoit și instalat automat."
+
+#: lets-encrypt/wizard/notices.php:74
+msgid "Automatic renewal of your certificate was not possible. The SSL certificate should be %srenewed%s manually."
+msgstr "Reînnoirea automată a certificatului tău nu a fost posibilă. Certificatul SSL trebuie să fie %sreînnoit%s manual."
+
+#: lets-encrypt/wizard/notices.php:67
+msgid "The SSL certificate has been renewed, and requires manual %sinstallation%s in your hosting dashboard."
+msgstr "Certificatul SSL a fost reînnoit și necesită o %sinstalare%s manuală în panoul de control al serviciului tău de găzduire."
+
+#: lets-encrypt/wizard/notices.php:60
+msgid "The automatic installation of your certificate has failed. Please check your credentials, and retry the %sinstallation%s."
+msgstr "Instalarea automată a certificatului tău a eșuat. Te rog verifică datele de conectare la server și încearcă %sinstalarea%s din nou."
+
+#: lets-encrypt/wizard/notices.php:45
+msgid "Your certificate will expire on %s. You can renew it %shere%s."
+msgstr "Certificatul tău va expira pe %s. Îl poți reînnoi %saici%s."
+
+#: lets-encrypt/wizard/notices.php:41
+msgid "Your certificate is valid to: %s"
+msgstr "Certificatul tău este valabil până la: %s"
+
+#: lets-encrypt/wizard/notices.php:8
+msgid "The www version of your site does not point to this website. This is recommended, as it will allow you to add it to the certificate as well."
+msgstr "Versiunea www a site-ului tău nu indică acest site. Acest lucru este recomandat, deoarece îți va permite să îl adaugi și la certificat."
+
+#: lets-encrypt/wizard/notices.php:6
+msgid "The non-www version of your site does not point to this website. This is recommended, as it will allow you to add it to the certificate as well."
+msgstr "Versiunea non-www a site-ului tău nu trimite spre acest site web. Acest lucru este recomandat, deoarece îți va permite să îl adăugi și la certificat."
+
+#: lets-encrypt/wizard/config/steps.php:153
+msgid "Searching for link to SSL installation page on your server..."
+msgstr "Caut legătura la pagina de instalare SSL pe serverul tău..."
+
+#: lets-encrypt/wizard/config/steps.php:150
+#: lets-encrypt/wizard/templates/menu.php:2
+msgid "Installation"
+msgstr "Instalare"
+
+#: lets-encrypt/wizard/config/steps.php:126
+msgid "We will now generate your SSL Certificate"
+msgstr "Acum îți vom genera certificatul SSL"
+
+#: lets-encrypt/wizard/config/steps.php:125
+msgid "Generation"
+msgstr "Generare"
+
+#: lets-encrypt/wizard/config/steps.php:116
+msgid "Retrieving DNS verification token..."
+msgstr "Preiau tokenul pentru verificarea DNS..."
+
+#: lets-encrypt/wizard/config/steps.php:110
+#: lets-encrypt/wizard/config/steps.php:135
+msgid "Creating account..."
+msgstr "Creez contul..."
+
+#: lets-encrypt/wizard/config/steps.php:107
+msgid "DNS Verification"
+msgstr "Verificare DNS"
+
+#: lets-encrypt/wizard/config/steps.php:98
+msgid "Checking challenge directory reachable over http..."
+msgstr "Verific dacă directorul challenge este accesibil prin http..."
+
+#: lets-encrypt/wizard/config/steps.php:91
+msgid "Checking permissions..."
+msgstr "Verific permisiunile..."
+
+#: lets-encrypt/wizard/config/steps.php:85
+msgid "Checking certs directory..."
+msgstr "Verific directorul certs..."
+
+#: lets-encrypt/wizard/config/steps.php:79
+msgid "Checking key directory..."
+msgstr "Verific directorul key..."
+
+#: lets-encrypt/wizard/config/steps.php:73
+msgid "Checking challenge directory..."
+msgstr "Verific directorul challenge..."
+
+#: lets-encrypt/wizard/config/steps.php:64
+msgid "Directories"
+msgstr "Directori"
+
+#: lets-encrypt/wizard/config/steps.php:56
+msgid "Below you will find the instructions for different hosting environments and configurations. If you start the process with the necessary instructions and credentials the next view steps will be done in no time."
+msgstr "Mai jos vei găsi instrucțiunile pentru diferite medii și configurații de găzduire. Dacă pornești procesul cu instrucțiunile și informații de acces, pașii din ecranul următor se vor face în cel mai scurt timp."
+
+#: lets-encrypt/wizard/config/steps.php:55
+msgid "Hosting"
+msgstr "Găzduire"
+
+#: lets-encrypt/wizard/config/steps.php:52
+msgid "Letʼs Encrypt is a free, automated and open certificate authority brought to you by the nonprofit Internet Security Research Group (ISRG)."
+msgstr "Let's Encrypt este o autoritate de certificare gratuită, automată și deschisă, care îți este oferită de organizația non-profit „Grupul de cercetare pentru securitate pe internet (ISRG)”."
+
+#: lets-encrypt/wizard/config/steps.php:48
+msgid " Please note that you can always save and finish the wizard later, use our %sdocumentation%s for additional information or log a %ssupport ticket%s if you need our assistance."
+msgstr "Te rog să reții că poți să salvezi și să finalizezi asistentul de inițializare oricând, chiar mai târziu. Pentru informații suplimentare, folosește %sdocumentația%s sau deschide un %sticket de suport%s dacă ai nevoie de asistență."
+
+#: lets-encrypt/wizard/config/steps.php:47
+msgid "We have tried to make our Wizard as simple and fast as possible. Although these questions are all necessary, if there’s any way you think we can improve the plugin, please let us %sknow%s!"
+msgstr "Am încercat să facem asistentul de inițializare cât mai simplu și rapid posibil. Deși toate aceste întrebări sunt necesare, dacă crezi că ne poți ajuta să îmbunătățim modulul, te rog %sanunță-ne%s!"
+
+#: lets-encrypt/wizard/config/steps.php:45
+msgid "General settings"
+msgstr "Setări generale"
+
+#: lets-encrypt/wizard/config/steps.php:37
+msgid "Checking for website configuration..."
+msgstr "Verific configurarea site-ului web..."
+
+#: lets-encrypt/wizard/config/steps.php:32
+msgid "Checking alias domain..."
+msgstr "Verific domeniul alias..."
+
+#: lets-encrypt/wizard/config/steps.php:27
+msgid "Checking server software..."
+msgstr "Verific software-ul serverului..."
+
+#: lets-encrypt/wizard/config/steps.php:22
+msgid "Checking if CURL is available..."
+msgstr "Verific dacă CURL este disponibilă..."
+
+#: lets-encrypt/wizard/config/steps.php:17
+msgid "Checking SSL certificate..."
+msgstr "Verific certificatul SSL..."
+
+#: lets-encrypt/wizard/config/steps.php:12
+msgid "Checking PHP version..."
+msgstr "Verific versiunea PHP..."
+
+#: lets-encrypt/wizard/config/steps.php:9
+msgid "Detected status of your setup."
+msgstr "Starea detectată a configurării tale."
+
+#: lets-encrypt/wizard/config/steps.php:8
+msgid "System Status"
+msgstr "Stare sistem"
+
+#: lets-encrypt/wizard/config/questions.php:300
+msgid "Store for renewal purposes. If not stored, renewal may need to be done manually."
+msgstr "Păstrează pentru reînnoire. Dacă nu este păstrat, poate fi necesară reînnoirea manuală."
+
+#: lets-encrypt/wizard/config/questions.php:299
+msgid "Credentials storage"
+msgstr "Stocare informații de conectare"
+
+#: lets-encrypt/wizard/config/questions.php:282
+msgid "Plesk password"
+msgstr "Parolă Plesk"
+
+#: lets-encrypt/wizard/config/questions.php:265
+msgid "You can find your Plesk username and password in %s"
+msgstr "Poți găsi numele de utilizator și parola Plesk în %s"
+
+#: lets-encrypt/wizard/config/questions.php:264
+msgid "Plesk username"
+msgstr "Nume de utilizator Plesk"
+
+#: lets-encrypt/wizard/config/questions.php:248
+msgid "The URL you use to access your Plesk dashboard. Ends on :8443."
+msgstr "URL-ul pe care îl folosești pentru a accesa panoul de control Plesk. Se termină în :8443."
+
+#: lets-encrypt/wizard/config/questions.php:247
+msgid "Plesk host"
+msgstr "Gazdă Plesk"
+
+#: lets-encrypt/wizard/config/questions.php:235
+msgid "You can find your api key %shere%s (make sure you're logged in with your main account)."
+msgstr "Poți găsi cheia API %saici%s (asigură-te că ești autentificat cu contul tău principal)."
+
+#: lets-encrypt/wizard/config/questions.php:232
+msgid "CloudWays api key"
+msgstr "Cheie API CloudWays"
+
+#: lets-encrypt/wizard/config/questions.php:219
+msgid "CloudWays user email"
+msgstr "Email utilizator CloudWays"
+
+#: lets-encrypt/wizard/config/questions.php:201
+msgid "DirectAdmin password"
+msgstr "Parolă DirectAdmin"
+
+#: lets-encrypt/wizard/config/questions.php:184
+msgid "DirectAdmin username"
+msgstr "Numele de utilizator DirectAdmin"
+
+#: lets-encrypt/wizard/config/questions.php:167
+msgid "The URL you use to access your DirectAdmin dashboard. Ends on :2222."
+msgstr "URL-ul pe care îl folosești pentru a accesa panoul de control DirectAdmin. Se termină în :2222."
+
+#: lets-encrypt/wizard/config/questions.php:166
+msgid "DirectAdmin host"
+msgstr "Gazdă DirectAdmin"
+
+#: lets-encrypt/wizard/config/questions.php:150
+msgid "CPanel password"
+msgstr "Parolă CPanel"
+
+#: lets-encrypt/wizard/config/questions.php:133
+msgid "CPanel username"
+msgstr "Nume de utilizator CPanel"
+
+#: lets-encrypt/wizard/config/questions.php:116
+msgid "The URL you use to access your cPanel dashboard. Ends on :2083."
+msgstr "URL-ul pe care îl folosești pentru a accesa panoul de control cPanel. Se termină în :2083."
+
+#: lets-encrypt/wizard/config/questions.php:115
+msgid "CPanel host"
+msgstr "Gazdă CPanel"
+
+#: lets-encrypt/wizard/config/questions.php:104
+msgid "Hosting provider"
+msgstr "Furnizor de găzduire"
+
+#: lets-encrypt/wizard/config/questions.php:102
+msgid "If your hosting provider is not listed, and there's an SSL activation/installation link, please let us %sknow%s."
+msgstr "Dacă furnizorul tău de găzduire nu este listat și există o legătură de activare / instalare SSL, te rugăm să ne lași %sun mesaj%s."
+
+#: lets-encrypt/wizard/config/questions.php:101
+msgid "By selecting your hosting provider we can tell you if your hosting provider already supports free SSL, and/or where you can activate it."
+msgstr "Prin selectarea furnizorului tău de găzduire, îți putem spune dacă acesta acceptă deja SSL gratuit și/sau unde îl poți activa."
+
+#: lets-encrypt/wizard/config/questions.php:99
+msgid "By selecting your hosting provider we can tell you if your hosting provider already supports free SSL, and how you can activate it."
+msgstr "Prin selectarea furnizorului tău de găzduire, îți putem spune dacă acesta acceptă deja SSL gratuit și cum îl poți activa."
+
+#: lets-encrypt/wizard/config/questions.php:87
+msgid "Include alias domain too?"
+msgstr "Incluzi și domeniul alias?"
+
+#: lets-encrypt/wizard/config/questions.php:85
+msgid "You should have the www domain pointed to the same website as the non-www domain."
+msgstr "Domeniul www trebuie să indice la același site web ca și domeniul fără www."
+
+#: lets-encrypt/wizard/config/questions.php:85
+msgid "This will include both the www. and non-www. version of your domain."
+msgstr "Va include ambele versiuni ale domeniului tău, www. și fără www."
+
+#: lets-encrypt/wizard/config/questions.php:73
+#: lets-encrypt/wizard/config/steps.php:51
+msgid "Domain"
+msgstr "Domeniu"
+
+#: lets-encrypt/wizard/config/questions.php:54
+msgid "I agree to the Let's Encrypt %sTerms & Conditions%s"
+msgstr "Sunt de acord cu %sTermenii și condițiile%s Let's Encrypt"
+
+#: lets-encrypt/wizard/config/questions.php:53
+msgid "Terms & Conditions"
+msgstr "Termeni și condiții"
+
+#: lets-encrypt/wizard/config/questions.php:42
+#: lets-encrypt/wizard/config/questions.php:74
+msgid "This field is prefilled based on your configuration"
+msgstr "Acest câmp este pre-completat pe baza configurării tale"
+
+#: lets-encrypt/wizard/config/questions.php:41
+msgid "Email address"
+msgstr "Adresă email"
+
+#: lets-encrypt/wizard/config/questions.php:39
+msgid "This email address will used to create a Let's Encrypt account. This is also where you will receive renewal notifications."
+msgstr "Această adresă de email va fi folosită pentru crearea unui cont Let's Encrypt. La această adresă vei primi și notificări pentru reînnoire."
+
+#: lets-encrypt/wizard/config/class-config.php:539
+msgid "No"
+msgstr "Nu"
+
+#: lets-encrypt/wizard/config/class-config.php:538
+msgid "Yes"
+msgstr "Da"
+
+#: lets-encrypt/wizard/class-wizard.php:953
+#: lets-encrypt/wizard/config/class-config.php:545
+msgid "I don't know, or not listed, proceed with installation"
+msgstr "Nu știu sau nu sunt listate, continuă cu instalarea"
+
+#: lets-encrypt/wizard/class-wizard.php:884
+msgid "Go to dashboard"
+msgstr "Mergi la Panou control"
+
+#: lets-encrypt/wizard/class-wizard.php:814
+msgid "Previous"
+msgstr "Anterior"
+
+#: grid/templates/grid-container.php:6
+#: lets-encrypt/wizard/templates/content.php:8
+msgid "Changes saved successfully"
+msgstr "Am salvat cu succes modificările"
+
+#: lets-encrypt/wizard/class-wizard.php:633
+msgid "If this user stops editing, the lock will expire after %s minutes."
+msgstr "Dacă acest utilizator nu mai editează, blocarea va expira după %s minute."
+
+#: lets-encrypt/wizard/class-wizard.php:631
+msgid "The wizard is currently being edited by %s"
+msgstr "Asistentul de inițializare este editat acum de %s"
+
+#: lets-encrypt/wizard/class-wizard.php:180
+msgid "Attempt %s."
+msgstr "Încercarea %s."
+
+#: lets-encrypt/wizard/class-wizard.php:86
+msgid "Checking for subdomain setup..."
+msgstr "Verific inițializarea subdomeniului..."
+
+#: lets-encrypt/wizard/class-wizard.php:63
+#: lets-encrypt/wizard/config/steps.php:141
+msgid "Generating SSL certificate..."
+msgstr "Generez certificatul SSL..."
+
+#: lets-encrypt/wizard/class-wizard.php:57
+msgid "Verifying DNS records..."
+msgstr "Verific înregistrările DNS..."
+
+#: lets-encrypt/wizard/class-field.php:1314
+msgid "Refresh"
+msgstr "Reîmprospătează"
+
+#: lets-encrypt/wizard/class-field.php:1297
+msgid "Start"
+msgstr "Începe"
+
+#: lets-encrypt/integrations/plesk/plesk.php:88
+msgid "Successfully installed SSL"
+msgstr "SSL a fost instalat cu succes"
+
+#: lets-encrypt/integrations/plesk/functions.php:34
+msgid "Installing SSL certificate using PLESK API..."
+msgstr "Instalez certificatul SSL folosind PLESK API..."
+
+#: lets-encrypt/integrations/cpanel/functions.php:102
+#: lets-encrypt/integrations/directadmin/functions.php:30
+msgid "Attempting to install certificate..."
+msgstr "Încerc să instalez certificatul..."
+
+#: lets-encrypt/integrations/cpanel/functions.php:95
+msgid "Attempting to set DNS txt record..."
+msgstr "Încerc să setez înregistrarea DNS txt..."
+
+#: lets-encrypt/integrations/cpanel/functions.php:86
+msgid "Attempting to install certificate using AutoSSL..."
+msgstr "Încerc să instalez certificatul folosind AutoSSL..."
+
+#: lets-encrypt/integrations/cpanel/functions.php:61
+msgid "The system is not ready for the DNS verification yet. Please run the wizard again."
+msgstr "Sistemul nu este încă pregătit pentru verificarea DNS. Rulează din nou expertul."
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:258
+#: lets-encrypt/integrations/cpanel/cpanel.php:278
+msgid "Could not automatically add TXT record. Please proceed manually, following the steps below."
+msgstr "Nu am putut să adaug automat înregistrarea TXT. Te rog adaug-o manual urmând pașii de mai jos."
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:254
+#: lets-encrypt/integrations/cpanel/cpanel.php:273
+msgid "Successfully added TXT record."
+msgstr "Am adăugat cu succes înregistrarea TXT."
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:246
+msgid "Login credentials incorrect"
+msgstr "Datele de autentificare sunt incorecte"
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:242
+msgid "Unable to connect to cPanel"
+msgstr "Nu pot face conectarea la cPanel"
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:157
+msgid "Errors were reported during installation."
+msgstr "Au fost raportate erori în timpul instalării."
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:117
+msgid "Errors were reported during installation"
+msgstr "Au fost raportate erori în timpul instalării"
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:111
+#: lets-encrypt/integrations/directadmin/directadmin.php:124
+msgid "SSL successfully installed on %s"
+msgstr "SSL a fost instalat cu succes pe %s"
+
+#: lets-encrypt/integrations/cpanel/cpanel.php:64
+#: lets-encrypt/integrations/directadmin/directadmin.php:64
+msgid "No valid list of domains."
+msgstr "Nu există o listă validă de domenii."
+
+#: lets-encrypt/integrations/cloudways/functions.php:51
+msgid "Enabling auto renew..."
+msgstr "Activez reînnoirea automată..."
+
+#: lets-encrypt/integrations/cloudways/functions.php:45
+msgid "Installing SSL certificate..."
+msgstr "Instalez certificatul SSL..."
+
+#: lets-encrypt/integrations/cloudways/functions.php:39
+msgid "Retrieving Cloudways server data..."
+msgstr "Se preiau datele serverului Cloudways..."
+
+#: lets-encrypt/integrations/cloudways/cloudways.php:259
+msgid "Could not retrieve server list"
+msgstr "Nu s-a putut prelua lista serverelor"
+
+#: lets-encrypt/integrations/cloudways/cloudways.php:217
+#: lets-encrypt/integrations/cloudways/cloudways.php:252
+msgid "Successfully retrieved server id and app id"
+msgstr "ID-ul serverului și ID-ul aplicației au fost recuperate cu succes"
+
+#: lets-encrypt/integrations/cloudways/cloudways.php:201
+msgid "Error enabling auto renew for Let's Encrypt"
+msgstr "Eroare la activarea reînnoirii automate pentru Let's Encrypt"
+
+#: lets-encrypt/integrations/cloudways/cloudways.php:186
+#: lets-encrypt/integrations/cloudways/cloudways.php:192
+msgid "Successfully installed Let's Encrypt"
+msgstr "Let's Encrypt a fost instalat cu succes"
+
+#: lets-encrypt/integrations/cloudways/cloudways.php:166
+msgid "Failed retrieving access token"
+msgstr "Recuperarea tokenului de acces a eșuat"
+
+#: lets-encrypt/functions.php:405
+msgid "You can follow these %sinstructions%s."
+msgstr "Poți să urmezi aceste %sinstrucțiuni%s."
+
+#: lets-encrypt/functions.php:403
+msgid "Your hosting environment does not allow automatic SSL installation."
+msgstr "Mediul tău de găzduire nu permite instalarea automată SSL."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1091
+#: lets-encrypt/functions.php:401
+msgid "According to our information, your hosting provider does not allow any kind of SSL installation, other then their own paid certificate. For an alternative hosting provider with SSL, see this %sarticle%s."
+msgstr "Conform informațiilor noastre, furnizorul tău de găzduire web nu permite niciun fel de instalare SSL, altele decât certificatul lor plătit. Pentru un furnizor alternativ de găzduire cu SSL, consultă acest %sarticol%s."
+
+#: lets-encrypt/functions.php:396
+msgid "You already have free SSL on your hosting environment."
+msgstr "Ai deja SSL gratuit în mediul tău de găzduire."
+
+#: lets-encrypt/functions.php:394 lets-encrypt/functions.php:398
+#: lets-encrypt/functions.php:406
+msgid "After completing the installation, you can continue to the next step to complete your configuration."
+msgstr "După finalizarea instalării, poți continua la pasul următor pentru a finaliza configurarea."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1098
+#: lets-encrypt/functions.php:393
+msgid "According to our information, your hosting provider supplies your account with an SSL certificate by default. Please contact your %shosting support%s if this is not the case."
+msgstr "Conform informațiilor noastre, furnizorul tău de găzduire web furnizează în mod implicit un certificat SSL pentru contul tău. Te rugăm să contactezi asistența %sfurnizorului%s dacă nu este cazul."
+
+#: lets-encrypt/functions.php:389
+msgid "Go to installation"
+msgstr "Mergi la instalare"
+
+#: lets-encrypt/functions.php:388
+msgid "Go to activation"
+msgstr "Mergi la activare"
+
+#: lets-encrypt/functions.php:387
+msgid "Please activate it on your dashboard %smanually%s"
+msgstr "Te rog activează-l %smanual%s din panoul tău de control"
+
+#: lets-encrypt/functions.php:386
+msgid "Please complete %smanually%s"
+msgstr "Te rog completează %smanual%s"
+
+#: lets-encrypt/functions.php:384
+msgid "Please activate it manually on your hosting dashboard."
+msgstr "Te rog să îl activezi manual în panoul de control al serviciului tău de găzduire."
+
+#: lets-encrypt/functions.php:383
+msgid "Please complete manually in your hosting dashboard."
+msgstr "Te rog să completezi manual în panoul de control al serviciului tău de găzduire."
+
+#: lets-encrypt/functions.php:321
+msgid "You have the required PHP version to continue."
+msgstr "Ai versiunea PHP necesară pentru a continua."
+
+#: lets-encrypt/functions.php:317
+msgid "The minimum requirements for the PHP version have not been met. Please upgrade to %s"
+msgstr "Nu sunt îndeplinite cerințele minime pentru versiunea de PHP. Te rog actualizează la %s"
+
+#: lets-encrypt/download.php:49
+msgid "File missing. Please retry the previous steps."
+msgstr "Fișier lipsă. Încearcă din nou pașii anteriori."
+
+#: lets-encrypt/cron.php:84
+msgid "Once every 5 minutes"
+msgstr "O dată la fiecare 5 minute"
+
+#: lets-encrypt/cron.php:80
+msgid "Once every day"
+msgstr "O dată pe zi"
+
+#: lets-encrypt/cron.php:76
+msgid "Once every week"
+msgstr "O dată pe săptămână"
+
+#: lets-encrypt/class-letsencrypt-handler.php:1679
+#: lets-encrypt/integrations/cloudways/functions.php:22
+#: lets-encrypt/integrations/cpanel/functions.php:16
+#: lets-encrypt/integrations/cpanel/functions.php:33
+#: lets-encrypt/integrations/directadmin/functions.php:16
+#: lets-encrypt/integrations/plesk/functions.php:16
+msgid "The system is not ready for the installation yet. Please run the wizard again."
+msgstr "Sistemul nu este încă pregătit pentru instalare. Te rog rulează din nou asistentul de inițializare."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1674
+msgid "Installation failed."
+msgstr "Instalarea a eșuat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1668
+msgid "Not recognized server."
+msgstr "Server nerecunoscut."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1642
+msgid "The certificate installation was rate limited. Please try again later."
+msgstr "Instalarea certificatului a fost limitată. Te rugăm să încerci din nou mai târziu."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1562
+msgid "Error code %s"
+msgstr "Cod de eroare %s"
+
+#: lets-encrypt/class-letsencrypt-handler.php:1545
+msgid "Please create a folder 'rsssl' in the uploads directory, with 644 permissions."
+msgstr "Te rog creează un dosar „rsssl” în directorul „uploads”, cu permisiuni 644."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1544
+msgid "Could not create test folder and file."
+msgstr "Nu s-au putut crea directorul și fișierul de testare."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1515
+msgid "If this is not the case, don't add this alias to your certificate."
+msgstr "Dacă nu este cazul, nu adăuga acest alias la certificatul tău."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1515
+msgid "Could not verify alias domain."
+msgstr "Nu s-a putut verifica domeniul alias."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1513
+msgid "Please check if the www version of your site also points to this website."
+msgstr "Te rog verifică dacă versiunea www a site-ului tău indică la acest site."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1511
+msgid "Please check if the non www version of your site also points to this website."
+msgstr "Te rog verifică dacă versiunea fără www a site-ului tău indică la acest site."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1492
+msgid "Alias domain check is not relevant for a subdomain"
+msgstr "Verificarea domeniului alias nu este relevantă pentru un subdomeniu"
+
+#: lets-encrypt/class-letsencrypt-handler.php:1462
+msgid "No subdomain setup detected."
+msgstr "Nu am detectat nicio inițializare a subdomeniului."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1457
+msgid "This is a multisite configuration with subdomains, which requires a wildcard certificate. Wildcard certificates are part of the %spremium%s plan."
+msgstr "Aceasta este o configurație multisit cu subdomenii, care necesită un certificat wildcard. Certificatele wildcard fac parte din planul %spremium%s."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1259
+#: lets-encrypt/class-letsencrypt-handler.php:1522
+#: lets-encrypt/class-letsencrypt-handler.php:1573
+msgid "Successfully verified alias domain."
+msgstr "Domeniul alias a fost verificat cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1246
+#: lets-encrypt/class-letsencrypt-handler.php:1250
+msgid "Error code %s."
+msgstr "Cod de eroare %s."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1232
+msgid "Challenge directory not writable."
+msgstr "Directorul challenge nu poate fi scris."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1226
+msgid "Could not reach challenge directory over %s."
+msgstr "Nu am putut ajunge la directorul challenge prin %s."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1222
+#: lets-encrypt/class-letsencrypt-handler.php:1499
+msgid "no response"
+msgstr "niciun răspuns"
+
+#: lets-encrypt/class-letsencrypt-handler.php:1163
+msgid "The certs directory was successfully created."
+msgstr "Directorul certs a fost creat cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1159
+msgid "The certs directory is not created yet."
+msgstr "Directorul certs nu este încă creat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1144
+msgid "The key directory was successfully created."
+msgstr "Directorul key a fost creat cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1136
+msgid "Trying to create directory in root of website."
+msgstr "Încerc să creez directorul în rădăcina site-ului web."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1132
+msgid "The key directory is not created yet."
+msgstr "Directorul key nu este încă creat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1119
+msgid "The challenge directory was successfully created."
+msgstr "Directorul challenge a fost creat cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1115
+msgid "The challenge directory is not created yet."
+msgstr "Directorul challenge nu este încă creat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1073
+msgid "The required directories have the necessary writing permissions."
+msgstr "Directoarele necesare au permisiunile de scriere necesare."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1066
+msgid "Set permissions to 644 to enable SSL generation."
+msgstr "Setează permisiunile la 644 pentru a permite generarea SSL."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1066
+msgid "The following directories do not have the necessary writing permissions."
+msgstr "Următoarele directoare nu au permisiunile de scriere necesare."
+
+#: lets-encrypt/class-letsencrypt-handler.php:1050
+msgid "Please complete the following step(s) first: %s"
+msgstr "Te rog să finalizezi mai întâi următorii pași: %s"
+
+#: lets-encrypt/class-letsencrypt-handler.php:785
+msgid "Order successfully retrieved."
+msgstr "Am preluat cu succes comanda."
+
+#: lets-encrypt/class-letsencrypt-handler.php:768
+msgid "Order successfully created."
+msgstr "Am creat cu succes comanda."
+
+#: lets-encrypt/class-letsencrypt-handler.php:724
+msgid "Bundle not available yet..."
+msgstr "Pachetul nu este încă disponibil ..."
+
+#: lets-encrypt/class-letsencrypt-handler.php:716
+msgid "Files not created yet..."
+msgstr "Fișierele nu au fost create încă..."
+
+#: lets-encrypt/class-letsencrypt-handler.php:710
+msgid "Successfully generated certificate."
+msgstr "Certificatul a fost generat cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:672
+msgid "OCSP not supported, the certificate will be generated without OCSP."
+msgstr "OCSP nu este acceptat, certificatul va fi generat fără OCSP."
+
+#: lets-encrypt/class-letsencrypt-handler.php:664
+msgid "As your order will be regenerated, you'll need to update your DNS text records."
+msgstr "Deoarece comanda ta va fi regenerată, va trebui să actualizezi înregistrările text DNS."
+
+#: lets-encrypt/class-letsencrypt-handler.php:443
+#: lets-encrypt/class-letsencrypt-handler.php:661
+msgid "The order is invalid, possibly due to too many failed authorization attempts. Please start at the previous step."
+msgstr "Comanda este invalidă, posibil din cauza prea multor încercări de autorizare eșuate. Te rugăm să reiei de la pasul anterior."
+
+#: lets-encrypt/class-letsencrypt-handler.php:644
+msgid "Authorization not completed yet."
+msgstr "Autorizarea nu a fost finalizată încă."
+
+#: lets-encrypt/class-letsencrypt-handler.php:619
+msgid "Certificate already generated. It was renewed if required."
+msgstr "Certificat deja generat. A fost reînnoit, dacă este necesar."
+
+#: lets-encrypt/class-letsencrypt-handler.php:588
+msgid "DNS records were not verified yet. Please complete the previous step."
+msgstr "Înregistrările DNS nu au fost încă confirmate. Te rog finalizează pasul anterior."
+
+#: lets-encrypt/class-letsencrypt-handler.php:574
+msgid "Please double check your DNS txt record."
+msgstr "Te rugăm să verifici înregistrarea DNS txt."
+
+#: lets-encrypt/class-letsencrypt-handler.php:572
+msgid "The certificate generation was rate limited for 10 minutes because the authorization failed."
+msgstr "Generarea certificatului a fost limitată de 10 minute, deoarece autorizarea a eșuat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:531
+msgid "Could not verify TXT record for domain %s"
+msgstr "Nu am putut verifica înregistrarea TXT pentru domeniul %s"
+
+#: lets-encrypt/class-letsencrypt-handler.php:522
+msgid "The DNS response for %s was %s, while it should be %s."
+msgstr "Răspunsul DNS pentru %s a fost %s, dar ar trebui să fie %s."
+
+#: lets-encrypt/class-letsencrypt-handler.php:515
+msgid "Successfully verified DNS records"
+msgstr "Înregistrările DNS verificate cu succes"
+
+#: lets-encrypt/class-letsencrypt-handler.php:501
+#: lets-encrypt/integrations/cpanel/functions.php:45
+msgid "Token not generated. Please complete the previous step."
+msgstr "Tokenul nu a fost generat. Te rog finalizează pasul anterior."
+
+#: lets-encrypt/class-letsencrypt-handler.php:474
+msgid "Configured for HTTP challenge"
+msgstr "Configurat pentru verificarea HTTP"
+
+#: lets-encrypt/class-letsencrypt-handler.php:433
+msgid "Token not received yet."
+msgstr "Tokenul nu a fost primit încă."
+
+#: lets-encrypt/class-letsencrypt-handler.php:418
+#: lets-encrypt/class-letsencrypt-handler.php:426
+msgid "Token successfully retrieved."
+msgstr "Tokenul a fost recuperat cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:381
+msgid "The email address was not set. Please set the email address"
+msgstr "Adresa de email nu a fost setată. Te rog setează adresa de email"
+
+#: lets-encrypt/class-letsencrypt-handler.php:372
+msgid "Please change your email address %shere%s and try again."
+msgstr "Te rog schimbă adresa de email %saici%s și încearcă din nou."
+
+#: lets-encrypt/class-letsencrypt-handler.php:371
+msgid "The used domain for your email address is not allowed."
+msgstr "Domeniul folosit pentru adresa ta de e-mail nu este permis."
+
+#: lets-encrypt/class-letsencrypt-handler.php:363
+msgid "Successfully retrieved account"
+msgstr "Cont recuperat cu succes"
+
+#: lets-encrypt/class-letsencrypt-handler.php:343
+msgid "The PHP function CURL has successfully been detected."
+msgstr "Funcția PHP CURL a fost detectată cu succes."
+
+#: lets-encrypt/class-letsencrypt-handler.php:339
+msgid "The PHP function CURL is not available on your server, which is required. Please contact your hosting provider."
+msgstr "Funcția PHP CURL nu este disponibilă pe serverul tău, dar este necesară. Te rugăm să contactezi furnizorul tău de găzduire."
+
+#: lets-encrypt/class-letsencrypt-handler.php:323
+msgid "DirectAdmin recognized. Possibly the certificate can be installed automatically."
+msgstr "DirectAdmin recunoscut. Este posibil ca certificatul să poată fi instalat automat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:320
+msgid "Plesk recognized. Possibly the certificate can be installed automatically."
+msgstr "Plesk recunoscut. Este posibil ca certificatul să poată fi instalat automat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:317
+msgid "CPanel recognized. Possibly the certificate can be installed automatically."
+msgstr "CPanel recunoscut. Este posibil ca certificatul să poată fi instalat automat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:313
+msgid "The Hosting Panel software was not recognized. Depending on your hosting provider, the generated certificate may need to be installed manually."
+msgstr "Software-ul de găzduire nu a fost recunoscut. În funcție de furnizorul tău de găzduire, este posibil ca certificatul generat să fie instalat manual."
+
+#: lets-encrypt/class-letsencrypt-handler.php:282
+msgid "SSL certificate should be generated and installed."
+msgstr "Certificatul SSL ar trebui să fie generat și instalat."
+
+#: lets-encrypt/class-letsencrypt-handler.php:276
+msgid "You already have a valid SSL certificate."
+msgstr "Ai deja un certificat SSL valid."
+
+#: lets-encrypt/class-letsencrypt-handler.php:272
+msgid "Continue to renew."
+msgstr "Continuă pentru a reînnoi."
+
+#: lets-encrypt/class-letsencrypt-handler.php:272
+msgid "Your certificate will expire on %s."
+msgstr "Certificatul tău va expira pe %s."
+
+#: lets-encrypt/class-letsencrypt-handler.php:266
+msgid "(unknown)"
+msgstr "(necunoscut)"
+
+#: lets-encrypt/class-letsencrypt-handler.php:202
+msgid "Your domain meets the requirements for Let's Encrypt."
+msgstr "Domeniul tău îndeplinește cerințele pentru Let's Encrypt."
+
+#: lets-encrypt/class-letsencrypt-handler.php:188
+msgid "It is not possible to install Let's Encrypt on a localhost environment."
+msgstr "Nu este posibilă instalarea Let's Encrypt pe un mediu localhost."
+
+#: lets-encrypt/class-letsencrypt-handler.php:198
+msgid "It is not possible to install Let's Encrypt on a subfolder configuration."
+msgstr "Nu este posibilă instalarea Let's Encrypt pe o configurație cu subdirectoare."
+
+#: lets-encrypt/class-letsencrypt-handler.php:193
+msgid "It is not possible to install Let's Encrypt on a subsite. Please go to the main site of your website."
+msgstr "Nu poți să instalezi Let's Encrypt pe un sub-site. Te rog mergi la site-ul tău principal."
+
+#: class-admin.php:3402
+msgid "You have the Really Simple SSL Let's Encrypt beta add-on activated. This functionality has now been integrated in core, so you can deactivate the add-on."
+msgstr "Ai activat modulul adițional Really Simple SSL Let's Encrypt beta. Această funcționalitate a fost acum integrată în nucleu, astfel încât să poți dezactiva modulul adițional."
+
+#: class-admin.php:3183
+msgid "Re-check"
+msgstr "Reverificare"
+
+#: class-admin.php:3181
+msgid "Depending on your hosting provider, %smanual installation%s may be required."
+msgstr "În funcție de furnizorul tău de găzduire, poate fi necesară %sinstalarea manuală%s."
+
+#: class-admin.php:3180
+msgid "If your hosting provider auto-renews your certificate, no action is required. Alternatively, you have the option to generate an SSL certificate with Really Simple SSL."
+msgstr "Dacă furnizorul tău de găzduire îți reînnoiește certificatul, nu este necesară nicio acțiune. În plus, ai opțiunea să generezi un certificat SSL cu Really Simple SSL."
+
+#: class-admin.php:3180
+msgid "SSL certificate will expire on %s."
+msgstr "Certificatul SSL va expira pe %s."
+
+#: class-admin.php:3179
+msgid "Your SSL certificate will expire soon."
+msgstr "Certificatul tău SSL va expira în curând."
+
+#: class-admin.php:3157
+msgid "No SSL detected. Use the retry button to check again."
+msgstr "Nu a fost detectat SSL. Folosește butonul pentru reîncercare pentru a verifica din nou."
+
+#: class-admin.php:3036
+msgid "(Unknown)"
+msgstr "(Necunoscut)"
+
+#: class-admin.php:903 class-admin.php:3158 class-admin.php:3167
+#: class-admin.php:3182
+msgid "Install SSL certificate"
+msgstr "Instalează certificatul SSL"
+
+#: class-admin.php:3159 lets-encrypt/wizard/class-wizard.php:891
+msgid "Retry"
+msgstr "Reîncearcă"
+
+#: class-admin.php:598 lets-encrypt/wizard/templates/activate.php:58
+msgid "An SSL certificate has been detected"
+msgstr "A fost detectat un certificat SSL"
+
+#: grid/templates/tips-tricks.php:39
+msgid "Adding a Permission Policy"
+msgstr "Adăugarea unei politici de autorizare"
+
+#: grid/templates/tips-tricks.php:31
+msgid "Adding a Content Security Policy"
+msgstr "Adăugarea unei politici de securitate a conținutului"
+
+#: class-admin.php:3342
+msgid "Or set your wp-config.php to writable and reload this page."
+msgstr "Sau configurează wp-config.php să poată fi scris și reîncarcă această pagină."
+
+#: class-admin.php:3334
+msgid "Add the following lines of code to your wp-config.php."
+msgstr "Adaugă următoarele linii de cod în wp-config.php."
+
+#: class-admin.php:3334
+msgid "To set the httponly secure cookie settings, your wp-config.php has to be edited, but the file is not writable."
+msgstr "Pentru a seta setările cookie-urilor securizate httponly, wp-config.php trebuie modificat, dar fișierul nu poate fi scris."
+
+#: class-admin.php:3327
+msgid "HttpOnly Secure cookies not set."
+msgstr "Cookie-urile HttpOnly Secure nu sunt setate."
+
+#: class-admin.php:3389
+msgid "Due to a recent update by WP Engine, we have changed your settings automatically to adapt."
+msgstr "Datorită unei actualizări recente a WP Engine, am modificat setările tale automat, pentru a le adapta."
+
+#: class-admin.php:3060
+msgid "The Really Simple SSL plugin folder in the /wp-content/plugins/ directory has been renamed to %s. This might cause issues when deactivating, or with premium add-ons. To fix this you can rename the Really Simple SSL folder back to the default %s."
+msgstr "Directorul pentru modulul Really Simple SSL din directorul /wp-content/plugins/ a fost redenumit în %s. Acest lucru ar putea cauza probleme la dezactivare sau la suplimentele premium. Pentru a remedia acest lucru, poți redenumi folderul Really Simple SSL înapoi la valoarea implicită %s."
+
+#: class-site-health.php:75
+msgid "Not all recommended security headers are installed"
+msgstr "Nu sunt instalate toate antetele de securitate recomandate"
+
+#: class-site-health.php:63
+msgid "The recommended security headers are detected on your site."
+msgstr "Anteturile de securitate recomandate sunt detectate pe site-ul tău."
+
+#: class-site-health.php:55
+msgid "Recommended security headers installed"
+msgstr "Antetele de securitate recomandate sunt instalate"
+
+#: class-site-health.php:38
+msgid "Security Headers Test"
+msgstr "Test antet securitate"
+
+#: class-site-health.php:32
+msgid "SSL Status Test"
+msgstr "Test de stare SSL"
+
+#: class-admin.php:3156
+msgid "No SSL detected"
+msgstr "Nu a fost detectat SSL"
+
+#: class-site-health.php:80
+msgid "Learn more about security headers"
+msgstr "Află mai multe despre antetele de securitate"
+
+#: class-site-health.php:146
+msgid "Enable 301 redirect"
+msgstr "Activează redirecționarea 301"
+
+#: class-site-health.php:141
+msgid "To ensure all traffic passes through SSL, please enable a 301 redirect."
+msgstr "Pentru a te asigura că tot traficul trece prin SSL, te rugăm să activezi o redirecționare 301."
+
+#: class-site-health.php:138
+msgid "No 301 redirect to SSL enabled."
+msgstr "Nu este activată nicio redirecționare 301 la SSL."
+
+#: class-site-health.php:132
+msgid "Really Simple SSL is installed, but no valid SSL certificate is detected."
+msgstr "Really Simple SSL este instalat, dar nu este detectat niciun certificat SSL valid."
+
+#: class-site-health.php:119
+msgid "Really Simple SSL detected an SSL certificate, but has not been configured to enforce SSL."
+msgstr "Really Simple SSL a detectat un certificat SSL, dar nu a fost configurat pentru a aplica SSL."
+
+#: class-site-health.php:116
+msgid "SSL is not enabled."
+msgstr "SSL nu este activat."
+
+#: class-admin.php:4607
+msgid "Deactivate, revert to http"
+msgstr "Dezactivează, revino la http."
+
+#: class-admin.php:4606
+msgid "Deactivate, keep https"
+msgstr "Dezactivează, dar păstrează https."
+
+#: class-admin.php:4593
+msgid "The WordPress 301 redirect will stop working"
+msgstr "Redirecționarea 301 WordPress nu va mai funcționa"
+
+#: class-admin.php:4588
+msgid "Deactivate, and revert to http. This will remove all changes by the plugin."
+msgstr "Dezactivează și revino la http. Aceasta va elimina toate modificările efectuate de modul."
+
+#: class-admin.php:4587
+msgid "Deactivate, but stay on SSL."
+msgstr "Dezactivează, dar rămâi pe SSL."
+
+#: class-admin.php:4585
+msgid "To deactivate the plugin correctly, please select if you want to:"
+msgstr "Pentru a dezactiva corect modulul, selectează dacă dorești:"
+
+#: class-admin.php:4341
+msgid "If the setting 'stop editing the .htaccess file' is enabled, you can't change this setting."
+msgstr "Dacă setarea „Oprește editarea fișierului .htaccess” este activată, nu poți modifica această setare."
+
+#: class-admin.php:4191 class-multisite.php:342
+msgid "Enable this option to permanently dismiss all +1 notices in the 'Your progress' tab"
+msgstr "Activează această opțiune pentru a respinge definitiv toate notificările +1 din secțiunea „Progresul tău”"
+
+#: class-admin.php:4188
+msgid "Fire mixed content fixer with different method"
+msgstr "Pornește programul pentru corectarea conținutului mixt prin altă metodă"
+
+#: class-admin.php:4170
+msgid "Enable WordPress 301 redirect"
+msgstr "Activează redirecționarea 301 prin WordPress"
+
+#: class-admin.php:4169
+msgid "Redirects all requests over HTTP to HTTPS using a PHP 301 redirect. Enable if the .htaccess redirect cannot be used, for example on NGINX servers."
+msgstr "Redirecționează toate cererile prin HTTP către HTTPS utilizând o redirecționare PHP 301. Activează dacă redirecționarea .htaccess nu poate fi utilizată, de exemplu pe serverele NGINX."
+
+#: class-admin.php:4141
+msgid "Copied!"
+msgstr "Copiat!"
+
+#: class-admin.php:4135
+msgid " You still have %s tasks open."
+msgstr "Ai în continuare %s sarcini deschise."
+
+#: class-admin.php:4036
+msgid "Premium"
+msgstr "Premium"
+
+#: class-admin.php:4034
+msgid "Open"
+msgstr "Deschide"
+
+#: class-admin.php:4032
+msgid "Warning"
+msgstr "Avertizare"
+
+#: class-admin.php:4030
+msgid "Completed"
+msgstr "Efectuat"
+
+#: class-admin.php:3965
+msgid "Instructions manual"
+msgstr "Manual de instrucțiuni"
+
+#: class-admin.php:3907
+msgid "Upgrade to pro"
+msgstr "Actualizează la Pro"
+
+#: class-admin.php:3909 upgrade/upgrade-to-pro.php:180
+msgid "Installed"
+msgstr "Instalat"
+
+#: class-admin.php:3904 upgrade/upgrade-to-pro.php:137
+#: upgrade/upgrade-to-pro.php:150 upgrade/upgrade-to-pro.php:167
+msgid "Install"
+msgstr "Instalează"
+
+#: class-admin.php:3791
+msgid "Tips & Tricks"
+msgstr "Sfaturi și trucuri"
+
+#: class-admin.php:3306
+msgid "Your site uses Divi. This can require some additional steps before getting the secure lock."
+msgstr "Site-ul tău folosește Divi. Acest lucru poate necesita câțiva pași suplimentari înainte de a obține blocarea sigură."
+
+#: class-admin.php:3292
+msgid "Your site uses Elementor. This can require some additional steps before getting the secure lock."
+msgstr "Site-ul tău folosește Elementor. Acest lucru poate necesita câțiva pași suplimentari înainte de a obține blocarea sigură."
+
+#: class-admin.php:3277
+msgid "The .htaccess redirect rules selected by this plugin failed in the test. Set manually or dismiss to leave on WordPress redirect."
+msgstr "Regulile de redirecționare .htaccess selectate de acest modul au eșuat în test. Setează manual sau închide pentru a lăsa redirecționarea WordPress activă."
+
+#: class-admin.php:3271
+msgid "The %s file is not writable. You can either use the WordPress redirect, add the rules manually, or set the file to %swritable%s."
+msgstr "Fișierul %s nu poate fi scris. Poți folosi redirecționarea WordPress, poți adăuga regulile manual sau poți seta fișierul la %swritable%s."
+
+#: class-admin.php:3259
+msgid "WordPress 301 redirect enabled. We recommend to enable a 301 .htaccess redirect."
+msgstr "Redirecționare WordPress 301 activată. Îți recomandăm să activezi o redirecționare 301 .htaccess."
+
+#: class-admin.php:3219
+msgid "Mixed content fixer not enabled. Enable the option to fix mixed content on your site."
+msgstr "Programul pentru corectarea conținutului mixt nu este activat. Activează opțiunea ca să corectezi conținutul mixt pe site-ul tău."
+
+#: class-admin.php:3208
+msgid "The mixed content fixer is active, but was not detected on the frontpage."
+msgstr "Programul de reparare a conținutului mixt este activ, dar nu a fost detectat pe prima pagină."
+
+#: class-admin.php:3201
+msgid "Really Simple SSL has received no response from the webpage."
+msgstr "Really Simple SSL nu a primit niciun răspuns de la pagina web."
+
+#: class-admin.php:3138
+msgid "SSL is not enabled yet."
+msgstr "SSL nu este activat încă."
+
+#: class-admin.php:3121
+msgid "Really Simple SSL 4.0. Learn more about our newest major release."
+msgstr "Really Simple SSL 4.0. Află mai multe despre cea mai nouă versiune majoră."
+
+#: class-admin.php:3120
+msgid "https://really-simple-ssl.com/really-simple-ssl-4-a-new-dashboard"
+msgstr "https://really-simple-ssl.com/really-simple-ssl-4-a-new-dashboard"
+
+#: class-admin.php:3076
+msgid "SSL is now activated. Check if your website is secure by following this article."
+msgstr "Acum SSL este activat. Verifică dacă site-ul tău web este sigur urmărind acest articol."
+
+#: class-admin.php:3020
+msgid "No recommended redirect rules detected."
+msgstr "Nu am detectat reguli de redirecționare recomandate."
+
+#: class-admin.php:2941
+msgid "General"
+msgstr "Generale"
+
+#: class-admin.php:591 lets-encrypt/wizard/templates/activate.php:45
+msgid "Before you migrate, please check for: "
+msgstr "Înainte de a migra, te rog verifică următoarele:"
+
+#: rlrsssl-really-simple-ssl.php:194
+msgid "Please upgrade to the latest version to be able use the full functionality of the plugin."
+msgstr "Te rugăm să actualizezi la cea mai recentă versiune pentru a putea utiliza toate funcționalitățile modulului."
+
+#: rlrsssl-really-simple-ssl.php:193
+msgid "You have a premium add-on with a version that is not compatible with the >4.0 release of Really Simple SSL."
+msgstr "Ai un modul suplimentar premium cu o versiune care nu este compatibilă cu versiunea> 4.0 a Really Simple SSL."
+
+#: rlrsssl-really-simple-ssl.php:192
+msgid "Plugin dependency error"
+msgstr "Eroare de dependență a modulului"
+
+#: rlrsssl-really-simple-ssl.php:41
+msgid "Really Simple SSL cannot be activated. The plugin requires WordPress 4.8 or higher"
+msgstr "Really Simple SSL nu poate fi activat. Pluginul necesită WordPress 4.8 sau o versiune ulterioară"
+
+#: rlrsssl-really-simple-ssl.php:35
+msgid "Really Simple SSL cannot be activated. The plugin requires PHP 5.6 or higher"
+msgstr "Really Simple SSL nu poate fi activat. Pluginul necesită PHP 5.6 sau o versiune ulterioară"
+
+#: class-multisite.php:1045
+msgid "Really Simple SSL has converted all your websites to non SSL."
+msgstr "Really Simple SSL a convertit toate site-urile tale să nu folosească SSL."
+
+#: class-multisite.php:1042
+msgid "Really Simple SSL has converted all your websites to SSL."
+msgstr "Really Simple SSL a convertit toate site-urile tale să folosească SSL."
+
+#: class-multisite.php:1040
+msgid "Conversion of websites completed."
+msgstr "Conversia site-urilor este finalizată."
+
+#: class-multisite.php:1035
+msgid "Site conversion in progress. Please refresh this page to check if the process has finished. It will proceed in the background."
+msgstr "Conversia site-ului este în desfășurare. Actualizează această pagină pentru a verifica dacă procesul s-a încheiat. Va continua în fundal."
+
+#: class-multisite.php:571
+msgid "Setup"
+msgstr "Inițializare"
+
+#: class-admin.php:3799 class-multisite.php:426
+msgid "Our plugins"
+msgstr "Modulele noastre"
+
+#: class-admin.php:3806 class-multisite.php:418
+msgid "Support forum"
+msgstr "Forum pentru suport"
+
+#: class-admin.php:3776 class-multisite.php:402
+msgid "Your progress"
+msgstr "Progresul tău"
+
+#: class-multisite.php:360
+msgid "Choose option"
+msgstr "Alege o opțiune"
+
+#: class-admin.php:2965 class-admin.php:4659 class-multisite.php:230
+#: class-multisite.php:475
+msgid "Support"
+msgstr "Suport"
+
+#: class-multisite.php:130
+msgid "SSL is enabled per site."
+msgstr "SSL este activat per site."
+
+#: class-multisite.php:126
+msgid "SSL is enabled networkwide."
+msgstr "SSL este activat în întreaga rețea."
+
+#: class-multisite.php:97
+msgid "SSL is activated network wide."
+msgstr "SSL este activat în întreaga rețea."
+
+#: class-multisite.php:95
+msgid "No choice has been made regarding networkwide or per site activation."
+msgstr "Nu a fost selectată nicio opțiune în ceea ce privește rețeaua sau activarea pe site."
+
+#: grid/templates/progress-footer.php:39
+msgid "301 Redirect"
+msgstr "Redirecționare 301"
+
+#: class-admin.php:897 class-site-health.php:125
+#: grid/templates/progress-footer.php:25
+#: lets-encrypt/wizard/config/steps.php:162
+msgid "Activate SSL"
+msgstr "Activează SSL"
+
+#: grid/templates/progress-footer.php:19
+msgid "Go PRO!"
+msgstr "Devino PRO!"
+
+#: grid/templates/progress-footer.php:9
+msgid "SSL Not activated"
+msgstr "SSL nu este activat"
+
+#: class-admin.php:4131 grid/templates/progress.php:43
+msgid "SSL is not yet enabled on this site."
+msgstr "SSL nu este încă activat pe acest site."
+
+#: class-admin.php:4127 grid/templates/progress.php:37
+msgid "Basic SSL configuration finished! Improve your score with %sReally Simple SSL Pro%s."
+msgstr "Configurarea SSL de bază s-a încheiat! Îmbunătățește-ți scorul cu %sReally Simple SSL Pro%s."
+
+#: grid/templates/progress.php:32
+msgid "SSL configuration finished!"
+msgstr "Configurarea SSL s-a încheiat!"
+
+#: class-admin.php:4134 grid/templates/progress.php:29
+msgid "You still have %s task open."
+msgid_plural "You still have %s tasks open."
+msgstr[0] "Ai în continuare o sarcină deschisă."
+msgstr[1] "Ai în continuare %s sarcini deschise."
+msgstr[2] "Ai în continuare %s de sarcini deschise."
+
+#: class-admin.php:4129 grid/templates/progress.php:29
+msgid "SSL is activated on your site."
+msgstr "SSL este activat pe site-ul tău."
+
+#: grid/templates/support.php:42
+msgid "Elementor"
+msgstr "Elementor"
+
+#: grid/templates/support.php:35
+msgid "Mixed Content"
+msgstr "Conținut mixt"
+
+#: grid/templates/support.php:21
+msgid "Multisite"
+msgstr "Multi-site"
+
+#: grid/templates/support.php:14
+msgid "Redirect loops"
+msgstr "Bucle de redirecționare"
+
+#: grid/templates/support.php:7
+msgid "General Issues"
+msgstr "Probleme generale"
+
+#: grid/templates/header.php:5
+msgid "Save settings"
+msgstr "Salvează setările"
+
+#: grid/templates/support-footer.php:7
+msgid "SSL type:"
+msgstr "Tip de SSL:"
+
+#: grid/templates/support-footer.php:6
+msgid "Server type:"
+msgstr "Tip de server:"
+
+#: grid/templates/support-footer.php:3
+msgid "Download system status"
+msgstr "Descarcă stare sistem"
+
+#: grid/templates/tips-tricks.php:47
+msgid "Information about landing page redirects"
+msgstr "Informații despre redirecționarea paginilor de destinație"
+
+#: grid/templates/tips-tricks.php:23
+msgid "Improve security: Add security headers"
+msgstr "Îmbunătățește securitatea: adaugă antete de securitate"
+
+#: grid/templates/tips-tricks.php:15
+msgid "Improve security: Enable HTTP Strict Transport Security (HSTS)"
+msgstr "Îmbunătățește securitatea: Activează HTTP Strict Transport Security (HSTS)"
+
+#: grid/templates/tips-tricks.php:10 grid/templates/tips-tricks.php:18
+#: grid/templates/tips-tricks.php:26 grid/templates/tips-tricks.php:34
+#: grid/templates/tips-tricks.php:42 grid/templates/tips-tricks.php:50
+#: grid/templates/tips-tricks.php:58
+msgid "Read more"
+msgstr "Citește mai mult"
+
+#: grid/templates/progress-header.php:15
+msgid "Remaining tasks"
+msgstr "Sarcini rămase"
+
+#: grid/templates/progress-header.php:7
+msgid "All tasks"
+msgstr "Toate sarcinile"
+
+#. Author of the plugin
+msgid "Really Simple Plugins"
+msgstr "Really Simple Plugins"
+
+#: grid/templates/support.php:28
+msgid "Really Simple SSL Pro"
+msgstr "Really Simple SSL Pro"
+
+#: class-admin.php:2689
+msgid "Hi, Really Simple SSL has kept your site secure for some time now, awesome! If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %smessage%s."
+msgstr "Bună, Really Simple SSL ți-a păstrat site-ul în siguranță de ceva timp! Dacă vrei, te rog lasă-ne o recenzie pe WordPress.org ca să afle și alții. Am fi recunoscători! Dacă ai întrebări, păreri sau idei, termite-ne un %smesaj%s."
+
+#: class-admin.php:613 lets-encrypt/wizard/templates/activate.php:30
+#: lets-encrypt/wizard/templates/activate.php:70
+msgid "Check out Really Simple SSL Pro"
+msgstr "Descoperă Really Simple SSL Pro"
+
+#: class-admin.php:900 lets-encrypt/wizard/class-wizard.php:896
+msgid "Get ready with PRO!"
+msgstr "Fii gata cu PRO!"
+
+#: class-admin.php:594
+msgid "Images, stylesheets or scripts from a domain without an SSL certificate: remove them or move to your own server"
+msgstr "Imagini, foi de stil sau scripturi dintr-un domeniu fără certificat SSL: elimină-le sau mută-le pe propriul server"
+
+#: class-admin.php:2699
+msgid "Don't show again"
+msgstr "Nu mai arăta din nou"
+
+#: class-admin.php:3225
+msgid "The mixed content fixer could not be detected due to a cURL error: %s. cURL errors are often caused by an outdated version of PHP or cURL and don't affect the front-end of your site. Contact your hosting provider for a fix."
+msgstr "Programul de reparare a conținutului mixt nu a putut fi detectat din cauza unei erori cURL: %s. Erorile cURL sunt adesea cauzate de o versiune învechită a PHP sau cURL și nu afectează partea din față a sitului tău. Contactează furnizorul de găzduire pentru o soluție."
+
+#: class-admin.php:3213
+msgid "Error occurred when retrieving the webpage."
+msgstr "A apărut o eroare la preluarea paginii web."
+
+#: class-site-health.php:153
+msgid "The 301 .htaccess redirect is the fastest and most reliable redirect option."
+msgstr "Redirecționarea 301 .htaccess este cea mai rapidă și mai fiabilă opțiune de redirecționare."
+
+#: class-site-health.php:150
+msgid "301 .htaccess redirect is not enabled."
+msgstr "Redirecționarea 301 prin .htaccess nu este activată."
+
+#: class-site-health.php:107
+msgid "You have set a 301 redirect to SSL. This is important for SEO purposes"
+msgstr "Ai setat o redirecționare 301 către SSL. Acest lucru este important în scopuri SEO"
+
+#: class-site-health.php:99
+msgid "301 SSL redirect enabled"
+msgstr "Redirecționarea 301 prin SSL este activată"
+
+#: class-admin.php:4192 class-multisite.php:343
+msgid "Dismiss all Really Simple SSL notices"
+msgstr "Respinge toate notificările Really Simple SSL"
+
+#: class-admin.php:3254
+msgid "301 redirect to https set: .htaccess redirect."
+msgstr "Setare redirecționare 301 către https: redirecționare prin .htaccess."
+
+#: class-multisite.php:1036
+msgid "If the conversion does not proceed after a few minutes, click %shere%s to force the conversion process."
+msgstr "În cazul în care conversia nu începe după câteva minute, Apasă %saici%s pentru a forța procesul de conversie."
+
+#: class-admin.php:3046
+msgid "The 'force-deactivate.php' file has to be renamed to .txt. Otherwise your ssl can be deactivated by anyone on the internet."
+msgstr "Fișierul „force-deactivate.php” trebuie redenumit în .txt. Dacă nu faci asta, SSL-ul tău poate fi dezactivat de oricine de pe internet."
+
+#: multisite-cron.php:11
+msgid "Once every minute"
+msgstr "O dată la fiecare minut"
+
+#: class-multisite.php:1034
+msgid "Conversion of websites %s percent complete."
+msgstr "Conversia site-urilor este finalizată %s."
+
+#: class-admin.php:2698
+msgid "Maybe later"
+msgstr "Poate mai târziu"
+
+#: class-admin.php:2697
+msgid "Leave a review"
+msgstr "Lasă o recenzie"
+
+#: class-admin.php:2691
+msgid "Hi, Really Simple SSL has kept your site secure for a month now, awesome! If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %smessage%s."
+msgstr "Bună, Really Simple SSL ți-a păstrat site-ul în siguranță timp de 30 de zile! Dacă vrei, te rog lasă-ne o recenzie pe WordPress.org ca să afle și alții. Am fi recunoscători! Dacă ai întrebări, păreri sau idei, termite-ne un %smesaj%s."
+
+#: class-multisite.php:160
+msgid "Activate SSL per site or install a wildcard certificate to fix this."
+msgstr "Activează SSL per site sau instalează un certificat wildcard pentru a remedia acest lucru."
+
+#: class-multisite.php:159
+msgid "This leads to issues when activating SSL networkwide since subdomains will be forced over SSL as well while they don't have a valid certificate."
+msgstr "Acest lucru duce la probleme la activarea SSL la nivel de rețea, deoarece subdomeniile vor fi forțate și prin SSL, în timp ce acestea nu au un certificat valid."
+
+#: class-multisite.php:158
+msgid "You run a Multisite installation with subdomains, but your site doesn't have a wildcard certificate."
+msgstr "Rulezi o instalare Multisite cu subdomenii, dar situl tău nu are un certificat wildcard."
+
+#: class-admin.php:4605 upgrade/upgrade-to-pro.php:360
+msgid "Cancel"
+msgstr "Anulează"
+
+#: class-admin.php:4595
+msgid "The .htaccess redirect will remain active"
+msgstr "Redirecționarea .htaccess va rămâne activă"
+
+#: class-admin.php:4594
+msgid "Your site address will remain https://"
+msgstr "Adresa site-ului tău va rămâne https://"
+
+#: class-admin.php:4592
+msgid "The mixed content fixer will stop working"
+msgstr "Programul de reparare a conținutului mixt va înceta să funcționeze"
+
+#: class-admin.php:4590
+msgid "Deactivating the plugin while keeping SSL will do the following:"
+msgstr "Dezactivarea modulului în timp ce păstrezi SSL va face următoarele:"
+
+#: class-admin.php:4572
+msgid "Are you sure?"
+msgstr "Sigur?"
+
+#: class-admin.php:4093
+msgid "More info"
+msgstr "Mai multe informații"
+
+#: class-admin.php:120
+msgid "Really Simple SSL and Really Simple SSL add-ons do not process any personal identifiable information, so the GDPR does not apply to these plugins or usage of these plugins on your website. You can find our privacy policy <a href=\"%s\" target=\"_blank\">here</a>."
+msgstr "Really Simple SSL și suplimentele Really Simple SSL nu procesează niciun fel de informații personale de identificare, deci GDPR nu se aplică la aceste module sau la folosirea lor pe site-ul tău web. Poți găsi politica noastră de confidențialitate <a href=\"%s\" target=\"_blank\">aici</a>."
+
+#: lets-encrypt/wizard/templates/activate.php:55
+msgid "We strongly recommend to create a %sbackup%s of your site before activating SSL"
+msgstr "Recomandăm insistent să faci o %scopie de siguranță%s a site-ului înainte de activarea SSL"
+
+#. Author URI of the plugin
+msgid "https://really-simple-plugins.com"
+msgstr "https://really-simple-plugins.com"
+
+#: class-admin.php:4187
+msgid "If this option is set to true, the mixed content fixer will fire on the init hook instead of the template_redirect hook. Only use this option when you experience problems with the mixed content fixer.\""
+msgstr "Dacă această opțiune este activată, programul de reparare a conținutului mixt se va declanșa pe cârligul init hook, în loc de cârligul template_redirect. Folosește această opțiune numai atunci când întâmpini probleme cu instrumentul de remediere a conținutului mixt."
+
+#: class-admin.php:612 lets-encrypt/wizard/templates/activate.php:26
+#: lets-encrypt/wizard/templates/activate.php:66
+msgid "You can also let the automatic scan of the pro version handle this for you, and get premium support, increased security with HSTS and more!"
+msgstr "De asemenea, poți lăsa scanarea automată a versiunii pro să se ocupe de aceasta pentru tine și să beneficiezi de suport premium, securitate sporită cu HSTS și altele!"
+
+#: class-multisite.php:99
+msgid "SSL is activated per site."
+msgstr "SSL este activat per site."
+
+#: class-multisite.php:457
+msgid "Options saved."
+msgstr "Am salvat opțiunile."
+
+#: class-multisite.php:339
+msgid "Select to enable SSL networkwide or per site."
+msgstr "Selectează pentru a activa SSL în întreaga rețea sau per site."
+
+#: class-multisite.php:363
+msgid "per site"
+msgstr "per site"
+
+#: class-multisite.php:362
+msgid "networkwide"
+msgstr "în întreaga rețea"
+
+#: class-multisite.php:340
+msgid "Enable SSL"
+msgstr "Activează SSL"
+
+#: class-admin.php:4308 class-admin.php:4338 class-admin.php:4415
+#: class-admin.php:4628
+msgid "This option is enabled on the network menu."
+msgstr "Această opțiune este activată în meniul de rețea."
+
+#: class-admin.php:595 lets-encrypt/wizard/templates/activate.php:56
+msgid "You may need to login in again."
+msgstr "Ar putea fi nevoie să te autentifici din nou."
+
+#: class-admin.php:4334
+msgid "Before you enable the htaccess redirect, make sure you know how to %sregain access%s to your site in case of a redirect loop."
+msgstr "Înainte de a activa redirecționarea htaccess, asigură-te că știi cum să-ți %srecapeți accesul%s la site în cazul unei bucle de redirecționare."
+
+#: class-admin.php:4174
+msgid "A .htaccess redirect is faster and works better with caching. Really Simple SSL detects the redirect code that is most likely to work (99% of websites), but this is not 100%. Make sure you know how to regain access to your site if anything goes wrong!"
+msgstr "O redirecționare .htaccess este mai rapidă și funcționează mai bine cu cache-ul. Really Simple SSL detectează codul de redirecționare care este foarte probabil să funcționeze (pe 99% din site-urile web), dar acest lucru nu este 100%. Asigură-te că ști cum să ai din nou acces la site dacă ceva nu merge bine!"
+
+#: class-admin.php:4175 class-site-health.php:158
+msgid "Enable 301 .htaccess redirect"
+msgstr "Activează redirecționarea 301 prin .htaccess"
+
+#: class-admin.php:3242
+msgid "No 301 redirect is set. Enable the WordPress 301 redirect in the settings to get a 301 permanent redirect."
+msgstr "Nicio redirecționare 301 setată. Activează redirecționarea 301 WordPress în setări pentru a obține o redirecționare 301 permanentă."
+
+#: class-admin.php:3265
+msgid "Enable a .htaccess redirect or WordPress redirect in the settings to create a 301 redirect."
+msgstr "Activează o redirecționare .htaccess sau o redirecționare WordPress în setări pentru a crea o redirecționare 301."
+
+#: class-admin.php:4164
+msgid "In most cases you need to leave this enabled, to prevent mixed content issues on your site."
+msgstr "În cele mai multe cazuri, trebuie s-o lași activată pentru a preveni problemele de conținut mixt pe site-ul tău."
+
+#: class-admin.php:4181
+msgid "If you want to customize the Really Simple SSL .htaccess, you need to prevent Really Simple SSL from rewriting it. Enabling this option will do that."
+msgstr "Dacă vrei să personalizezi fișierul .htaccess Really Simple SSL, trebuie să împiedici rescrierea lui de Really Simple SSL. Activarea acestei opțiuni va face acest lucru."
+
+#: class-admin.php:3238
+msgid "301 redirect to https set."
+msgstr "Setare redirecționare 301 către https."
+
+#: class-multisite.php:577 class-multisite.php:605
+msgid "You can also let the automatic scan of the pro version handle this for you, and get premium support and increased security with HSTS included."
+msgstr "De asemenea, poți lăsa scanarea automată a versiunii pro să se ocupe de aceasta pentru tine și să beneficiezi de suport premium și securitate sporită cu HSTS inclus."
+
+#: class-admin.php:4661 class-multisite.php:232
+msgid "Premium Support"
+msgstr "Suport premium"
+
+#: class-multisite.php:579 class-multisite.php:607
+msgid "Check out Really Simple SSL Premium"
+msgstr "Descoperă Really Simple SSL Premium"
+
+#: lets-encrypt/wizard/class-wizard.php:887
+msgid "Go ahead, activate SSL!"
+msgstr "Continuă, activează SSL!"
+
+#: lets-encrypt/functions.php:379 lets-encrypt/functions.php:380
+msgid "Instructions"
+msgstr "Instrucțiuni"
+
+#: class-multisite.php:134
+msgid "SSL is not enabled yet"
+msgstr "SSL nu este activat încă"
+
+#: class-admin.php:3134
+msgid "SSL is enabled on your site."
+msgstr "SSL este activat pe site-ul tău."
+
+#: grid/templates/progress-footer.php:6
+msgid "SSL Activated"
+msgstr "SSL este activat"
+
+#: class-admin.php:2568
+msgid "Because your server does not pass a variable with which WordPress can detect SSL, WordPress may create redirect loops on SSL."
+msgstr "Deoarece serverul tău nu transmite o variabilă cu care WordPress poate detecta SSL, WordPress poate crea bucle de redirecționare pe SSL."
+
+#: class-admin.php:2562
+msgid "Or set your wp-config.php to %swritable%s and reload this page."
+msgstr "Sau configurează wp-config.php să %spoată fi scris%s și reîncarcă această pagină."
+
+#: class-admin.php:2546
+msgid "Because your site is behind a loadbalancer and is_ssl() returns false, you should add the following line of code to your wp-config.php."
+msgstr "Deoarece sie-tul tău se află în spatele unui loadbalancer și is_ssl () returnează valoarea \"false\", ar trebui să adaugi următoarea linie de cod în wp-config.php."
+
+#: class-admin.php:2545
+msgid "Your wp-config.php has to be edited, but is not writable."
+msgstr "wp-config.php trebuie să fie editat, dar nu poate fi scris."
+
+#: class-admin.php:2542 class-admin.php:2569
+msgid "Set your wp-config.php to %swritable%s and reload this page."
+msgstr "Configurează wp-config.php să %spoată fi scris%s și reîncarcă această pagină."
+
+#: class-admin.php:2540
+msgid "A definition of a siteurl or homeurl was detected in your wp-config.php, but the file is not writable."
+msgstr "Am detectat o definiție pentru siteurl sau homeurl în wp-config.php, dar fișierul nu poate fi scris."
+
+#: class-admin.php:2575
+msgid "System detection encountered issues"
+msgstr "Detectarea sistemului a întâmpinat probleme"
+
+#: class-multisite.php:575 lets-encrypt/wizard/templates/activate.php:20
+#: lets-encrypt/wizard/templates/activate.php:49
+msgid "Images, stylesheets or scripts from a domain without an SSL certificate: remove them or move to your own server."
+msgstr "Imagini, foi de stiluri sau scripturi de pe un domeniu fără un certificat SSL: înlătură-le sau mută-le pe propriul server."
+
+#: class-admin.php:593 class-multisite.php:574
+#: lets-encrypt/wizard/templates/activate.php:19
+#: lets-encrypt/wizard/templates/activate.php:48
+msgid "Http references in your .css and .js files: change any http:// into https://"
+msgstr "Referințe http în fișierele tale .css și .js: modifică orice http:// în https://"
+
+#: class-multisite.php:572
+msgid "Some things can't be done automatically. Before you migrate, please check for: "
+msgstr "Unele lucruri nu pot fi făcute automat. Înainte de migrare, te rog verifică:"
+
+#: class-admin.php:582 lets-encrypt/wizard/templates/last-step.php:13
+msgid "Almost ready to migrate to SSL!"
+msgstr "Aproape am terminat migrarea la SSL!"
+
+#: class-multisite.php:590
+msgid "Networkwide activation does not check if a site has an SSL certificate. It just migrates all sites to SSL."
+msgstr "Activarea în întreaga rețea nu verifică dacă un site are un certificat SSL. Doar migrează toate site-urile la SSL."
+
+#: class-multisite.php:587
+msgid "Activate SSL per site"
+msgstr "Activează SSL per site"
+
+#: class-multisite.php:584
+msgid "Activate SSL networkwide"
+msgstr "Activează SSL în întreaga rețea"
+
+#: class-admin.php:51 class-cache.php:11 class-certificate.php:14
+#: class-front-end.php:18 class-help.php:9 class-mixed-content-fixer.php:13
+#: class-multisite.php:28 class-site-health.php:12
+#: lets-encrypt/class-letsencrypt-handler.php:30
+msgid "%s is a singleton class and you cannot create a second instance."
+msgstr "%s este o clasă singleton și nu poți crea o a doua instanță."
+
+#: class-admin.php:4373
+msgid ".htaccess is currently not %swritable%s."
+msgstr "În prezent, .htaccess nu %spoate fi scris%s."
+
+#: class-admin.php:3196
+msgid "Mixed content fixer was successfully detected on the front-end."
+msgstr "Programul de reparare a conținutului mixt a fost detectat cu succes pe partea din față."
+
+#: class-admin.php:2959 class-multisite.php:469
+#: grid/templates/tips-tricks-footer.php:3
+msgid "Documentation"
+msgstr "Documentație"
+
+#. Description of the plugin
+msgid "Lightweight plugin without any setup to make your site SSL proof"
+msgstr "Plugin ușor, fără nicio configurare, pentru a face site-ul tău integral SSL"
+
+#. Plugin URI of the plugin
+msgid "https://really-simple-ssl.com"
+msgstr "https://really-simple-ssl.com"
+
+#. Plugin Name of the plugin
+msgid "Really Simple SSL"
+msgstr "Really Simple SSL"
+
+#: class-admin.php:4182
+msgid "Stop editing the .htaccess file"
+msgstr "Oprește editarea fișierului .htaccess"
+
+#: grid/templates/settings-footer.php:3
+#: lets-encrypt/wizard/class-field.php:1305
+msgid "Save"
+msgstr "Salvează"
+
+#: class-admin.php:3174
+msgid "An SSL certificate was detected on your site."
+msgstr "A fost detectat un certificat SSL pe site-ul tău."
+
+#: class-site-health.php:129
+msgid "No SSL detected."
+msgstr "Niciun SSL detectat."
+
+#: class-admin.php:2904 class-admin.php:3784 class-admin.php:4162
+#: class-admin.php:4655 class-multisite.php:226 class-multisite.php:338
+#: class-multisite.php:410
+msgid "Settings"
+msgstr "Setări"
+
+#: class-admin.php:4165
+msgid "Mixed content fixer"
+msgstr "Program de reparare a conținutului mixt"
+
+#: class-admin.php:2882
+msgid "SSL"
+msgstr "SSL"
+
+#: class-admin.php:2881
+msgid "SSL settings"
+msgstr "Setări SSL"
+
+#: class-multisite.php:147
+msgid "Activate networkwide to fix this."
+msgstr "Pentru a corecta asta, activează întreaga rețea."
+
+#: class-multisite.php:146
+msgid "Because the $_SERVER[\"HTTPS\"] variable is not set, your website may experience redirect loops."
+msgstr "Deoarece variabila $ _SERVER [\"HTTPS\"] nu este setată, site-ul tău web poate încerca bucle de redirecționare."
+
+#: class-multisite.php:145
+msgid "You run a Multisite installation with subfolders, which prevents this plugin from fixing your missing server variable in the wp-config.php."
+msgstr "Rulezi o instalare Multisite cu subdirectoare, ceea ce împiedică acest modul să remedieze variabila server lipsă din wp-config.php."
+
+#: class-admin.php:3047
+msgid "Check again"
+msgstr "Verifică din nou"
+
+#: class-admin.php:3045
+msgid "Major security issue!"
+msgstr "Problemă majoră de securitate!"

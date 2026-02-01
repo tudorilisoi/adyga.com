@@ -52,6 +52,7 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: lUnkeTibEMbI
       WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wprg_
       WP_HOME: '${WP_BASE_URL:-http://localhost:8000}'
       WP_SITEURL: '${WP_BASE_URL:-http://localhost:8000}'
       FS_METHOD: 'direct'      

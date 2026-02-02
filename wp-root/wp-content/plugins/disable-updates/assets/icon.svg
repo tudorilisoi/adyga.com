@@ -1,0 +1,14 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<title>Disable Updates plugin icon</title>
+	<desc>Icon for the Disable Updates WordPress plugin. See https://wordpress.org/plugins/disable-updates/</desc>
+	<mask id="mask" x="0" y="0" width="256" height="256">
+		<circle cx="128" cy="128" r="128" fill="white" />
+	</mask>
+	<g mask="url(#mask)">
+		<circle cx="128" cy="128" r="113" fill="white" stroke="#D60000" stroke-width="30" />
+		<path d="M129.424 63C163.381 63 191.278 88.0513 195.991 120.589H216L182.331 158.982L148.663 120.589H170.98C168.828 111.194 163.547 102.804 155.999 96.7892C148.452 90.7749 139.083 87.4916 129.424 87.4755C115.476 87.4755 103.162 94.2902 95.3706 104.56L78.9212 85.8438C85.2173 78.66 92.9819 72.9046 101.693 68.9644C110.404 65.0241 119.86 62.9904 129.424 63ZM125.576 192C91.7152 192 63.7223 166.949 59.0087 134.411H39L72.6685 96.0178C83.9234 108.783 95.0821 121.645 106.337 134.411H84.0196C86.1716 143.806 91.4527 152.196 99.0005 158.211C106.548 164.225 115.917 167.508 125.576 167.524C139.524 167.524 151.837 160.71 159.629 150.44L176.079 169.156C169.789 176.347 162.025 182.108 153.313 186.048C144.6 189.989 135.142 192.019 125.576 192Z" fill="#282525">
+			<animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 128 128" to="360 128 128" dur="8s" repeatCount="indefinite" />
+		</path>
+		<line x1="0" y1="0" x2="256" y2="256" stroke="#D60000" stroke-width="20" />
+	</g>
+</svg>

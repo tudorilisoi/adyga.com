@@ -18,9 +18,6 @@
 			<div class="bottom-foot">
 				<div class="container">
 					<p class="credits"><?php echo ( vertex_setting('vertex_copyright') !='' ? sanitize_text_field( vertex_setting('vertex_copyright') ) : vertex_footer_copyright() ); ?></p>
-					<br />
-					
-
 				</div>
 			</div>
 		</footer>

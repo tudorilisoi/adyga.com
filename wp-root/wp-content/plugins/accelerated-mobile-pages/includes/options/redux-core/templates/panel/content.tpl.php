@@ -46,6 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             }
         }
         $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
+        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
         echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . esc_attr( $section['class'] ). ' '.$section['id'] . '" data-rel="' . $k . '">'.$hide_wrapper;
         //echo '<div id="' . $k . '_nav-bar' . '"';
         /*
@@ -75,6 +76,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         // Don't display in the
         $display = true;
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
         if ( isset( $_GET['page'] ) && $_GET['page'] == $this->parent->args['page_slug'] ) {
             if ( isset( $section['panel'] ) && $section['panel'] == "false" ) {
                 $display = false;

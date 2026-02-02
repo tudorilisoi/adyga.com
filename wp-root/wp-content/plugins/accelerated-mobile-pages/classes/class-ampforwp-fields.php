@@ -20,6 +20,9 @@ class AMPforWP_Fields
 	private $data_url = '';
 	private $options = array();
 	private $required = array();
+	private $data_text = '';
+	private $data_href = '';
+	private $ampforwp_field = array();
 
 	public function createFields($fields_array){
 		if ( is_array($fields_array) ) {
@@ -255,7 +258,7 @@ class AMPforWP_Fields
 		}
 		$output = '<div class="ux-field-container amp-ux-select-container '.$hide.'" '.esc_attr($required).'>';
 		if ( !empty($this->title) ) {
-			$output .= '<h2 class="'.esc_attr($this->element_class).'">'.esc_html__($this->title).'</h2>';
+			$output .= '<h2 class="'.esc_attr($this->element_class).'">'.esc_html($this->title).'</h2>';
 		}
 		$output .= '<select id="'.$this->id.'" class="'.$this->class.'"  '.$this->data_href.'>';
 		if ( !empty($this->options) ) {
@@ -276,7 +279,7 @@ class AMPforWP_Fields
 			if($this->default!="Other"){
 				$hide = 'hide';
 			}
-			$output .= '<div class="ux-other-site-type '.esc_attr($hide).'"><h2 class="ux-label trac-id site-tpy">Mention the type of your site</h2></div><input type="text" id="'.esc_attr($fields['data-value-id']).'" class="'.esc_attr($this->class).' '.esc_attr($hide).'" value="'.esc_attr($fields['data-value']).'" placeholder="Enter your website type">';
+			$output .= '<div class="ux-other-site-type '.esc_attr($hide).'"><h2 class="ux-label trac-id site-tpy">'.esc_html__( 'Mention the type of your site', 'accelerated-mobile-pages' ).'</h2></div><input type="text" id="'.esc_attr($fields['data-value-id']).'" class="'.esc_attr($this->class).' '.esc_attr($hide).'" value="'.esc_attr($fields['data-value']).'" placeholder="'.esc_attr__('Enter your website type','accelerated-mobile-pages').'">';
 		}
 		if( $this->data_href ){
 			if ( isset($fields['data-href-id']) ) {
@@ -285,11 +288,13 @@ class AMPforWP_Fields
 			$output .= '<input type="hidden" value="'.esc_attr($this->default).'" id="'.esc_attr($hrf_id).'">';
 		}
 		if($this->id=="ampforwp-ux-analytics-more"){
-			$output .= '<span><button type="button" id="ampforwp-add-more-analytics" class="">Add</button></span>';
+			$output .= '<span><button type="button" id="ampforwp-add-more-analytics" class="">' . esc_html__('Add', 'accelerated-mobile-pages') . '</button></span>';
 		}
 
 		$output .= '</div>';
-		echo $output; /* $output XSS escaped */
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $output;
+		/* $output XSS escaped */
 	}
 	public function ampforwp_field_checkbox($fields){
 		$required = $hide = $checked = '';
@@ -303,11 +308,11 @@ class AMPforWP_Fields
 
 		$lbl_cls = '';
 		if(isset($fields['label-class'])){
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$lbl_cls = 'class="'.esc_attr($fields['label-class']).'"';
 		} /* $lbl_cls XSS escaped */
-
-		$output = '<div class="ux-field-container amp-ux-checkbox-container '.esc_attr($hide).' '.esc_attr($this->parent_class).' " '.esc_attr($required).'><label '.$lbl_cls.'><input type="checkbox" class="'.esc_attr($this->class).'" id="'.esc_attr($this->id).'" ' . esc_attr($checked).'>'.esc_html__($this->title).'</label></div>';   /* $lbl_cls XSS escaped */
-		echo $output;  /* $output XSS escaped */
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '<div class="ux-field-container amp-ux-checkbox-container '.esc_attr($hide).' '.esc_attr($this->parent_class).' " '.esc_attr($required).'><label '.$lbl_cls.'><input type="checkbox" class="'.esc_attr($this->class).'" id="'.esc_attr($this->id).'" ' . esc_attr($checked).'>'.esc_html($this->title).'</label></div>';
 	}
 	public function ampforwp_field_switch($fields){
 
@@ -325,7 +330,7 @@ class AMPforWP_Fields
 		}
 		$output .= '<div class="ux-field-container amp-ux-switch-container '.esc_attr($this->parent_class).' '.esc_attr($hide).'">';
 		if ( !empty($this->title) ) {
-			$output .= '<h2 class="'.esc_attr($this->element_class).'">'.esc_html__($this->title, 'accelerated-mobile-pages').'</h2>';
+			$output .= '<h2 class="'.esc_attr($this->element_class).'">'.esc_html( $this->title ).'</h2>';
 		}
 		if ( 1 == $this->default ) {
 			$this->selected = 'checked';
@@ -353,6 +358,7 @@ class AMPforWP_Fields
         	$output .= '<p class="amp-ux-switch-text">'.esc_html($this->desc).'</p>';
         }
         $output .= '</div>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output; /* $output XSS escaped */
 	}
 
@@ -378,23 +384,22 @@ class AMPforWP_Fields
 			$logo_css = "amp-ux-chng-lg";
 		}
 		$output .= '<div id="'.esc_attr($this->id).'" class="'.esc_attr($this->class).'" data-id="opt-media" data-type="media">
-				<input placeholder="No media selected" type="text" class="upload large-text hide" id="amp-ux-opt-media-url" value="'.intval($id).'" readonly="readonly">
+				<input placeholder="'.esc_attr__('No media selected','accelerated-mobile-pages').'" type="text" class="upload large-text hide" id="amp-ux-opt-media-url" value="'.intval($id).'" readonly="readonly">
 				<input type="hidden" class="data" data-mode="image">
 				<input type="hidden" class="library-filter" data-lib-filter="">
 				<input type="hidden" class="upload-id " name="amp-ux-logo-id" id="amp-ux-logo-id" value="'.intval($id).'">
 				<input type="hidden" class="upload-height" name="amp-ux-logo-height" id="amp-ux-logo-height" value="'.intval($height).'">
 				<input type="hidden" class="upload-width" name="amp-ux-logo-width" id="amp-ux-logo-width" value="'.intval($width).'">
 				<input type="hidden" class="upload-thumbnail" name="amp-ux-logo-thumb" id="amp-ux-logo-thumb" value="'.esc_url($url).'">
-				<div class="screenshot '.esc_attr($hide).'">
-					
-					<img class="redux-option-image amp-ux-image" id="image_opt-media" src="'.esc_url($url).'" alt="" target="_blank" rel="external">
+				<div class="screenshot '.esc_attr($hide).'">'./* phpcs:ignore 	PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */'<img class="redux-option-image amp-ux-image" id="image_opt-media" src="'.esc_url($url).'" alt="" target="_blank" rel="external">
 					
 				</div>
 				<div class="upload_button_div amp-ux-upload '.esc_attr($logo_css).'">
 					<span class="button media_upload_button media-amp-ux-opt-media media-'.intval($this->id).'" id="opt-media-media">'.esc_attr($but_name).'</span>
-					<span class="amp-ux-img-re-txt">(Recommended Size: 120 x 90)</span>				
+					<span class="amp-ux-img-re-txt">'.esc_html__('Recommended Size: 120 x 90', 'accelerated-mobile-pages').'</span>				
 				</div>';
 			$output .= '</div></div>';
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo $output; /* $output XSS escaped */
 	}
 
@@ -402,11 +407,13 @@ class AMPforWP_Fields
 		
 		$output = '<div class="ux-field-container amp-ux-color-container" id="ampforwp-easy-setup-global-color">';
 		if ( !empty($this->title) ) {
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$output .= '<h2 class="'.esc_attr($this->element_class).'">'.esc_html($this->title).'</h2>';
 		}
 		$this->selected = $this->default ? 'value='.esc_attr($this->default) : "";
 		$output .= '<input type="text" id="'.esc_attr($this->id).'" class="'.esc_attr($this->class).'" '.esc_attr($this->selected).'>';
 		$output .= '</div>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output; /* $output XSS escaped */
 	}
 	public function ampforwp_field_text($fields){
@@ -416,17 +423,24 @@ class AMPforWP_Fields
 			$required = 'required="'.esc_attr($this->required[0]).'"';
 			$hide .= ' hide';
 		}
+		
+		if (is_array($this->default)) {
+			$this->default = $this->default[0];
+		}
 		$output = '<div class="ux-field-container amp-ux-text-container '.esc_attr($hide).'">';
 		if ( !empty($this->title) ) {
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$output .= '<h2 class="'.esc_attr($this->element_class).'">'.esc_html($this->title).'</h2>';
 		}
 		$output .= '<input type="text" id="'.esc_attr($this->id).'" class="'.esc_attr($this->class).'" '.esc_attr($this->data_text).' value="'.esc_attr($this->default).'"></div>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output; /* $output XSS escaped */
 	}
 
-	public function loading(){
-		$output = '<span class="hide amp-ux-check"></span><div class="hide amp-ux-loading"></div><br>';
-		echo $output; /* $output XSS escaped */
+	public function loading() {
+
+		echo '<span class="hide amp-ux-check"></span><div class="hide amp-ux-loading"></div><br>';
+
 	}
 	public function ampforwp_field_notification($fields){
 		$required = $hide = $hrf_id = '';
@@ -454,6 +468,7 @@ class AMPforWP_Fields
 			$output .= '<p>'.$this->desc.'</p>'; // xss ok for $this->desc
 		}
 		$output .= '</div>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output; // xss ok for $output
 	}
 
@@ -466,10 +481,11 @@ class AMPforWP_Fields
 			}
 			$output .= '<div class="ux-field-foot-cont"><a href="'.esc_url($f['url']).'" target="_blank">
 							<i class="ux-foot-icon '.esc_attr($f['icon']).'"></i>'.$svg.'
-							<p>'.esc_html__($f['desc']).'</p></a>
+							<p>'.esc_html($f['desc']).'</p></a>
 						</div>';
 		}
 		$output .= '</div>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output; // xss ok for $output
 	}
 

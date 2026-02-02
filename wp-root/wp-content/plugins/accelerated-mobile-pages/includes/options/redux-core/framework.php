@@ -79,7 +79,15 @@
             public static $base_wp_content_url;
             public static $_is_plugin = true;
             public static $_as_plugin = false;
-
+            public  $old_opt_name;
+            public  $transients = array();
+            public  $wp_data = array();
+            public  $field_types = array();
+            public  $field_head = array();
+            public $apiHasRun;
+            public $transients_check;
+            public $validation_ran;
+            
             public static function init() {
                 $dir = Redux_Helpers::cleanFilePath( dirname( __FILE__ ) );
 
@@ -193,6 +201,7 @@
              */
             public function __construct( $sections = array(), $args = array(), $extra_tabs = array() ) {
                 // Disregard WP AJAX 'heartbeat'call.  Why waste resources?
+                /* phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.NonceVerification.Missing,WordPress.Security.NonceVerification.Missing */
                 if ( isset ( $_POST ) && isset ( $_POST['action'] ) && $_POST['action'] == 'heartbeat' ) {
 
                     // Hook, for purists.
@@ -218,7 +227,8 @@
                 }
 
                 if ( empty ( $this->args['footer_credit'] ) ) {
-                    $this->args['footer_credit'] = '<span id="footer-thankyou">' . sprintf( __( 'Options panel created using %1$s', 'accelerated-mobile-pages' ), '<a href="' . esc_url( $this->framework_url ) . '" target="_blank">' . __( 'Redux Framework', 'accelerated-mobile-pages' ) . '</a> v' . self::$_version ) . '</span>';
+                    /* translators: %1$s: href */
+                    $this->args['footer_credit'] = '<span id="footer-thankyou">' . sprintf( __( 'Options panel created using %1$s', 'accelerated-mobile-pages' ), '<a href="' . esc_url( $this->framework_url ) . '" target="_blank">' . esc_html__( 'Redux Framework', 'accelerated-mobile-pages' ) . '</a> v' . self::$_version ) . '</span>';
                 }
 
                 if ( empty ( $this->args['menu_title'] ) ) {
@@ -250,6 +260,7 @@
                 }
 
                 // Do not save the defaults if we're on a live preview!
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                 if ( $GLOBALS['pagenow'] == "customize" && isset( $_GET['theme'] ) && ! empty( $_GET['theme'] ) ) {
                     $this->args['save_defaults'] = false;
                 }
@@ -320,8 +331,8 @@
                     $this->_default_cleanup();
 
                     // Internataionalization
-                    $this->_internationalization();
-
+                    //$this->_internationalization();
+                    add_action( 'init', array( $this, '_internationalization') );
                     $this->filesystem = Redux_Filesystem::get_instance( $this );
 
                     //set redux upload folder
@@ -364,6 +375,7 @@
                     add_action( 'admin_init', array( $this, '_dismiss_admin_notice' ), 9 );
 
                     // Enqueue the admin page CSS and JS
+                    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                     if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
                         add_action( 'admin_enqueue_scripts', array( $this, '_enqueue' ), 1 );
                     }
@@ -575,7 +587,7 @@
             }
 
             public function save_network_page() {
-
+/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.NonceVerification.Missing */
                 $data = $this->_validate_options( sanitize_text_field($_POST[ $this->args['opt_name'] ]) );
 
                 if ( ! empty ( $data ) ) {
@@ -619,7 +631,7 @@
                  * @param string     The locale of the blog or from the 'locale' hook
                  * @param string     'redux-framework'  text domain
                  */
-                //                $locale = apply_filters( "redux/textdomain/{$this->args['opt_name']}", get_locale(), 'redux-framework' );
+                //                $locale = apply_filters( "redux/textdomain/{$this->args['opt_name']}", get_locale(), 'accelerated-mobile-pages' );
                 //
                 //                if ( strpos( $locale, '_' ) === false ) {
                 //                    if ( file_exists( self::$_dir . 'languages/' . strtolower( $locale ) . '_' . strtoupper( $locale ) . '.mo' ) ) {
@@ -767,7 +779,7 @@
                         }
                     } else if ( $this->args['database'] === 'network' ) {
                         // Strip those slashes!
-                        $value = json_decode( stripslashes( json_encode( $value ) ), true );
+                        $value = json_decode( stripslashes( wp_json_encode( $value ) ), true );
                         update_site_option( $this->args['opt_name'], $value );
                     } else {
                         update_option( $this->args['opt_name'], $value );
@@ -819,7 +831,7 @@
                     $result = get_theme_mods();
                 } else if ( $this->args['database'] === 'network' ) {
                     $result = get_site_option( $this->args['opt_name'], array() );
-                    $result = json_decode( stripslashes( json_encode( $result ) ), true );
+                    $result = json_decode( stripslashes( wp_json_encode( $result ) ), true );
                 } else {
                     $result = get_option( $this->args['opt_name'], array() );
                 }
@@ -920,6 +932,7 @@
                         } else if ( $type == "terms" || $type == "term" ) {
                             $taxonomies = $args['taxonomies'];
                             unset ( $args['taxonomies'] );
+                            /* phpcs:ignore WordPress.WP.DeprecatedParameters.Get_termsParam2Found */
                             $terms = get_terms( $taxonomies, $args ); // this will get nothing
                             if ( ! empty ( $terms ) && ! is_a( $terms, 'WP_Error' ) ) {
                                 foreach ( $terms as $term ) {
@@ -1075,8 +1088,10 @@
             public function show( $opt_name, $default = '' ) {
                 $option = $this->get( $opt_name );
                 if ( ! is_array( $option ) && $option != '' ) {
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo $option;
                 } elseif ( $default != '' ) {
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo $this->_get_default( $opt_name, $default );
                 }
             }
@@ -1571,8 +1586,9 @@
                 if ( isset ( $this->no_output ) ) {
                     return;
                 }
-
+/* phpcs:ignore WordPress.Security.NonceVerification.Missing */
                 if ( ! empty ( $this->outputCSS ) && ( $this->args['output_tag'] == true || ( isset ( $_POST['customized'] ) ) ) ) {
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo '<style type="text/css" title="dynamic-css" class="options-output">' . $this->outputCSS . '</style>';
                 }
             }
@@ -1659,7 +1675,7 @@
                             if ( typeof WebFontConfig === "undefined" ) {
                                 WebFontConfig = new Object();
                             }
-                            WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString ( $this->typography ) ?>]};
+                            WebFontConfig['google'] = {families: [<?php /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ echo $typography->makeGoogleWebfontString ( $this->typography ) ?>]};
 
                             (function() {
                                 var wf = document.createElement( 'script' );
@@ -1672,6 +1688,7 @@
                         </script>
                         <?php
                     } elseif ( ! $this->args['disable_google_fonts_link'] ) {
+                        /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated */
                         $protocol = ( ! empty ( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ) ? "https:" : "http:";
 
                         //echo '<link rel="stylesheet" id="options-google-fonts" title="" href="'.$protocol.$typography->makeGoogleWebfontLink( $this->typography ).'&amp;v='.$version.'" type="text/css" media="all" />';
@@ -1728,21 +1745,25 @@
                     $hint_status = get_user_meta( $current_user->ID, 'ignore_hints' ) ? get_user_meta( $current_user->ID, 'ignore_hints', true ) : 'true';
 
                     // current page parameters
+                   
+                     /* phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
                     $curPage = esc_attr( $_GET['page'] );
 
                     $curTab = '0';
+                    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                     if ( isset ( $_GET['tab'] ) ) {
+                        /* phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
                         $curTab = esc_attr( $_GET['tab'] );
                     }
 
                     // Default url values for enabling hints.
                     $dismiss = 'true';
-                    $s       = __( 'Enable', 'accelerated-mobile-pages' );
+                    $s       = esc_html__( 'Enable', 'accelerated-mobile-pages' );
 
                     // Values for disabling hints.
                     if ( 'true' == $hint_status ) {
                         $dismiss = 'false';
-                        $s       = __( 'Disable', 'accelerated-mobile-pages' );
+                        $s       = esc_html__( 'Disable', 'accelerated-mobile-pages' );
                     }
 
                     // Make URL
@@ -1757,7 +1778,8 @@
                     }
 
                     // Construct message
-                    $msg = sprintf( __( 'Hints are tooltips that popup when %d the hint icon, offering addition information about the field in which they appear.  They can be %d d by using the link below.', 'accelerated-mobile-pages' ), $event, strtolower( $s ) ) . '<br/><br/>' . $url;// url escaped above
+                    /* translators: %s: text */
+                    $msg = sprintf( __( 'Hints are tooltips that popup when %1$s the hint icon, offering addition information about the field in which they appear.  They can be %2$s d by using the link below.', 'accelerated-mobile-pages' ), $event, strtolower( $s ) ) . '<br/><br/>' . $url;// url escaped above
 
                     // Construct hint tab
                     $tab = array(
@@ -2045,7 +2067,7 @@
                     }
 
                     $display = true;
-
+                    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                     if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
                         if ( isset ( $section['panel'] ) && $section['panel'] == false ) {
                             $display = false;
@@ -2168,7 +2190,7 @@
                             $this->field_sections[ $field['type'] ][ $field['id'] ] = $k;
 
                             $display = true;
-
+                            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                             if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
                                 if ( isset ( $field['panel'] ) && $field['panel'] == false ) {
                                     $display = false;
@@ -2196,7 +2218,7 @@
 
                             if ( ! isset ( $field['id'] ) ) {
                                 echo '<br /><h3>No field ID is set.</h3><pre>';
-                                print_r( $field );
+                                print_r( $field ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
                                 echo "</pre><br />";
                                 continue;
                             }
@@ -2347,7 +2369,7 @@
                             $this->sections[ $k ]['fields'][ $fieldk ] = $field;
 
                             if ( isset ( $this->args['display_source'] ) ) {
-                                $th .= '<div id="' . $field['id'] . '-settings" style="display:none;"><pre>' . var_export( $this->sections[ $k ]['fields'][ $fieldk ], true ) . '</pre></div>';
+                                $th .= '<div id="' . $field['id'] . '-settings" style="display:none;"><pre>' . var_export( $this->sections[ $k ]['fields'][ $fieldk ], true ) /* phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export */ . '</pre></div>';
                                 $th .= '<br /><a href="#TB_inline?width=600&height=800&inlineId=' . $field['id'] . '-settings" class="thickbox"><small>View Source</small></a>';
                             }
 
@@ -2797,9 +2819,10 @@
             }
 
             public function ajax_save() {
+                /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized	 */
                 if ( ! wp_verify_nonce( $_REQUEST['nonce'], "redux_ajax_nonce" . $this->args['opt_name'] ) ) {
-                    echo json_encode( array(
-                        'status' => __( 'Invalid security credential.  Please reload the page and try again.', 'accelerated-mobile-pages' ),
+                    echo wp_json_encode( array(
+                        'status' => esc_html__( 'Invalid security credential.  Please reload the page and try again.', 'accelerated-mobile-pages' ),
                         'action' => ''
                     ) );
 
@@ -2807,14 +2830,14 @@
                 }
 
                 if ( ! current_user_can( $this->args['page_permissions'] ) ) {
-                    echo json_encode( array(
-                        'status' => __( 'Invalid user capability.  Please reload the page and try again.', 'accelerated-mobile-pages' ),
+                    echo wp_json_encode( array(
+                        'status' => esc_html__( 'Invalid user capability.  Please reload the page and try again.', 'accelerated-mobile-pages' ),
                         'action' => ''
                     ) );
 
                     die();
                 }
-
+/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
                 $redux = ReduxFrameworkInstances::get_instance( sanitize_text_field($_POST['opt_name']) );
 
                 if ( ! empty ( $_POST['data'] ) && ! empty ( $redux->args['opt_name'] ) ) {
@@ -2835,7 +2858,7 @@
                     //    }
                     //    unset($process);
                     //}
-
+/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
                     $sanitized_data = filter_var(stripslashes( $_POST['data'] ), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 
                     // Old method of saving, in case we need to go back! - kp
@@ -2846,8 +2869,12 @@
 
                     $values = $values[ $redux->args['opt_name'] ];
 
+                    // Saving a copy of global css 
+                    $tmp_css_editor = $values['css_editor'];
                     $values = array_map( 'stripslashes_deep', $values );
 
+                    // fixing backslash not saving in global css #5329
+                    $values['css_editor'] = $tmp_css_editor;
                     if ( ! empty ( $values ) ) {
 
                         try {
@@ -2868,7 +2895,7 @@
                             }
 
                             if ( $do_reload || ( isset ( $values['defaults'] ) && ! empty ( $values['defaults'] ) ) || ( isset ( $values['defaults-section'] ) && ! empty ( $values['defaults-section'] ) ) ) {
-                                echo json_encode( array( 'status' => 'success', 'action' => 'reload' ) );
+                                echo wp_json_encode( array( 'status' => 'success', 'action' => 'reload' ) );
                                 die ();
                             }
 
@@ -2887,7 +2914,7 @@
                             $return_array = array( 'status' => $e->getMessage() );
                         }
                     } else {
-                        echo json_encode( array( 'status' => __( 'Your panel has no fields. Nothing to save.', 'accelerated-mobile-pages' ) ) );
+                        echo wp_json_encode( array( 'status' => esc_html__( 'Your panel has no fields. Nothing to save.', 'accelerated-mobile-pages' ) ) );
                     }
                 }
                 if ( isset ( $this->transients['run_compiler'] ) && $this->transients['run_compiler'] ) {
@@ -2939,7 +2966,7 @@
                         $return_array['notification_bar'] = $notification_bar;
                     }
 
-                    echo json_encode( apply_filters( "redux/options/{$this->args['opt_name']}/ajax_save/response", $return_array ) );
+                    echo wp_json_encode( apply_filters( "redux/options/{$this->args['opt_name']}/ajax_save/response", $return_array ) );
                 }
 
                 die ();
@@ -2974,12 +3001,29 @@
                             }
                             if ( isset ( $field['type'] ) &&  $field['type'] == 'ace_editor'  ) {
                                 if(isset($field['mode']) && in_array($field['mode'], array('css','javascript')) ) {
-                                    $plugin_options[ $field['id'] ]= strip_tags($plugin_options[ $field['id'] ]);
+                                    $plugin_options[ $field['id'] ]= wp_strip_all_tags($plugin_options[ $field['id'] ]);
                                 }
 
                             }
                             if ( isset ( $field['type'] ) &&  $field['type'] == 'text'  ) {
+                                    $callrail_config_url = []; $callrail_analytics_url = [];
+                                    if($field['id'] == 'ampforwp-callrail-config-url' && !empty($plugin_options[ $field['id'] ])){
+                                        $callrail_config_url['id'] = $field['id'];
+                                        $callrail_config_url['value'] = $plugin_options[ $field['id']];
+                                    }
+                                    if($field['id'] == 'ampforwp-callrail-analytics-url' && !empty($plugin_options[ $field['id'] ])){
+                                        $callrail_analytics_url['id'] = $field['id'];
+                                        $callrail_analytics_url['value'] = $plugin_options[ $field['id']];
+                                    }
+                                    
                                     $plugin_options[ $field['id'] ]= str_replace("=", "", $plugin_options[ $field['id'] ]);
+
+                                    if(!empty($callrail_config_url)){
+                                        $plugin_options[$callrail_config_url['id']] = $callrail_config_url['value'];
+                                    }
+                                    if(!empty($callrail_analytics_url)){
+                                        $plugin_options[ $callrail_analytics_url['id'] ] = $callrail_analytics_url['value'];
+                                    }
                             }
 
 //                            if ( isset ( $field['type'] ) && $field['type'] == 'typography' ) {
@@ -3158,7 +3202,7 @@
                 $display = true;
 
                 $section['class'] = isset ( $section['class'] ) ? ' ' . $section['class'] : '';
-
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                 if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
                     if ( isset ( $section['panel'] ) && $section['panel'] == false ) {
                         $display = false;
@@ -3176,6 +3220,7 @@
                 $string = "";
                 if ( ( ( isset ( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) || ( isset ( $section['icon_type'] ) && $section['icon_type'] == 'image' ) ) || ( isset( $section['icon'] ) && strpos( $section['icon'], '/' ) !== false ) ) {
                     //if( !empty( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) {
+                    /* phpcs:ignore 	PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
                     $icon = ( ! isset ( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . esc_url( $section['icon'] ) . '" /> ';
                 } else {
                     if ( ! empty ( $section['icon_class'] ) ) {
@@ -3268,7 +3313,7 @@
                         while ( $doLoop ) {
                             $nextK += 1;
                             $display = true;
-
+                            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                             if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
                                 if ( isset ( $sections[ $nextK ]['panel'] ) && $sections[ $nextK ]['panel'] == false ) {
                                     $display = false;
@@ -3289,6 +3334,7 @@
 
                                 if ( ( isset ( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) || ( isset ( $sections[ $nextK ]['icon_type'] ) && $sections[ $nextK ]['icon_type'] == 'image' ) ) {
                                     //if( !empty( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) {
+                                    /* phpcs:ignore 	PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
                                     $icon = ( ! isset ( $sections[ $nextK ]['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . esc_url( $sections[ $nextK ]['icon'] ) . '" /> ';
                                 } else {
                                     if ( ! empty ( $sections[ $nextK ]['icon_class'] ) ) {
@@ -3357,6 +3403,7 @@
                            $descriptions = str_replace('{'.$value['id'].'}', 'admin.php?page=amp_options&tab='.$key, $descriptions);
                         }
                     }
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo '<div class="redux-section-desc">' . $descriptions . '</div>';
                 }
             }
@@ -3453,6 +3500,7 @@
 
                     // If the field is set not to display in the panel
                     $display = true;
+                    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                     if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
                         if ( isset ( $field['panel'] ) && $field['panel'] == false ) {
                             $display = false;
@@ -3612,16 +3660,16 @@
                         if ( isset ( $field['fieldset_class'] ) && ! empty( $field['fieldset_class'] ) ) {
                             $class_string .= ' ' . $field['fieldset_class'];
                         }
-
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo '<fieldset id="' . $this->args['opt_name'] . '-' . $field['id'] . '" class="' . $hidden . 'redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
                         //}
-
+/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo $_render;
 
                         if ( ! empty ( $field['desc'] ) ) {
                             $field['description'] = $field['desc'];
                         }
-
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo ( isset ( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && ! empty ( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
 
                         //if ( ! isset( $field['fields'] ) || empty( $field['fields'] ) ) {

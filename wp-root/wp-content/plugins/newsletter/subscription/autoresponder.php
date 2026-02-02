@@ -1,7 +1,7 @@
 <?php
-/* @var $this NewsletterSubscriptionAdmin */
-/* @var $controls NewsletterControls */
-/* @var $logger NewsletterLogger */
+/** @var NewsletterSubscriptionAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
 
 defined('ABSPATH') || exit;
 ?>
@@ -12,7 +12,6 @@ defined('ABSPATH') || exit;
 
     <div id="tnp-heading">
         <?php $controls->title_help('/subscription') ?>
-        <h2><?php esc_html_e('Subscription', 'newsletter') ?></h2>
         <?php include __DIR__ . '/nav.php' ?>
 
     </div>

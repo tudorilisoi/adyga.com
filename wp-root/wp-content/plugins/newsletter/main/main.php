@@ -1,6 +1,9 @@
 <?php
-/* @var $this NewsletterMainAdmin */
-/* @var $controls NewsletterControls */
+/** @var NewsletterMainAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
+/** @var wpdb $wpdb */
+/** @var string $language */
 
 use Newsletter\License;
 
@@ -14,7 +17,17 @@ if (!$controls->is_action()) {
 
         if (!$language) {
 
-            $controls->data = wp_kses_post_deep($controls->data);
+            $css = $controls->data['css'] ?? '';
+
+            if (!$this->is_html_allowed()) {
+                $controls->data = wp_kses_post_deep($controls->data);
+                // CSS must not be filtered!
+                $controls->data['css'] = $css;
+            }
+
+            if (preg_match('#</?\w+#', $css)) {
+                $controls->errors .= __('Invalid CSS', 'newsletter') . '<br>';
+            }
 
             if (!$this->is_email($controls->data['sender_email'])) {
                 $controls->errors .= __('The sender email address is not correct.', 'newsletter') . '<br>';
@@ -33,9 +46,13 @@ if (!$controls->is_action()) {
                 $controls->data['scheduler_max'] = 12;
             }
 
-            $controls->data['max_per_second'] = (int) $controls->data['max_per_second'];
-            if ($controls->data['max_per_second'] <= 0) {
-                $controls->data['max_per_second'] = 0;
+            if (defined('NEWSLETTER_SEND_DELAY')) {
+                $controls->data['max_per_second'] = (float) $controls->data['max_per_second'];
+            } else {
+                $controls->data['max_per_second'] = (float) $controls->data['max_per_second'];
+                if ($controls->data['max_per_second'] <= 0) {
+                    $controls->data['max_per_second'] = 0;
+                }
             }
 
             if (!$this->is_email($controls->data['reply_to'], true)) {
@@ -114,7 +131,20 @@ if (is_wp_error($license_data)) {
     $controls->errors .= esc_html($license_data->get_error_message());
 }
 
+$mailer = Newsletter::instance()->get_mailer();
+$mailer_speed = $mailer->get_speed();
 
+// Public page type check
+$front_page_id = (int) get_option('page_on_front');
+$blog_page_id = (int) get_option('page_for_posts');
+
+if (!empty($controls->data['page'])) {
+    if ($controls->data['page'] == $front_page_id) {
+        $controls->warnings[] = 'The blog front page has been set as the Newsletter public page, that is not recommended. Please create a dedicated page.';
+    } elseif ($controls->data['page'] == $blog_page_id) {
+        $controls->warnings[] = 'The blog post list page has been set as the Newsletter public page, that is not recommended. Please create a dedicated page.';
+    }
+}
 ?>
 
 <?php include NEWSLETTER_INCLUDES_DIR . '/codemirror.php'; ?>
@@ -163,7 +193,7 @@ if (is_wp_error($license_data)) {
 
                 <ul>
                     <li><a href="#tabs-basic"><?php esc_html_e('Settings', 'newsletter') ?></a></li>
-                    <li><a href="#tabs-speed"><?php esc_html_e('Delivery Speed', 'newsletter') ?></a></li>
+                    <li><a href="#tabs-speed"><?php esc_html_e('Sending', 'newsletter') ?></a></li>
                     <li class="tnp-tabs-advanced"><a href="#tabs-advanced"><?php esc_html_e('Advanced', 'newsletter') ?></a></li>
                     <?php if (NEWSLETTER_DEBUG) { ?>
                         <li><a href="#tabs-debug">Debug</a></li>
@@ -249,6 +279,8 @@ if (is_wp_error($license_data)) {
 
                                 <p class="description">
                                     <?php esc_html_e('The page content must be only the shortcode [newsletter]', 'newsletter') ?>.
+                                    <br>
+                                    <?php esc_html_e('Do not choose the "front page" or "post list page"', 'newsletter') ?>.
                                 </p>
 
                                 <?php if ($this->is_multilanguage()) { ?>
@@ -279,7 +311,7 @@ if (is_wp_error($license_data)) {
 
                                         <?php $batch_max = floor($controls->data['scheduler_max'] / 12); ?>
                                         <?php if ($batch_max < 5) { ?>
-                                        <br>
+                                            <br>
                                             The delivery engines runs every 5 minutes (12 runs per hour). With that setting you'll have:
                                             <br>
                                             <?php echo $batch_max; ?> max emails every 5 minutes,
@@ -287,7 +319,13 @@ if (is_wp_error($license_data)) {
                                             <?php echo $batch_max * 12 * 24; ?> max emails per day
                                         <?php } ?>
 
+                                        <?php if ($mailer_speed && $mailer_speed != $controls->data['scheduler_max']) { ?>
+                                            <br><br>
+                                            <strong>The maximum speed is overridden by the delivery addon "<?php echo esc_html($mailer->get_description()); ?>"</strong>
+                                        <?php } ?>
                                     </p>
+
+
                                 </td>
                             </tr>
 
@@ -297,8 +335,27 @@ if (is_wp_error($license_data)) {
                                     <?php $controls->field_help('/installation/newsletter-configuration/#speed') ?>
                                 </th>
                                 <td>
-                                    <?php $controls->text('max_per_second', 5); ?>
-                                    <span class="description"><?php esc_html_e('0 for unlimited', 'newsletter') ?></span>
+                                    <?php if (defined('NEWSLETTER_SEND_DELAY')) { ?>
+                                        Delay set to <?php echo esc_html(NEWSLETTER_SEND_DELAY); ?> in <code>wp-config.php</code>
+                                    <?php } else { ?>
+                                        <?php $controls->text('max_per_second', 5); ?>
+                                        <span class="description"><?php esc_html_e('0 for unlimited', 'newsletter') ?></span>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+
+                            <tr valign="top">
+                                <th>Sending time window</th>
+                                <td>
+                                    <?php $controls->enabled('schedule'); ?>
+
+                                    <span data-tnpshow="schedule=1">
+                                        from <?php $controls->hours('schedule_start'); ?> to <?php $controls->hours('schedule_end'); ?>
+                                    </span>
+
+                                    <p class="description">
+                                        Out of this time window the newsletter sending is suspended. Does not apply to email series.
+                                    </p>
                                 </td>
                             </tr>
 
@@ -363,13 +420,14 @@ if (is_wp_error($license_data)) {
                             <tr>
                                 <th><?php esc_html_e('Custom styles', 'newsletter') ?></th>
                                 <td>
+                                    <p class="description">
+                                        Styles added to the site for the subscription and profile editing forms.
+                                    </p>
                                     <?php if (apply_filters('newsletter_enqueue_style', true) === false) { ?>
                                         <p><strong>Warning: Newsletter styles and custom styles are disable by your theme or a plugin.</strong></p>
                                     <?php } ?>
                                     <?php $controls->textarea('css'); ?>
-                                    <p class="description">
-                                        Styles added to the site for the subscription and profile editing forms.
-                                    </p>
+
                                 </td>
                             </tr>
 

@@ -48,6 +48,15 @@ function photolab_add_header_options() {
 				?></textarea>
 			</td>
 		</tr>
+		<tr>
+			<th scope="row"><?php _e( 'Show post title on header image?', 'photolab' ); ?></th>
+			<td>
+				<label>
+					<input type="checkbox" name="show_post_title_on_header">
+					<?php _e( 'Show post title on header image?', 'photolab' ); ?>
+				</label>
+			</td>
+		</tr>
 	</tbody>
 </table>
 <?php

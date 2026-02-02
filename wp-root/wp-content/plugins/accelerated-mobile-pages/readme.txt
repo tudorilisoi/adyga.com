@@ -1,10 +1,10 @@
-﻿=== AMP for WP - Accelerated Mobile Pages ===
+=== AMP for WP - Accelerated Mobile Pages ===
 Contributors: mohammed_kaludi, ahmedkaludi, ampforwp
-Tags: AMP, accelerated mobile pages, mobile, amp project, google amp, amp wp, google, plugin, SEO
+Tags: AMP, accelerated mobile pages, mobile, google amp, SEO
 Donate link: https://www.paypal.me/Kaludi/25
 Requires at least: 3.0
-Tested up to: 6.0
-Stable tag: 1.0.77.49
+Tested up to: 6.9
+Stable tag: 1.1.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,7 @@ Some code used in this plugin was forked from 'AMP for WordPress' plugin https:/
 Mobile & Tablet detection library used https://github.com/serbanghita/Mobile-Detect - License URI: https://github.com/serbanghita/Mobile-Detect/blob/master/LICENSE.txt
 PHP CSS Parser library used https://github.com/sabberworm/PHP-CSS-Parser - License URI: https://github.com/sabberworm/PHP-CSS-Parser#license (PHP-CSS-Parser is freely distributable under the terms of an MIT-style license.)
 AMP Optimizer library used https://github.com/ampproject/amp-toolbox/tree/main/packages/optimizer - License URI: https://github.com/ampproject/amp-toolbox#license (AMP Toolbox is made by the AMP Project, and is licensed under the Apache License, Version 2.0.)
+GA4 Code used from https://github.com/analytics-debugger/google-analytics-4-for-amp - License URI: https://github.com/analytics-debugger/google-analytics-4-for-amp/blob/main/LICENSE
 
 == Installation ==
 **[Visit Help area for the Documentation:](https://ampforwp.com/help/)**
@@ -193,26 +194,149 @@ You can contact us from [here](https://ampforwp.com/contact/)
 11. Pingdom Speed Report for AMP
 
 == Changelog ==
+= 1.1.11 (08 January 2026) =
+* Fixed : Authenticated (Contributor+) Stored Cross-Site Scripting via SVG File Upload reported by Andrea Bocchetti (Wordfence)
 
-= 1.0.77.49 (22nd August 2022) =
-* Fixed: There is a compatibility issue with the latest version of the All in One SEO Plugin. #5306
+= 1.1.10 (23 December 2025) =
+* Fixed : CSRF issue for comment submission disclosed by 0N0ise (Wordfence)
+* Fixed : Fixed AMP error for labels #5716
 
-= 1.0.77.48 (11th August 2022) =
-* Improvements: Added Super Related Posts plugin compatibility #5298
-* Improvements: Added Inline Related Post plugin compatibility #5296
-* Fixed: Fatal error while activating official AMP. #5300
-* Fixed: Spotify Embed not working after 1.0.77.46 version #5294
-* Fixed: AMP Pagebuilder not loading with All in One SEO latest update #5299
+= 1.1.9 (25 November 2025) =
+* Fixed : PHP Fatal error & More Warnings #5713
+* Fixed : Settings are not getting saved #5714
 
-= 1.0.77.47 (5th July 2022) =
-* Fixed: AMP validation error when youtube video is embeded with query parameters #5292
-* Fixed: Instagram embeds not working when added with blockquote tags #5289
+= 1.1.8 (19 November 2025) =
+* Fixed : Function _load_textdomain_just_in_time was called incorrectly #5703
+* Fixed : PHP Notice: Function _load_textdomain_just_in_time was called incorrectly - Version: 1.1.7.1 #5709
+* Fixed : PHP Warning : Trying to access array offset on null #5704
 
-= 1.0.77.46 (28th June 2022) =
-* Fixed: Reduced the execution of JS in youtube embeds #5287
-* Fixed: Instagram embeds not working when added with iframe #5289
-* Fixed: Subchild menu items does not expand with UberMenu plugin
-* Fixed: Incorrect default value in TPD #5286
-* Fixed: Debug Warnings - Undefined array-key: row #5283
+= 1.1.7.1 (27 September 2025) =
+* Fixed : Issue persists in AMP plugin version 1.1.7. #5707
+
+= 1.1.7 (26 September 2025) =
+* Fixed : PHP Error: Function _load_textdomain_just_in_time #5703
+* Fixed : PHP Deprecated:  Creation of dynamic property
+
+= 1.1.6.1 (29 July 2025) =
+* Fixed : Settings not saving in version 1.1.6 #5700
+* Fixed : Call to a member function hasAttributes() in Document.php (v1.1.6) #5699
+
+= 1.1.6 (28 July 2025) =
+* Tested: Tested upto WordPress 6.8.2
+* Fixed : Deprecated "Creation of dynamic property" #5688
+* Fixed : PHP 8.2 Deprecated Warnings in DOMDocument and Dynamic Property Creation in AMP . #5692
+* Fixed : Deprecated Warning: FILTER_SANITIZE_STRING used in framework.php line 2862 #5691
+* Fixed : Related post refresh not working #5693
+* Fixed : Fatal Error: Undefined Callback ampforwp_getty_image_compatibility in PHP 8.3 #56967
+
+= 1.1.6 (28 July 2025) =
+* Tested: Tested upto WordPress 6.8.2
+* Fixed : Deprecated "Creation of dynamic property" #5688
+* Fixed : PHP 8.2 Deprecated Warnings in DOMDocument and Dynamic Property Creation in AMP . #5692
+* Fixed : Deprecated Warning: FILTER_SANITIZE_STRING used in framework.php line 2862 #5691
+* Fixed : Related post refresh not working #5693
+* Fixed : Fatal Error: Undefined Callback ampforwp_getty_image_compatibility in PHP 8.3 #56967
+
+= 1.1.5 (22 May 2025) =
+* Tested: Need to test with WordPress 6.8 #5686
+* Fixed : A fatal error occurs when we activate the AMP Page Builder. #5684
+* Feature : AMP is not showing .avif images #5670
+* Fixed: The attribute 'alt' may not appear in tag 'a'. #5682
+* Feature: Conflict issue with Penci widgets. #5683
+* Improvement: Need to improve Query of function ampforwp_get_post_percent() #5687
+
+= 1.1.4 (08 April 2025) =
+* Feature: Add setting button in Purge AMP CDN Cache #5671
+* Compatibility: Need to implement inMobi Choice #5678
+* Improvement: Add the close button feature in AMP Stories for better usability. #5680
+* Feature: Option to Disable Custom Third-Party Code Injection in AMP Pages #5681
+
+= 1.1.3 (14 February 2025) =
+* Fixed: PHP Deprecated: error with AMP #5669
+* Fixed: Fatal error on user end  #5673
+* Fixed: Error in debug log. #5676
+* Fixed: Submit button issue with Amp Ninja Form extension #5667
+* Fixed: Need to added the feature in AMP CTA customize button location #5674
+
+= 1.1.2 (03 December 2024) =
+* New: Jetpack related post not showing on AMP #5575
+* New: Add a new feature to add Whatsapp Group links to Floating Buttons for AMP #5649
+* New: Need to added the Subtitle feature in Post/pages in AMP #5665
+* Fixed: Security issue reported by "Wordfence" #5662
+* Fixed: AMP Pixel URL Issue After Recent Plugin Update 1.1.1 #5663
+* Fixed: Function _load_textdomain_just_in_time was called incorrectly #5664
+
+= 1.1.1 (12 November 2024) =
+* New : Manual post selection in infinite scroll #5651
+* Fixed: Version 1.0.99.1 causing Tag issue. #5650
+* Fixed: Errors in debug.log, PHP Deprecated: trim(): Passing null to parameter #5652
+* Fixed: GA-4 Analytic not working on infinite scroll post #5656
+* Fixed: The Last Modified date appears broken in the AMP version #5659
+* Fixed: Feature images are not loading in homepage due to conflict with JNews theme lazyload #5655
+* Fixed: Afterpay Gateway for WooCommerce plugin is causing issue in Amp Validator #5643
+* Fixed: FV Gravatar Cache plugin conflicts with AMP. #5611
+* Fixed: Php error on user end. #5642
+* Fixed: The author image added by the "Simple User Avatar plugin" is not showing in the AMP. #5606
+* Fixed: Cron reschedule event error for hook #5595
+* Fixed: PHP Deprecated: error with AMP #5621
+* Test: Test with WordPress version 6.7 #5657
+* Improvement : Few improvements required #5630
+
+= 1.0.99.2 (23 October 2024) =
+* Fixed: Cross-Site Request Forgery discovered by David Gallagher ( Wordfence )
+
+= 1.0.99.1 (24 September 2024) =
+* Fixed: The tag <? is disallowed error in 1.0.99 WITH MENU #5646
+
+= 1.0.99 (23 September 2024) =
+* Fixed: Conflict issue with Infinite Scroll option. #5638
+* Fixed: Some language characters breaking in amp footer #5627 , #5639 , #5620
+* Fixed: Code Improvement #5630
+
+= 1.0.98 (9th August 2024) =
+* Fixed: PHP errors and warnings #5617,#5624,#5619,#5628,#5629,#5626
+* Fixed: Disqus comments are not showing on the AMP. #5353
+
+= 1.0.97 (22nd July 2024) =
+* Fixed: Stored Cross-Site Scripting via SVG File Upload (Reported by Wordfence)
+* Fixed: Contributor+ Broken Access Control discovered by Rafie Muhammad (Patchstack)
+* Fixed: PHP Deprecated: error with AMP #5621
+* Fixed: Disqus comments are not showing on the AMP. #5353
+* Fixed: Warning in query monitor, "Array to String Conversion" #5610
+* Tested: WordPress version 6.6 #5618
+
+= 1.0.96.1 (1st July 2024) =
+* Fixed: Update Twitter Icon as X  in author box #5609
+* Fixed: AMP footer Menu showing as text for some users
+
+= 1.0.96 (28th June 2024) =
+* Fixed: Featured image caption is not working #5574
+* Fixed: PHP deprecated error (PHP 8.2) #5587
+* Fixed: PHP warning message displayed on the user's end. #5594
+* Fixed: Publisher desk "Dismiss" button is not working.  #5591
+* Fixed: PHP error on the user end. #5605
+* Fixed: Undefined property: stdClass::$inContentPlacementMethod #5607
+* Fixed: While using the News12Paper theme and tagDiv Composer plugin, there is an issue with the AMP menu (user-end issue). #5608
+* Fixed: Change Twitter as X #5609
+* Fixed: Amazon auto links are not working on AMP #5583
+
+= 1.0.95 (7th May 2024) =
+* Fixed: rtrim(): Argument #1 ($string) must be of type string, WP_Error given #5588
+* Fixed: Issue persist due to recent update with poll maker plugin #5585
+* Fixed: PHP Warning: Attempt to read property "ID" on null #5589
+* Test: Test with new version of wordpress i.e. 6.5v #5581
+* Fixed: Validation issues in images when using Pencil builder #5592
+
+= 1.0.94 (3rd April 2024) =
+* New: Added Shortcode so that user can show or hide some content in AMP. #5474
+* Improvements: Code improvement part 2 #5567
+* Fixed: Warning appears related to author-box #5577
+* Fixed: The excerpt is not showing inside the em tag in AMP, and the font is not working. #5487
+* Fixed: Issue with a cookie banner (GDPR) #5561
+
+= 1.0.93.2 (1st February 2024) =
+* Fixed: Video docking not working in AMP Newspaper theme #5566
+* Fixed: Video not loading on Amp if video set in Soledad theme Video Embed. #5571
+* Fixed: Authenticated(Contributor+) Arbitrary Post Deletion Vulnerability (Reported by Wordfence)
 
 Full changelog available [ at changelog.txt](https://plugins.svn.wordpress.org/accelerated-mobile-pages/trunk/changelog.txt)

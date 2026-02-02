@@ -1,13 +1,9 @@
 <?php
-/**
- * @package loginizer
- * @version 1.6.4
- */
 /*
 Plugin Name: Loginizer
 Plugin URI: https://wordpress.org/extend/plugins/loginizer/
 Description: Loginizer is a WordPress plugin which helps you fight against bruteforce attack by blocking login for the IP after it reaches maximum retries allowed. You can blacklist or whitelist IPs for login using Loginizer.
-Version: 1.6.4
+Version: 2.0.4
 Text Domain: loginizer
 Author: Softaculous
 Author URI: https://www.loginizer.com
@@ -35,32 +31,44 @@ if(!function_exists('add_action')){
 	exit;
 }
 
+$_tmp_plugins = get_option('active_plugins', []);
+
+if(!defined('SITEPAD') && in_array('loginizer-security/loginizer-security.php', $_tmp_plugins)){
+
+	// Was introduced in 1.9.0
+	$loginizer_pro_info = get_option('loginizer_pro_version');
+	
+	if(!empty($loginizer_pro_info) && version_compare($loginizer_pro_info, '1.9.0', '>=')){
+		// Let Loginizer load
+	
+	// Lets check for older versions
+	}else{
+
+		if(!function_exists('get_plugin_data')){
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$loginizer_pro_info = get_plugin_data(WP_PLUGIN_DIR . '/loginizer-security/loginizer-security.php');
+		
+		if(!empty($loginizer_pro_info) && version_compare($loginizer_pro_info['Version'], '1.8.9', '<')){
+			return;
+		}
+	}
+}
+
+
 function loginizer_load_plugin_textdomain(){
-    load_plugin_textdomain( 'loginizer', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain('loginizer', FALSE, basename( dirname( __FILE__ ) ) . '/languages/');
 }
 
-add_action( 'plugins_loaded', 'loginizer_load_plugin_textdomain' );
-
-$_ltmp_plugins = get_option('active_plugins');
-
-// Is the premium plugin loaded ?
-if(in_array('loginizer-security/loginizer-security.php', $_ltmp_plugins)){
-	return;
-}
+add_action('init', 'loginizer_load_plugin_textdomain', 0);
 
 // Is the premium plugin active ?
 if(defined('LOGINIZER_VERSION')){
 	return;
 }
 
-$plugin_loginizer = plugin_basename(__FILE__);
 define('LOGINIZER_FILE', __FILE__);
-define('LOGINIZER_API', 'https://api.loginizer.com/');
 
 include_once(dirname(__FILE__).'/init.php');
 
-
-
-if(function_exists('is_admin') && is_admin() && !file_exists(WP_PLUGIN_DIR.'/loginizer/loginizer-security.php') && file_exists(dirname(__FILE__).'/supgrade.php')){
-	include_once(dirname(__FILE__).'/supgrade.php');
-}

@@ -7,6 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class AMP_Tag_And_Attribute_Sanitizer
  *
  * 
+ * Also referred to the "Validating Sanitizer".
+ *
+ * @package AMP
  */
 
 /**
@@ -849,6 +852,9 @@ class AMP_Tag_And_Attribute_Sanitizer extends AMP_Base_Sanitizer {
 		foreach ( $node->attributes as $attr_name => $attr_node ) {
 			if ( ! $this->is_amp_allowed_attribute( $attr_name, $attr_spec_list ) ) {
 				$attrs_to_remove[] = $attr_node;
+			}elseif( $node->tagName == 'table' && $attr_name == 'height' ){
+				//Remove height from table
+				$attrs_to_remove[] = $attr_node;
 			}
 		}
 
@@ -1091,10 +1097,11 @@ class AMP_Tag_And_Attribute_Sanitizer extends AMP_Base_Sanitizer {
 		 * Check 'value_casei' - case insensitive
 		 */
 		if ( isset( $attr_spec_rule[ AMP_Rule_Spec::VALUE_CASEI ] ) ) {
-			$rule_value = strtolower( $attr_spec_rule[ AMP_Rule_Spec::VALUE_CASEI ] );
+			
+			$rule_value = !is_array($attr_spec_rule[ AMP_Rule_Spec::VALUE_CASEI ])?strtolower( $attr_spec_rule[ AMP_Rule_Spec::VALUE_CASEI ] ):$attr_spec_rule[ AMP_Rule_Spec::VALUE_CASEI ];
 			if ( $node->hasAttribute( $attr_name ) ) {
 				$attr_value = strtolower( $node->getAttribute( $attr_name ) );
-				if ( $attr_value === (string) $rule_value ) {
+				if ( is_array($rule_value) && ( $attr_value === join($rule_value) ) ) {
 					return AMP_Rule_Spec::PASS;
 				} else {
 					return AMP_Rule_Spec::FAIL;
@@ -1103,7 +1110,7 @@ class AMP_Tag_And_Attribute_Sanitizer extends AMP_Base_Sanitizer {
 				foreach ( $attr_spec_rule[ AMP_Rule_Spec::ALTERNATIVE_NAMES ] as $alternative_name ) {
 					if ( $node->hasAttribute( $alternative_name ) ) {
 						$attr_value = strtolower( $node->getAttribute( $alternative_name ) );
-						if ( $attr_value === (string) $rule_value ) {
+						if ( is_array($rule_value) && ( $attr_value === join($rule_value) ) ) {
 							return AMP_Rule_Spec::PASS;
 						} else {
 							return AMP_Rule_Spec::FAIL;

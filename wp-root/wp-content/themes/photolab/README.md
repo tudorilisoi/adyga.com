@@ -19,3 +19,9 @@ version 1.0.2
 - FIX: added rel="nofollow" to footer links according Google recomendations
 - UPD: updated version of device.js and magnific.popup
 - UPD: moved unminified version of scripts moved to 'unminified' folder in 'js'
+
+version 1.1.0
+-------------
+- ADD: socials links list (option in customizer, output in header or footer)
+- UPD: upadte translations
+- UPD: change link on theme home page

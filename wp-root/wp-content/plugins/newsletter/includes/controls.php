@@ -499,9 +499,6 @@ class NewsletterControls {
     }
 
     /**
-     *
-     * @return string
-     *
      * @todo Internationalization
      */
     function language_notice() {
@@ -509,8 +506,6 @@ class NewsletterControls {
     }
 
     /**
-     *
-     * @return string
      * @deprecated
      */
     function switch_to_all_languages_notice() {
@@ -519,7 +514,7 @@ class NewsletterControls {
         }
         echo '<div class="tnpc-language-notice">';
 
-        echo 'You are configuring the language <strong>', esc_html(NewsletterAdmin::instance()->get_language_label($current_language)), '</strong>. Switch to "all languages" to see all options.';
+        echo 'Switch to "all languages" to see all options.';
 
         echo '</div>';
     }
@@ -719,12 +714,16 @@ class NewsletterControls {
      * @param bool $show_id Show the page ID near the page title
      */
     function page($name = 'page', $first = null, $language = '', $show_id = false) {
+
+        $front_page_id = (int)get_option('page_on_front');
+        $blog_page_id = (int)get_option('page_for_posts');
         $args = array(
             'post_type' => 'page',
             // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page
             'posts_per_page' => 1500,
             'offset' => 0,
             'orderby' => 'post_title',
+            'order' => 'ASC',
             'post_status' => 'any',
             'suppress_filters' => true
         );
@@ -740,6 +739,13 @@ class NewsletterControls {
             if ($show_id) {
                 $label .= ' [#' . $page->ID . ']';
             }
+
+            if ($page->ID == $front_page_id) {
+                $label .= ' (front page)';
+            } elseif ($page->ID == $blog_page_id) {
+                $label .= ' (post list page)';
+            }
+
             $options[$page->ID] = $label;
         }
         $this->select($name, $options, $first);
@@ -1031,6 +1037,13 @@ class NewsletterControls {
         echo '<input name="options[', esc_attr($name), ']" id="options-', esc_attr($name), '" type="hidden" value="', esc_attr($value), '">';
     }
 
+    function hidden_encoded($name) {
+        $value = $this->get_value($name, '');
+        $value = base64_encode(rawurlencode($value));
+        echo '<input name="options[', esc_attr($name), ']" id="options-', esc_attr($name), '" type="hidden" value="', esc_attr($value), '">';
+        echo '<input type="hidden" name="tnp_fields[', esc_attr($name), ']" value="encoded">';
+    }
+
     /**
      * General button. Attributes:
      * - id: the element HTML id
@@ -1038,6 +1051,7 @@ class NewsletterControls {
      * - icon: the font awesome icon name (fa-xxx)
      * - style: the CSS style
      * - data: free data associated to the button click ($controls->button_data) for example to pass the element ID from a list of elements
+     * - confirm: false to no show an alert, true to show the "want to proceed?" question or a string to show that exact message
      *
      * @param string $action
      * @param string $label
@@ -1067,14 +1081,19 @@ class NewsletterControls {
         if (!empty($attrs['data'])) {
             $onclick .= "this.form.btn.value='" . esc_attr(esc_js($attrs['data'])) . "';";
         }
-        if (isset($attrs['confirm'])) {
-            if (is_string($attrs['confirm'])) {
-                $onclick .= "if (!confirm('" . esc_attr(esc_js($attrs['confirm'])) . "')) return false;";
-            } elseif ($attrs['confirm'] === true) {
-                $onclick .= "if (!confirm('" . esc_attr(esc_js(__('Proceed?', 'newsletter'))) . "')) return false;";
-            }
+
+        $confirm = $attrs['confirm'] ?? false;
+
+        if ($confirm === true || is_string($confirm) && empty($confirm)) {
+            $confirm = __('Proceed?', 'newsletter');
         }
+
+        if ($confirm) {
+            $onclick .= "if (!confirm('" . esc_attr(esc_js($confirm)) . "')) return false;";
+        }
+
         echo ' onclick="', esc_attr($onclick), '"';
+
         if (!empty($attrs['title'])) {
             echo ' title="', esc_attr($attrs['title']), '"';
         }
@@ -1082,6 +1101,7 @@ class NewsletterControls {
             echo ' style="', esc_attr($attrs['style']), '"';
         }
         echo '>';
+
         if (!empty($attrs['icon'])) {
             echo '<i class="fas ', esc_attr($attrs['icon']), '"></i>';
             if (!empty($label)) {
@@ -1178,6 +1198,7 @@ class NewsletterControls {
         $this->btn('copy', '', ['secondary' => true, 'data' => $data, 'icon' => 'fa-copy', 'confirm' => true, 'title' => __('Duplicate', 'newsletter')]);
     }
 
+
     /**
      * Creates a button with "delete" action.
      * @param type $data
@@ -1256,12 +1277,12 @@ class NewsletterControls {
         }
     }
 
-    function button_confirm($action, $label, $message = true, $data = '') {
-        $this->btn($action, $label, ['data' => $data, 'confirm' => $message]);
+    function button_confirm($action, $label, $confirm = true, $data = '') {
+        $this->btn($action, $label, ['data' => $data, 'confirm' => $confirm]);
     }
 
-    function button_confirm_secondary($action, $label, $message = true, $data = '') {
-        $this->btn($action, $label, ['data' => $data, 'confirm' => $message, 'secondary' => true]);
+    function button_confirm_secondary($action, $label, $confirm = true, $data = '') {
+        $this->btn($action, $label, ['data' => $data, 'confirm' => $confirm, 'secondary' => true]);
     }
 
     /**
@@ -2138,7 +2159,7 @@ class NewsletterControls {
         echo '<select class="tnpf-font-family" id="options-', esc_attr($name), '" name="options[', esc_attr($name), ']">';
 
         if ($show_empty_option) {
-            echo '<option value="">', esc_html('Default', 'newsletter');
+            echo '<option value="">', esc_html__('Default', 'newsletter');
         }
 
         echo '<optgroup label="', esc_attr__('Email safe fonts', 'newsletter'), '">';
@@ -2208,6 +2229,8 @@ class NewsletterControls {
      * @param string $name
      */
     function media($name) {
+        $media_id = 0;
+        $media_full = ['', '', ''];
         if (isset($this->data[$name]['id'])) {
             $media_id = (int) $this->data[$name]['id'];
             $media = wp_get_attachment_image_src($media_id, 'medium');
@@ -2238,7 +2261,7 @@ class NewsletterControls {
         if (!empty($label)) {
             echo '<label class="select" for="tnp_' . esc_attr($name) . '">' . esc_html($label) . ':</label>';
         }
-        echo '<input id="tnp_' . esc_attr($name) . '" type="text" size="36" name="' . esc_attr($option) . '[' . esc_attr($name) . ']" value="' . esc_attr($val) . '" />';
+        echo '<input id="tnp_' . esc_attr($name) . '" type="text" size="36" name="' . esc_attr($option) . '[' . esc_attr($name) . ']" value="" />';
         echo '<input id="tnp_' . esc_attr($name) . '_button" class="button-primary" type="button" value="Select Image" />';
         echo '<br class="clear"/>';
     }
@@ -2373,7 +2396,7 @@ class NewsletterControls {
         if (substr($url, 0, 4) !== 'http') {
             $url = 'https://www.thenewsletterplugin.com/documentation' . $url;
         }
-        if (empty($text)) {
+        if (!$text) {
             $text = __('Need help?', 'newsletter');
         }
         echo '<p class="tnp-panel-help"><a href="', esc_attr($url), '" target="_blank">', wp_kses_post($text), '</a></p>';
@@ -2385,7 +2408,7 @@ class NewsletterControls {
      * @param type $text
      */
     static function page_help($url, $text = '') {
-        if (empty($text)) {
+        if (!$text) {
             $text = __('Need help?', 'newsletter');
         }
         echo '<div class="tnp-page-help"><a href="', esc_attr($url), '" target="_blank">', wp_kses_post($text), '</a></div>';
@@ -2532,6 +2555,6 @@ class NewsletterControls {
     }
 
     function logs($source, $attrs = []) {
-        include __DIR__ . '/controls-logs.php';
+        include NEWSLETTER_INCLUDES_DIR . '/controls-logs.php';
     }
 }

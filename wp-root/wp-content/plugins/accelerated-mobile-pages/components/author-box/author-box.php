@@ -8,7 +8,7 @@ if( class_exists('Simple_Author_Box') && !isset($args['author_info']) ){
     return;
 }
 global $post, $redux_builder_amp;
-$post_author = get_userdata($post->post_author);
+$post_author = is_object($post) ? get_userdata($post->post_author):'';
 if(empty($post_author)){
     return;
 }
@@ -106,6 +106,7 @@ if ( isset($args['show_time']) ) {
             $alt = array_pop($match);
             $alt = implode(" ", $alt);
             $alt = explode(" ", $alt);
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
             if(class_exists('transposh_plugin') && isset($_GET['lang']) && isset($alt[1]) ){
                 $alt = 'alt=' . $alt[1];
             }
@@ -123,12 +124,20 @@ if ( isset($args['show_time']) ) {
         if ( true == ampforwp_get_setting('ampforwp-author-page-url') ){
             if ( function_exists('coauthors_posts_links') ) {
                 if( $author_pub_name  ){
-                    $auth_link = $author_link;
-                    if($is_author_link_amp==true){
-                        $auth_link = ampforwp_url_controller($author_link);
+                    $author_link_ = $author_link;
+                    if($is_author_link_amp==true && ampforwp_get_setting('ampforwp-archive-support')){
+                        $author_link_ = ampforwp_url_controller($author_link);
+                        if($author_link_)
+                        {
+                            echo '<span class="author-name">' .esc_html($author_prefix) . ' <a href="'. esc_url($author_link_).'" title="'. esc_html($author_name).'"> ' .esc_html( $author_name ).'</a></span>';  
+                        }
+                        else
+                        {
+                            //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            echo $author_link; // this is html
+                        }
                     }
-                    $author_link = (true == ampforwp_get_setting('ampforwp-archive-support'))? esc_url($auth_link) :  esc_url($author_link);
-	                echo '<span class="author-name">' .esc_html($author_prefix) . ' <a href="'. esc_url($author_link).'" title="'. esc_html($author_name).'"> ' .esc_html( $author_name ).'</a></span>';
+                    //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo ampforwp_yoast_twitter_handle();
                 }
             }
@@ -138,6 +147,7 @@ if ( isset($args['show_time']) ) {
                         $author_link = ampforwp_url_controller($author_link);
                     }
                     echo '<span class="author-name">' .esc_html($author_prefix) . ' <a href="'. esc_url($author_link).'" title="'. esc_html($author_name).'"> ' .esc_html( $author_name ).'</a></span>';
+                    //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo ampforwp_yoast_twitter_handle();
                 }
             }
@@ -145,6 +155,7 @@ if ( isset($args['show_time']) ) {
         else{
             if( $author_pub_name  ){
                 echo '<span class="author-name">' . esc_html($author_prefix) . esc_html( $author_name ) . '</span>';
+                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo  ampforwp_yoast_twitter_handle();
             }
         }
@@ -163,8 +174,9 @@ if ( isset($args['show_time']) ) {
         if ( $author_description ) {
             if( true == ampforwp_get_setting('amp-author-box-description') ){
                 $allowed_tags = '<p><a><b><strong><i><u><ul><ol><li><h1><h2><h3><h4><h5><h6><table><tr><th><td><em><span>';
-                $author_description = "<p>".strip_tags($post_author->description,$allowed_tags)."</p>";
+                $author_description = "<p>".wp_strip_all_tags($post_author->description,$allowed_tags)."</p>";
                 $author_description = apply_filters( 'ampforwp_author_description', $author_description);
+                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo $author_description;
             }
         } ?>

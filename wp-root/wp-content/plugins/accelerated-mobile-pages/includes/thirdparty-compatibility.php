@@ -30,6 +30,15 @@ function ampforwp_thirdparty_compatibility(){
 	remove_filter('wp_nav_menu_args',array('AitMenu','modify_arguments'),100);
 	// #3124 enfold theme shortcodes removed
 	add_filter('the_content','ampforwp_remove_enfold_theme_shortcodes_tags');
+
+	if ( in_array( 'wordproof-timestamp/wordproof-timestamp.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+		add_filter('amp_post_template_data','ampforwp_compatibility_filter_tags_for_wordproof_plugin');
+	}
+	if ( in_array( 'opensea/opensea.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+		add_filter('amp_post_template_data','ampforwp_compatibility_for_opensea_plugin');
+	}
+	
+	add_filter('amp_post_template_data','ampforwp_add_target_attribute_in_form_tags');
 	// AMP is not working due to JCH Optimize Pro plugin #3185
 	remove_action('shutdown', 'jch_buffer_end', -1);
 	//ShortPixel Plugin Compatibility to remove picture tag in amp #3439
@@ -101,6 +110,85 @@ function ampforwp_thirdparty_compatibility(){
 	}elseif (class_exists('WPSEO_Options') && 'yoast' == ampforwp_get_setting('ampforwp-seo-selection') && WPSEO_Meta::get_value( 'meta-robots-noindex', ampforwp_get_the_ID()) == 1) {
 		add_action( 'amp_post_template_head', 'AMPforWP\\AMPVendor\\amp_post_template_add_canonical' );
 	}
+	if(class_exists('\\EmbedPress\\Ends\\Front\\Handler')){
+		global $wp_embed;
+		remove_filter('the_content', ['\\EmbedPress\\Ends\\Front\\Handler', 'autoEmbedUrls']);
+		add_filter('the_content', [$wp_embed, 'autoembed'], 8);
+		add_filter('the_content', [$wp_embed, 'run_shortcode'], 8);
+	}
+	if(class_exists( 'Jetpack_RelatedPosts' ) && true == ampforwp_get_setting('ampforwp-jetpack-related-posts')){
+		add_filter('amp_post_template_data','ampforwp_jetpack_related_post');
+	}
+}
+function ampforwp_jetpack_related_post($amp_post_template_data){
+	$content = $amp_post_template_data['post_amp_content'];
+	$jprp = Jetpack_RelatedPosts::init();
+	$jprp_settings = $jprp->get_options();
+	$get_related_post = $jprp->get_for_post_id(ampforwp_get_the_ID(),$jprp_settings);
+	if(!empty($get_related_post)){
+		$rp_content = ampforwp_prepre_jetpack_related_post($get_related_post,$jprp_settings);
+		$content = $content.$rp_content;
+		$amp_post_template_data['post_amp_content'] = $content;
+	}
+	return $amp_post_template_data;
+}
+function ampforwp_prepre_jetpack_related_post($get_related_post,$jprp_settings){
+	$show_thumbnails = $jprp_settings['show_thumbnails'];
+	$show_headline = $jprp_settings['show_headline'];
+	$show_date = $jprp_settings['show_date'];
+	$show_context = $jprp_settings['show_context'];
+	$layout = $jprp_settings['layout'];
+	$headline = $jprp_settings['headline'];
+	
+	$jetpack_rp_content = '';
+	$jetpack_rp_content = '<div id="ampforwp-jp-relatedposts" class="jp-relatedposts">';
+	if($show_headline==true){
+		$jetpack_rp_content .= '<h3 class="jp-relatedposts-headline"><em>'.$headline.'</em></h3>';
+	}
+	$jetpack_rp_content .= '<div class="jp-relatedposts-items jp-relatedposts-items-visual jp-relatedposts-grid ">';
+	foreach ($get_related_post as $key => $value) {
+		$id = $value['id'];
+		$url = $value['url'];
+		$title = $value['title'];
+		$date = $value['date'];
+		$excerpt = $value['excerpt'];
+		$context = $value['context'];
+		$format = $value['format'];
+		$img = $value['img'];
+		$img_alt_text = $img['alt_text'];
+		$img_width = $img['width'];
+		$img_height = $img['height'];
+		$img_src = $img['src'];
+		$img_srcset = '';
+		if(isset($img['srcset'])){
+			$img_srcset = $img['srcset'];
+		}
+		$amp_url =  ampforwp_url_controller($url);	
+		$cls = 'jp-relatedposts-post-thumbs';
+		if($show_thumbnails==true && $img_src==""){
+			$cls = 'jp-relatedposts-post-nothumbs';
+		}
+		$jetpack_rp_content .= '<div class="jp-relatedposts-post jp-relatedposts-post'.esc_attr( $key ).' '.esc_attr( $cls ).'" data-post-id="'.esc_attr($id).'" data-post-format="'.esc_attr($format).'">';
+			if($show_thumbnails==true && $img_src!=""){
+				$jetpack_rp_content .= '<a class="jp-relatedposts-post-a" href="'.esc_url($amp_url).'" title="'.esc_attr($title).'" data-origin="37" data-position="0">
+					<amp-img  src="'.esc_url($img_src).'" width="230" height="130"></amp-img>
+				</a>';
+			}
+			$jetpack_rp_content .= '<h4 class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="'.esc_url($amp_url).'"  title="'.esc_attr($title).'" data-origin="'.esc_attr($id).'" data-position="0">'.esc_attr($title).'</a></h4>';
+			if($show_thumbnails==true && $img_src==""){
+				$jetpack_rp_content .= '<p class="jp-relatedposts-post-excerpt" style="max-height: 7.14286em;">'.$excerpt.'</p>';
+			}
+			if($show_date==true){
+				$jetpack_rp_content .= '<time class="jp-relatedposts-post-date" style="display: block;">'.esc_attr($date).'</time>';
+			}
+			if($show_context==true){
+				$jetpack_rp_content .= '<p class="jp-relatedposts-post-context">'.$context.'</p>';
+			}
+			$jetpack_rp_content .= '</div>';
+	}
+	$jetpack_rp_content .='</div>';
+	$jetpack_rp_content .='</div>';
+	return $jetpack_rp_content;
 }
 function ampforwp_removing_sassy_social_share(){	
 	return 1;
@@ -172,7 +260,7 @@ require_once AMPFORWP_PLUGIN_DIR . '/includes/updater/update.php';
 			if ( 'single' === $type ) {
 	        	$file = $filePath . '/index.php';
 	        
-		        if ( $redux_builder_amp['amp-frontpage-select-option'] == 1 ) {
+		        if ( isset($redux_builder_amp['amp-frontpage-select-option']) && $redux_builder_amp['amp-frontpage-select-option'] == 1 ) {
 					$file = $filePath . '/page.php';
 		        }
 		        if ( ampforwp_is_blog() ) {
@@ -590,7 +678,9 @@ function ampforwp_simple_author_box(){
 		$fontsImplementData		= json_decode($fontsImplementRawData, true);
 		if (!empty($fontsImplementData)):
 			foreach ($fontsImplementData as $key=>$fontImplementData): ?>
-				<?php echo $fontImplementData['font_elements']; // escaped above ?>{
+				<?php
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo $fontImplementData['font_elements']; // escaped above ?>{
 					font-family: '<?php echo esc_html($fontsData[$fontImplementData['font_key']]['font_name']); ?>';
 				}
 			<?php endforeach;
@@ -661,6 +751,7 @@ function ampforwp_seopress_social(){
 				if (has_filter('seopress_social_og_url')) {
 					$seopress_social_og_url = apply_filters('seopress_social_og_url', $seopress_social_og_url);
 			    }			
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $seopress_social_og_url."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_facebook_og'])) {
@@ -669,6 +760,7 @@ function ampforwp_seopress_social(){
 				if (has_filter('seopress_social_og_site_name')) {
 					$seopress_social_og_site_name = apply_filters('seopress_social_og_site_name', $seopress_social_og_site_name);
 			    }
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $seopress_social_og_site_name."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_facebook_og'])) {
@@ -699,6 +791,7 @@ function ampforwp_seopress_social(){
 					$seopress_social_og_locale = apply_filters('seopress_social_og_locale', $seopress_social_og_locale);
 			    }
 				if (isset($seopress_social_og_locale) && $seopress_social_og_locale !='') {
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo $seopress_social_og_locale."\n"; // escaped above
 				}
 			}
@@ -726,6 +819,7 @@ function ampforwp_seopress_social(){
 					if (has_filter('seopress_social_og_type')) {
 						$seopress_social_og_type = apply_filters('seopress_social_og_type', $seopress_social_og_type);
 				    }
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo $seopress_social_og_type."\n"; // escaped above
 				}
 			}
@@ -748,6 +842,7 @@ function ampforwp_seopress_social(){
 					if (has_filter('seopress_social_og_author')) {
 						$seopress_social_og_author = apply_filters('seopress_social_og_author', $seopress_social_og_author);
 				    }
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo $seopress_social_og_author."\n"; // escaped above
 				}
 			}
@@ -773,6 +868,7 @@ function ampforwp_seopress_social(){
 					$seopress_social_og_title = apply_filters('seopress_social_og_title', $seopress_social_og_title);
 			    }
 			    if (isset($seopress_social_og_title) && $seopress_social_og_title !='') {
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			    	echo $seopress_social_og_title; // escaped above
 			    }
 			}
@@ -795,6 +891,7 @@ function ampforwp_seopress_social(){
 					$seopress_social_og_desc = apply_filters('seopress_social_og_desc', $seopress_social_og_desc);
 			    }
 			    if (isset($seopress_social_og_desc) && $seopress_social_og_desc !='') {
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			    	echo $seopress_social_og_desc; // escaped above
 				}
 			}
@@ -852,20 +949,24 @@ function ampforwp_seopress_social(){
 						$seopress_social_og_img = apply_filters('seopress_social_og_thumb', $seopress_social_og_img);
 				    }
 				    if (isset($seopress_social_og_img) && $seopress_social_og_img !='') {
+						//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			    		echo $seopress_social_og_img; // escaped above
 				    }
 				}
 			}
 			if (isset($options['seopress_social_facebook_og']) && isset($options['seopress_social_facebook_link_ownership_id'])) {
 				$seopress_social_link_ownership_id = '<meta property="fb:pages" content="'.esc_attr($options['seopress_social_facebook_link_ownership_id']).'" />';	
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $seopress_social_link_ownership_id."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_facebook_og']) && isset($options['seopress_social_facebook_link_ownership_id']) ) {
 				$seopress_social_admin_id = '<meta property="fb:admins" content="'.esc_attr($options['seopress_social_facebook_admin_id']).'" />';		
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $seopress_social_admin_id."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_facebook_og']) && isset($options['seopress_social_facebook_link_ownership_id']) ) {
-				$seopress_social_app_id = '<meta property="fb:app_id" content="'.esc_attr($options['seopress_social_facebook_app_id']).'" />';		
+				$seopress_social_app_id = '<meta property="fb:app_id" content="'.esc_attr($options['seopress_social_facebook_app_id']).'" />';	
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped	
 				echo $seopress_social_app_id."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_twitter_card'])) {
@@ -878,6 +979,7 @@ function ampforwp_seopress_social(){
 				if (has_filter('seopress_social_twitter_card_summary')) {
 					$seopress_social_twitter_card_summary = apply_filters('seopress_social_twitter_card_summary', $seopress_social_twitter_card_summary);
 			    }
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $seopress_social_twitter_card_summary."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_twitter_card']) && isset($options['seopress_social_accounts_twitter']) ) {
@@ -886,6 +988,7 @@ function ampforwp_seopress_social(){
 				if (has_filter('seopress_social_twitter_card_site')) {
 					$seopress_social_twitter_card_site = apply_filters('seopress_social_twitter_card_site', $seopress_social_twitter_card_site);
 			    }
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $seopress_social_twitter_card_site."\n"; // escaped above
 			}
 			if (isset($options['seopress_social_twitter_card'])) {
@@ -903,6 +1006,7 @@ function ampforwp_seopress_social(){
 					$seopress_social_twitter_card_creator = apply_filters('seopress_social_twitter_card_creator', $seopress_social_twitter_card_creator);
 			    }
 			    if (isset($seopress_social_twitter_card_creator) && $seopress_social_twitter_card_creator !='') {
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			    	echo $seopress_social_twitter_card_creator."\n"; // escaped above
 				}
 			}
@@ -933,6 +1037,7 @@ function ampforwp_seopress_social(){
 					$seopress_social_twitter_card_title = apply_filters('seopress_social_twitter_card_title', $seopress_social_twitter_card_title);
 			    }
 			    if (isset($seopress_social_twitter_card_title) && $seopress_social_twitter_card_title !='') {
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			    	echo $seopress_social_twitter_card_title."\n"; // escaped above
 			    }
 			}
@@ -961,6 +1066,7 @@ function ampforwp_seopress_social(){
 					$seopress_social_twitter_card_desc = apply_filters('seopress_social_twitter_card_desc', $seopress_social_twitter_card_desc);
 			    }
 			    if (isset($seopress_social_twitter_card_desc) && $seopress_social_twitter_card_desc !='') {
+					//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			    	echo $seopress_social_twitter_card_desc."\n"; // escaped above
 			    }
 			}
@@ -1022,6 +1128,7 @@ function ampforwp_seopress_social(){
 						$seopress_twitter_img = apply_filters('seopress_social_og_thumb', $seopress_twitter_img);
 				    }
 				    if (isset($seopress_twitter_img) && $seopress_twitter_img !='') {
+						//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				    	echo $seopress_twitter_img; // escaped above
 				    }
 				}
@@ -1064,7 +1171,11 @@ if ( ! function_exists('ampforwp_yoast_twitter_handle') ) {
 add_action('init','ampforwp_enfold_theme_compatibility',2);
 if(!function_exists('ampforwp_enfold_theme_compatibility')){
 	function ampforwp_enfold_theme_compatibility(){
-		$url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH),'/' );
+		$url_path = parse_url(add_query_arg(array()), PHP_URL_PATH);
+		if($url_path=="" || $url_path==null){
+			$url_path = $url_path.'/';
+		}
+		$url_path = trim($url_path,'/' );
 	  	$explode_path = explode('/', $url_path);  
 	    if ( AMPFORWP_AMP_QUERY_VAR === end( $explode_path)   ) {
 			remove_filter('avia_load_shortcodes','add_shortcode_folder',11);
@@ -1135,6 +1246,7 @@ if(function_exists('deco_mistape_init')){
 if(!function_exists('ampforwp_mistape_plugin_style')){
 	function ampforwp_mistape_plugin_style(){
 		$css = '.mistape_caption{font-size:80%;opacity:.8}.mistape-logo svg{display:block;height:22px;width:22px;fill:#e42029}.mistape_caption .mistape-link{text-decoration:none;border:none;box-shadow:none}.mistape-link:hover{text-decoration:none;border:none}';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ampforwp_css_sanitizer($css);
 	}
 }
@@ -1144,6 +1256,7 @@ if(!function_exists('ampforwp_mistape_plugin_compatibility')){
 			$rep = '<a href="https://mistape.com" target="_blank" rel="nofollow" class="mistape-link mistape-logo"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="-12 -10 39.9 40" enable-background="new -12 -10 39.9 40" xml:space="preserve">';
 			$content = preg_replace('/<span\sclass=\"mistape-link-wrap">(.*?)<\/span>/', $rep.'$1</svg></a>', $content);
 		}
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $content;
 	}
 }
@@ -1215,6 +1328,7 @@ function ampforwp_execute_amp_prior_marfeel(){
 function ampforwp_is_amp_inURL($url){
 	if (ampforwp_get_setting('amp-core-end-point')) {
 		global $wp;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 		$url = home_url(add_query_arg(array($_GET), $wp->request));
 		$urlArray = explode("/", $url);
 		if( in_array( '?' . AMPFORWP_AMP_QUERY_VAR , $urlArray ) ) {
@@ -1230,6 +1344,7 @@ function ampforwp_is_amp_inURL($url){
 	if (ampforwp_get_setting('ampforwp-amp-takeover')) {
 		return true;
 	}
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 	if(get_option('permalink_structure') == '' && isset($_GET['amp'])){
         return true;
     }
@@ -1311,6 +1426,7 @@ if(!function_exists('ampforwp_category_image_compatibility')){
 		if($type=='return'){
 			return $cat_image;
 		}else if($type=='echo'){
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $cat_image;
 		}
 	}
@@ -1321,10 +1437,736 @@ function ampforwp_zeen_lazyload($lazyload){
     return $lazyload;
 }
 
-add_action('plugins_loaded', 'ampforwp_jetpack_boost_compatibility' , 0);
+add_action('plugins_loaded', 'ampforwp_jetpack_boost_compatibility' , 1);
 function ampforwp_jetpack_boost_compatibility(){
-    $url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH),'/' );	
-    if (function_exists('\Automattic\Jetpack_Boost\run_jetpack_boost') && function_exists('ampforwp_is_amp_inURL') && ampforwp_is_amp_inURL($url_path)) {
- 		remove_action( 'plugins_loaded', '\Automattic\Jetpack_Boost\run_jetpack_boost', 1 );
+	$url_path = parse_url(add_query_arg(array()), PHP_URL_PATH);
+	if($url_path=="" || $url_path==null){
+		$url_path = $url_path.'/';
+	}
+	$url_path = trim($url_path,'/' );
+    if (function_exists('\Automattic\Jetpack_Boost\run_jetpack_boost') && function_exists('ampforwp_is_amp_inURL') && ampforwp_is_amp_inURL($url_path) && !is_admin()) {
+ 			remove_action( 'plugins_loaded', '\Automattic\Jetpack_Boost\run_jetpack_boost', 1 );
  	}
+}
+if(!function_exists('ampforwp_get_coauthor_id')){
+	function ampforwp_get_coauthor_id()
+	{
+		$author_name = esc_attr(get_query_var('author_name'));
+		$coauthor_id 	 = get_the_author_meta( 'ID' );
+		if(!$coauthor_id)
+		{
+			$coauthors = get_the_coauthor_meta('login');
+			foreach($coauthors as $key=>$value)
+			{
+			if($value==$author_name)
+			{
+				$coauthor_id = $key;
+			}
+			}
+		}
+		return $coauthor_id;
+	}
+}
+
+if(!function_exists('ampforwp_get_coauthor_meta')){
+	function ampforwp_get_coauthor_meta($meta_name=null)
+	{ 
+		if(!function_exists('get_the_coauthor_meta') || !$meta_name)
+		{
+			return '';
+	    }
+		$coauthor_id 	 = get_the_author_meta( 'ID' );
+		if(!$coauthor_id)
+		{
+			$author_name = esc_attr(get_query_var('author_name'));
+			$coauthors = get_the_coauthor_meta('login');
+			foreach($coauthors as $key=>$value)
+			{
+				if($value==$author_name)
+				{
+					$coauthor_id = $key;
+				}
+			}
+		}
+		if(!$coauthor_id)
+		{
+			return '';
+		}
+		if($meta_name=='avatar_url')
+		{
+			$meta_value = get_avatar_url($coauthor_id,array('size'=>180));
+		}
+		else 
+		{
+			$meta_value = get_the_coauthor_meta($meta_name,$coauthor_id);
+		}
+		if(is_array($meta_value))
+		{ 
+			$meta_value=$meta_value[$coauthor_id];
+		}
+		return esc_html($meta_value);
+	}
+}
+
+add_action('template_redirect', 'ampforwp_callrail_buffer_start', 0);
+function ampforwp_callrail_buffer_start() {
+	if(ampforwp_is_callrail_switch_active()){
+		$url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH),'/' );	
+		if(function_exists('ampforwp_is_amp_inURL') && ampforwp_is_amp_inURL($url_path) && !is_admin()) {
+			add_action('shutdown', 'ampforwp_callrail_buffer_stop', PHP_INT_MAX);
+	    	ob_start('ampforwp_callrail_modify_content'); 
+		}
+	}
+}
+function ampforwp_callrail_buffer_stop() {
+	if(ob_get_length() > 0) {
+    	ob_end_flush();
+    }
+}
+function ampforwp_callrail_modify_content($content) {
+    //modify $content
+    $config_url = $number = $analytics_url = '';
+	$config_url = ampforwp_get_setting('ampforwp-callrail-config-url');
+	$number = ampforwp_get_setting('ampforwp-callrail-number');
+	$number_2 = ampforwp_callrail_get_formated_phone($number); // getting number in format 123-456-7890
+	$number_2_replace= '(<a(.*?)href="tel:((.*?-)?'.esc_attr($number_2).')"(.*?)>(.*?)<\/a>)'; // regex for matching number format with anchor tag
+	$analytics_url = ampforwp_get_setting('ampforwp-callrail-analytics-url');
+	$call_rail_analytics = '<amp-call-tracking config="'.esc_url($config_url).'"><a href="tel:'.esc_attr($number).'">'.esc_html($number).'</a></amp-call-tracking><amp-analytics config="'.esc_url($analytics_url).'"></amp-analytics>';
+	$content = str_replace($number, $call_rail_analytics, $content);
+	$content = preg_replace($number_2_replace, $call_rail_analytics, $content); // replacing number with call tracing code
+	$ct_test = '<amp-call-tracking config="'.esc_url($config_url).'"><a href="tel:'.esc_attr($number).'">'.esc_attr($number).'</a></amp-call-tracking>';
+	$content = preg_replace('/<a(.*?)><amp-call-tracking(.*?)><a(.*?)<\/a>/', $ct_test, $content);
+
+	return $content;
+}
+function ampforwp_callrail_get_formated_phone($number){
+	$number = preg_replace("/[^\d]/","",$number);
+	$number = preg_replace("/^1?(\d{3})(\d{3})(\d{4})$/", "$1-$2-$3", $number);
+	return $number;
+}
+
+function ampforwp_is_callrail_switch_active()
+{
+	if(ampforwp_get_setting('ampforwp-callrail-switch')){
+	    $config_url = $number = $analytics_url = '';
+		$config_url = ampforwp_get_setting('ampforwp-callrail-config-url');
+		$number = ampforwp_get_setting('ampforwp-callrail-number');
+		$analytics_url = ampforwp_get_setting('ampforwp-callrail-analytics-url');
+		if(!empty($config_url) && !empty($number) && !empty($analytics_url)){
+			return true;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+}
+
+add_action('pre_amp_render_post', 'amp_saswp_faq_comp');
+function amp_saswp_faq_comp(){
+    if ( function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint() ) {
+    	remove_shortcode('saswp_tiny_multiple_faq');
+    	add_shortcode( 'saswp_tiny_multiple_faq', 'amp_saswp_tiny_multi_faq_render' );
+    }
+}
+
+function amp_saswp_tiny_multi_faq_render( $atts, $content = null ){
+    global $saswp_tiny_multi_faq;
+    $output = '';
+    $saswp_tiny_multi_faq = shortcode_atts(
+        [
+            'css_class' => '',
+            'count'     => '1',
+            'html'      => true,
+            'elements'  => [],
+        ], $atts );
+    foreach ( $atts as $key => $merged_att ) {
+        if ( strpos( $key, 'headline' ) !== false || strpos( $key, 'question' ) !== false || strpos( $key,
+                'answer' ) !== false || strpos( $key, 'image' ) !== false ) {
+            $saswp_tiny_multi_faq['elements'][ explode( '-', $key )[1] ][ substr( $key, 0, strpos( $key, '-' ) ) ] = $merged_att;
+        }
+    }
+    if($saswp_tiny_multi_faq['html'] == 'true'){
+        if( !empty($saswp_tiny_multi_faq['elements']) ){
+            foreach ($saswp_tiny_multi_faq['elements'] as $value) {
+                $output .= '<details>';
+                $output .= '<summary>';
+                $output .= '<'.esc_attr($value['headline']).'>';
+                $output .=  esc_html($value['question']);
+                $output .= '</'.esc_attr($value['headline']).'>';
+                $output .= '</summary>';
+                $output .= '<div>';
+                if ( ! empty( $value['image'] ) ) {
+                    $image_id       = intval( $value['image'] );                
+                    $image_thumburl = wp_get_attachment_image_url( $image_id, [ 150, 150 ] );
+                    $output .= '<figure>';
+					/* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
+                    $output .= '<a href="'.esc_url(esc_url($image_thumburl)).'"><img class="saswp_tiny_faq_image" src="'.esc_url($image_thumburl).'"></a>';
+                    $output .= '</figure>';
+                }
+                $output .= '<div class="saswp_faq_tiny_content">'.esc_html($value['answer']).'</div>';                
+                $output .= '</div>';
+                $output .= '</details>';
+            }
+        }
+    }    
+    return $output;
+} 
+
+add_action('pre_amp_render_post', 'amp_3d_viewer_comp');
+function amp_3d_viewer_comp(){
+    if ( function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint() ) {
+    	remove_shortcode('3d_viewer', ['Shortcode', 'bp3dviewer_cpt_content_func']);
+    	add_shortcode( '3d_viewer', 'amp_3dviewer_content_func' );
+    }
+}
+
+function amp_3dviewer_content_func( $atts ){
+	extract( shortcode_atts( array(
+	    'id' => '',
+	    'src' => '',
+	    'alt' => '',
+	    'width' => '100%',
+	    'height' => '%',
+	    'auto_rotate' => 'auto-rotate',
+	    'camera_controls' =>'camera-controls',
+	    'zooming_3d' => '',
+	    'loading' => '',
+	), $atts ) ); ob_start(); 
+		
+	// Options Data
+	$modeview_3d = false;
+	if($id){
+	    $modeview_3d = get_post_meta( $id, '_bp3dimages_', true );
+	}else {
+	    $id = uniqid();
+	}
+
+	$attribute = [];
+	
+	if( class_exists( 'BP3D' ) && $modeview_3d && is_array($modeview_3d) ) {
+		//https://playground.amp.dev/static/samples/glTF/DamagedHelmet.glb
+	    $src = BP3D\Helper\Utils::isset2($modeview_3d, 'bp_3d_src', 'url', 'i-do-not-exist.glb');
+	    $src = str_replace('http', 'https', $src);
+	    $width = BP3D\Helper\Utils::isset2($modeview_3d, 'bp_3d_width', 'width', '100').BP3D\Helper\Utils::isset2($modeview_3d, 'bp_3d_width', 'unit', '%');
+	    $height = BP3D\Helper\Utils::isset2($modeview_3d, 'bp_3d_height', 'height', '300').BP3D\Helper\Utils::isset2($modeview_3d, 'bp_3d_height', 'unit', 'px');
+	    $camera_controls = $modeview_3d['bp_camera_control'] == 1 ? 'camera-controls' : '';
+	    $alt            = !empty($modeview_3d['bp_3d_src']['url']) ? $modeview_3d['bp_3d_src']['title'] : '';
+	    $auto_rotate    = $modeview_3d['bp_3d_rotate'] === '1' ? 'auto-rotate' : '';
+	    $zooming_3d     = $modeview_3d['bp_3d_zooming'] === '1' ? '' : 'disable-zoom';
+	    // Preload
+	    $loading   = isset ($modeview_3d['bp_3d_loading']) ? $modeview_3d['bp_3d_loading'] : '';
+	    $attribute = apply_filters('bp3d_model_attribute', [], $id, false);
+	}
+	if( !empty($src) ){ ?>
+		<!-- 3D Model html -->
+		<div class="bp_grand wrapper_<?php echo esc_attr($id) ?>">   
+		<div class="bp_model_parent">
+		    <amp-3d-gltf class="model" id="bp_model_id_<?php echo esc_attr($id); ?>" src="<?php echo esc_url($src); ?>" alt="<?php echo esc_attr($alt); ?>" layout="fixed" width="320" height="240"></amp-3d-gltf>
+		</div>
+		</div>
+	<?php }
+	$output = ob_get_clean(); return $output;
+}
+
+//JetPack Boost
+add_action('wp','ampforwp_jetpack_defer_js_comp');
+function ampforwp_jetpack_defer_js_comp(){
+	if( (function_exists( 'ampforwp_is_amp_endpoint' ) && ampforwp_is_amp_endpoint()) || (function_exists( 'is_amp_endpoint' ) && is_amp_endpoint()) ){
+		add_filter( 'jetpack_boost_should_defer_js', '__return_false' );
+	}
+} 
+
+add_filter('the_content','ampforwp_newsp_td_get_css', 12);
+function ampforwp_newsp_td_get_css($content){
+	$the_ID = function_exists('ampforwp_get_the_ID') ? ampforwp_get_the_ID() : get_the_ID();
+	$tdc_status = get_post_meta( $the_ID, 'tdc_content', true);
+	if(!empty($tdc_status)){
+		global $amp_td_custom_css;
+		$amp_td_custom_css = '';
+		preg_match_all('/<style>(.*?)<\/style>/s', $content, $matches);
+		if($matches[1]){
+			foreach ($matches[1] as $key => $value) {
+				$amp_td_custom_css .= $value;
+			}
+		}
+		$content = preg_replace('/data-img-url="(.*?)"/', 'data-img-url="$1" style="background-image:url($1)"', $content);
+	}
+	return $content;
+}
+
+add_action('amp_post_template_css','ampforwp_newsp_td_render_css');
+function ampforwp_newsp_td_render_css(){
+	$tdc_status = get_post_meta( ampforwp_get_the_ID(), 'tdc_content', true);
+		if(!empty($tdc_status)){
+		global $amp_td_custom_css;
+		$cssData = $newspaper_css = '';
+		$newspaper_css_url[] = get_template_directory_uri().'/style.css';
+		$newspaper_css_url[] = TDC_URL_LEGACY . '/assets/css/td_legacy_main.css';
+		if($newspaper_css_url){
+			foreach ($newspaper_css_url as $key => $urlValue) {
+		    $cssData = ampforwp_get_remote_content($urlValue);
+		    $cssData = preg_replace("/\/\*(.*?)\*\//si", "", $cssData);
+		    $newspaper_css = preg_replace_callback('/url[(](.*?)[)]/', function($matches)use($urlValue){
+		            $matches[1] = str_replace(array('"', "'"), array('', ''), $matches[1]);
+		                if(!wp_http_validate_url($matches[1]) && strpos($matches[1],"data:")===false){
+		                    $urlExploded = explode("/", $urlValue);
+		                    $parentUrl = str_replace(end($urlExploded), "", $urlValue);
+		                    return 'url('.$parentUrl.$matches[1].")"; 
+		                }else{
+		                    return $matches[0];
+		                }
+		            }, $cssData);
+			}
+	  }
+	  //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $newspaper_css;
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $amp_td_custom_css;
+		if(method_exists('td_block', 'get_common_css') && method_exists('td_util', 'remove_style_tag')){
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo td_util::remove_style_tag(td_block::get_common_css());
+		}
+	}
+}
+
+/**
+ * Ampforwp_compatibility_filter_tags_for_wordproof_plugin function
+ *
+ * @since 1.0.86
+ * @param mixed|string $amp_post_template_data
+ * @return mixed|string
+ */
+function ampforwp_compatibility_filter_tags_for_wordproof_plugin( $amp_post_template_data ) 
+{
+	global $wpdb,$post;
+	if(is_single() && isset($post->ID) && !empty($post->ID)){
+		
+		$cache_key = 'wordproof_cache_key_'.$post->ID;
+      	$results = wp_cache_get( $cache_key ); 
+		if($results===false){
+			/* phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery */
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT meta_value FROM {$wpdb->prefix}postmeta WHERE post_id = %d AND meta_key LIKE %s",array( $post->ID,'_wordproof_hash_input_%' )),
+					ARRAY_N
+			);
+			wp_cache_set( $cache_key, $results );
+		}
+		if($results)
+		{
+			$schema_data = reset($results);
+			if(isset($schema_data[0])){
+			 $schema_data = unserialize($schema_data[0]);
+			}
+			if(empty($schema_data)) { return $amp_post_template_data; }
+			$content = $amp_post_template_data['post_amp_content'];
+		// for w-certificate-button
+		if( false !== strpos($content, "<w-certificate-button") ) { 
+			add_action( 'amp_post_template_css', 'amp_wordproof_compatibility_css' );
+			$findRegExforTag = '~<(w-certificate-button)(.*) text="(.*)"?>(.*)<\/\1>~mi';
+			$content = preg_replace( $findRegExforTag, "<button on='tap:w-certificate-button'>$3</button>", $content);
+		}
+		 
+		 $lightbox_content = '<amp-lightbox id="w-certificate-button" layout="nodisplay" scrollable>';
+		 $lightbox_content.='<div class="amp_wordproof_lightbox" role="button" tabindex="0" on="tap:w-certificate-button.close">';
+		 $lightbox_content.='<svg xmlns="http://www.w3.org/2000/svg" class="shield"><use xlink:href="#shield"></use><symbol id="shield" viewBox="0 0 44 58"><path d="M21.799.018c1.463-.176 3.371 1.017 4.736 1.475 4.102 1.375 8.177 2.9 12.235 4.405 1.344.5 4.237.945 4.939 2.296.513.989.191 2.694.191 3.783v8.875c0 8.06.633 16.427-3.742 23.623-1.15 1.889-2.563 3.55-4.151 5.088-1.867 1.807-4.078 3.306-6.315 4.621a81.965 81.965 0 01-5.13 2.788c-.766.38-1.626.968-2.5 1.025-.857.055-1.763-.595-2.5-.96-2.019-1.002-4.003-2.057-5.92-3.24-2.533-1.565-4.924-3.364-6.961-5.537C-.563 40.532.091 30.113.091 20.33v-8.353c0-1.066-.301-2.682.192-3.654.77-1.517 3.831-2.007 5.334-2.525 3.657-1.26 7.287-2.627 10.92-3.96 1.643-.602 3.516-1.61 5.262-1.82m0 3.817c-1.708.222-3.526 1.221-5.131 1.822-2.834 1.06-5.737 1.947-8.552 3.057-.936.37-3.805.823-4.262 1.752-.37.754-.08 2.244-.08 3.077v7.309c0 8.573-.77 17.4 5.19 24.406 1.563 1.837 3.498 3.303 5.467 4.68 1.675 1.17 3.484 2.1 5.263 3.095.63.352 1.62 1.068 2.368 1.021.745-.047 1.602-.686 2.236-1.04 1.46-.817 2.917-1.598 4.342-2.48a30.632 30.632 0 005.915-4.754c6.455-6.7 5.662-15.868 5.662-24.406v-7.7c0-.864.306-2.428-.08-3.208-.424-.86-3.243-1.385-4.13-1.71-3.282-1.204-6.588-2.346-9.867-3.559-1.192-.441-3.056-1.53-4.341-1.362m-1.053 32.417h-.132l-6.183-6.134c-.48-.476-2.081-1.63-2.078-2.35.004-.827 1.785-2.058 2.341-2.61 1.521 1.098 2.898 2.683 4.188 4.042.408.43 1.209 1.572 1.864 1.564.814-.01 2.082-1.798 2.631-2.342l6.447-6.395c.518-.515 1.588-2.044 2.368-2.064.793-.02 2.65 2.02 2.187 2.716-1.094 1.638-3.023 3.048-4.424 4.438z" fill="currentColor"></path></symbol></svg>';
+		 if(isset($schema_data->dateCreated)){
+		  $datetime = new DateTime($schema_data->dateCreated);
+		  $lightbox_content.= '<h5>Last edited '.esc_attr($datetime->format('F j, Y at h:i A')) .' </h5>';
+		 }
+		 $lightbox_content.= '<h4>This information did not change since the last timestamp</h4><p>This is important, because it proves that the content has not been tampered with and it can be trusted.<p>';
+		 $lightbox_content.= '</div></amp-lightbox>';
+	
+		 // for w-certificate
+		if( false !== strpos($content, "<w-certificate") ) { 
+			$findRegExforTag = '~<(w-certificate)(.*)?>(.*)<\/\1>~mi';
+			$content = preg_replace( $findRegExforTag, $lightbox_content, $content);
+		}
+	
+		$amp_post_template_data['post_amp_content'] = $content;
+		}
+		
+	}
+
+
+	return $amp_post_template_data;
+}
+
+function amp_wordproof_compatibility_css(){
+	echo '.amp_wordproof_lightbox{background:rgba(0,0,0,.8);width:100%;height:100%;position:absolute;display:flex;flex-wrap:wrap;color:#fff;justify-content:center;align-content:center;align-items:center}.amp_wordproof_lightbox h4,.amp_wordproof_lightbox h5,.amp_wordproof_lightbox p{padding:0 10px}';
+}
+/**
+ * ampforwp_compatibility_for_opensea_plugin function
+ *
+ * @since 1.0.86
+ * @param mixed|string $amp_post_template_data
+ * @return mixed|string
+ */
+function ampforwp_compatibility_for_opensea_plugin( $amp_post_template_data )
+{
+	$content = $amp_post_template_data['post_amp_content'];
+	if( false !== strpos($content, "<nft-card") ) { 
+		add_action( 'amp_post_template_css', 'ampforwp_opensea_compatibility_css' );
+
+		$findRegExforTag = '~<(nft-card) tokenaddress="(.*)" tokenid="(.*)">?>(.*)<\/\1>~mi';
+		$content = preg_replace_callback($findRegExforTag, 'ampforwp_compatibility_for_opensea_callback', $content);
+	}
+	$amp_post_template_data['post_amp_content'] = $content;
+	return $amp_post_template_data;
+}
+
+function ampforwp_opensea_compatibility_css(){
+	echo '.ampforwp_opensea_card .asset-detail-type a {border: 1px solid;border-radius: 20px;display: flex;flex-direction: row;align-items: center;}.ampforwp_opensea_card .asset-detail-type img {width:25px;border-radius:50%;padding:5px;}.ampforwp_opensea_card{background-color:#fff;font-family:Roboto,sans-serif;-webkit-font-smoothing:antialiased;font-style:normal;font-weight:400;line-height:normal;border-radius:5px;perspective:1000px;margin:auto;width:80vw;height:210px;min-height:200px;max-width:670px}.ampforwp_opensea_card .card-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform .6s;transform-style:preserve-3d;box-shadow:0 1px 6px rgba(0,0,0,.25);border-radius:5px}.ampforwp_opensea_card a{text-decoration:none;color:inherit}.ampforwp_opensea_card .card-front{backface-visibility:hidden;background:#fff;border-radius:5px;display:grid;grid-template-columns:1fr 2fr;position:relative;width:100%;height:100%;transform:translateY(0);overflow:hidden}.ampforwp_opensea_card .card-front p{margin:0;padding:0 10px;}.ampforwp_opensea_card .asset-image-container{border-right:1px solid #e2e6ef;background-size:cover;box-sizing:border-box}.ampforwp_opensea_card .asset-image{background-size:contain;background-position:50%;background-repeat:no-repeat;height:100%;box-sizing:border-box}.ampforwp_opensea_card .asset-details-container{display:grid;grid-template-rows:auto;grid-template-columns:1fr 1fr;padding:20px;align-items:center}.ampforwp_opensea_card .asset-detail{display:flex}.ampforwp_opensea_card .asset-detail .asset-detail-type{height:35px;font-size:12px;margin-right:10px}.ampforwp_opensea_card .asset-detail .asset-detail-badge{width:54px;height:30px;font-size:12px}.ampforwp_opensea_card .asset-detail-name{font-weight:400;text-align:left}.ampforwp_opensea_card .asset-detail-price{align-items:flex-end;font-size:18px;font-weight:400;display:flex;flex-flow:row;justify-content:flex-end;line-height:15px;text-align:right;padding:6px 0}.ampforwp_opensea_card .asset-detail-price img{margin:0 4px}.ampforwp_opensea_card .asset-detail-price-current img{width:15px}.ampforwp_opensea_card .asset-detail-price-previous{font-size:14px;color:#828282;line-height:10px}.ampforwp_opensea_card .asset-detail-price-previous img{width:1ex}.ampforwp_opensea_card .asset-detail-price .value{margin-left:5px}.ampforwp_opensea_card .asset-detail-price .previous-value{font-size:14px;color:#828282}.ampforwp_opensea_card .asset-action-buy{grid-column-start:1;grid-column-end:3}.ampforwp_opensea_card .asset-action-buy button{width:100%;background:#3291e9;border-radius:5px;height:35px;color:#fff;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:.2s;outline:0;border-style:none;text-transform:uppercase}.ampforwp_opensea_card .asset-action-buy button:hover{background:#153d62}.ampforwp_opensea_card .asset-link{text-decoration:none;}';
+}
+
+function ampforwp_compatibility_for_opensea_callback($matches){
+	$default_return="";
+	if(isset($matches[2]) && !empty($matches[2]) &&  isset($matches[3]) && !empty($matches[3])){
+	
+		$response = wp_remote_get( 'https://api.opensea.io/api/v1/asset/'.$matches[2].'/'.$matches[3].'/?',
+		array('headers'=>array('X-API-KEY'=>'e4e7b08f1807492e91301de85728ce2e',
+		   'accept' => 'application/json'
+		 )) );
+		 if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			
+			$body    = $response['body']; // use the content
+			$nft_data = json_decode($body,true);
+			
+			if(isset($nft_data['token_id']) && isset($nft_data['image_url']) && isset($nft_data['name']) && isset($nft_data['permalink']) && isset($nft_data['asset_contract']['name']) && isset($nft_data['asset_contract']['image_url']) && isset($nft_data['collection']['slug'])){
+			$nft_card_html="
+			<div class='ampforwp_opensea_card'>
+			<div class='card-inner'>
+			<div class='card-front'>
+			  <div class='asset-image-container'>
+				<a target='_blank' href='".esc_url($nft_data['permalink'])."'>
+				  <div class='asset-image' style='background-image: url(&quot;".esc_url($nft_data['image_url'])."&quot;); background-size: contain;'></div>
+				</a>
+			  </div>
+				<div class='asset-details-container'>
+				  <div class='asset-detail'>
+					<div class='asset-detail-type'>
+					  <a class='asset-link' target='_blank' href='https://opensea.io/assets/".esc_url($nft_data['collection']['slug'])."'>"./* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */"<img alt='' src='".esc_url($nft_data['asset_contract']['image_url'])."'>
+            		  <p>".esc_attr($nft_data['asset_contract']['name'])."</p>
+					  </a>
+					</div>
+				  </div>
+				  <div class='spacer'></div>
+				  <div class='asset-detail-name'>
+					<a class='asset-link' target='_blank' href='".esc_url($nft_data['permalink'])."'>".esc_attr($nft_data['name'])."</a>
+				  </div>
+				  
+				<a class='asset-link' target='_blank' href='".esc_url($nft_data['permalink'])."'>
+				<div class='asset-detail-price asset-detail-price-previous'>
+				<div class='previous-value'>Prev.&nbsp;</div>"./* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage,PluginCheck.CodeAnalysis.Offloading.OffloadedContent */"<img alt='' src='https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg'>
+				<div class='asset-detail-price-value'>
+				  ";
+				  if(isset($nft_data['last_sale']['total_price'])){
+					$price_to_show=round($nft_data['last_sale']['total_price']/1000000000000000000,3);
+					$nft_card_html.= esc_attr($price_to_show);
+				  }
+				$nft_card_html.="</div>
+			  </div>
+			  </a>
+			<div class='asset-action-buy'>
+			  <button>
+				<a class='asset-link' target='_blank' href='".esc_url($nft_data['permalink'])."'> buy this item > </a>
+			  </button>
+				  </div>
+				</div>
+		  </div>
+		</div>
+	</div>";
+	return $nft_card_html;
+			}
+		}
+
+	}
+	if(isset($response['response']['code']) && $response['response']['message'] ){
+		$default_return = '<center><small> Opensea Error - '.esc_attr($response['response']['code']).' : '.esc_attr($response['response']['message']).'</small></center>' ;
+	}
+ return $default_return;
+}
+/**
+ * ampforwp_add_target_attribute_in_form_tags function
+ *
+ * @since 1.0.86
+ * @param mixed|string $amp_post_template_data
+ * @return mixed|string
+ */
+function ampforwp_add_target_attribute_in_form_tags( $amp_post_template_data )
+{
+	$content = $amp_post_template_data['post_amp_content'];
+	$pattern = '~<form(?![^>]*\btarget=)[^<]*>~im';
+
+	if( preg_match_all( $pattern, $content, $matches ) ) 
+	{
+		if( 0 < count( $matches[0] ) )
+		{
+			$matchesUnique = array_unique( $matches[0] );
+			foreach( $matchesUnique as $match )
+			{
+				$matchStr = trim( str_replace( '>', '', $match ) ); 
+				$content = str_replace( $matchStr, $matchStr . ' target="_top"', $content );
+			}
+		}
+	}
+
+	$amp_post_template_data['post_amp_content'] = $content;
+
+	return $amp_post_template_data;
+}
+
+
+add_filter('the_content','ampforwp_heista_pro_frontpage_section');
+function ampforwp_heista_pro_frontpage_section($content){
+	global $redux_builder_amp;
+	$ampforwp_frontpage = $redux_builder_amp['amp-frontpage-select-option-pages']?intval($redux_builder_amp['amp-frontpage-select-option-pages']):0;
+	if ( (is_home() || is_page($ampforwp_frontpage)) && function_exists('hestia_run')) {
+			if ( $redux_builder_amp['amp-frontpage-select-option'] == 1 && class_exists('Hestia_Defaults_Models')) {
+				$slider_default = Hestia_Defaults_Models::instance()->get_slider_default();
+				$slider_content = get_theme_mod( 'hestia_slider_content',wp_json_encode($slider_default));
+				$slider_content = json_decode( $slider_content );
+				if ( !empty( $slider_content ) ) {
+				$amp_html='<div class="ampforwp-carousel-cont" >
+					<amp-carousel width="500" height="300" layout="responsive" type="slides" aria-label="Hestia Header carousel">';
+				foreach ( $slider_content as $slider_item ) {
+					$title                = ! empty( $slider_item->title ) ? apply_filters( 'hestia_translate_single_string', $slider_item->title, 'Slider section' ) : '';
+					$subtitle             = ! empty( $slider_item->subtitle ) ? apply_filters( 'hestia_translate_single_string', $slider_item->subtitle, 'Slider section' ) : '';
+					$button               = ! empty( $slider_item->text ) ? apply_filters( 'hestia_translate_single_string', $slider_item->text, 'Slider section' ) : '';
+					$link                 = ! empty( $slider_item->link ) ? apply_filters( 'hestia_translate_single_string', $slider_item->link, 'Slider section' ) : '';
+					$button2              = ! empty( $slider_item->text2 ) ? apply_filters( 'hestia_translate_single_string', $slider_item->text2, 'Slider section' ) : '';
+					$link2                = ! empty( $slider_item->link2 ) ? apply_filters( 'hestia_translate_single_string', $slider_item->link2, 'Slider section' ) : '';
+					$slider_type 		  = get_theme_mod( 'hestia_slider_type', apply_filters( 'hestia_slider_type_default', 'image' ) );
+					$image_url_bg         = ! empty( $slider_item->image_url ) && $slider_type=='image' ? apply_filters( 'hestia_translate_single_string', $slider_item->image_url, 'Slider section' ) : '';				
+					$amp_html.='<div class="ampforwp-carousel-wrapper">';
+					if($image_url_bg){
+						$amp_html.='<div class="ampforwp-carousel-img-wrapper" ><amp-img src="'.esc_url($image_url_bg).'" width="1200" height="800" layout="fill"></amp-img></div>';
+					}
+						$amp_html.='<div class="ampforwp-carousel-content">';
+					if($title){
+						$amp_html.=	'<h1>'.esc_attr( $title ).'</h1>';
+					}
+					if($subtitle){
+						$amp_html.=	'<p>'.esc_attr( $subtitle ).'</p>';
+					}
+					if($button && $link){
+						$amp_html.=	'<a href="'.esc_url($link).'" title="'.esc_attr( $button ).'"><button>'.esc_attr( $button ).'</button></a>';
+					} 
+					if($button2 && $link2){
+						$amp_html.=	'<a href="'.esc_url($link2).'" title="'.esc_attr( $button2 ).'"><button>'.esc_attr( $button2 ).'</button></a>';
+					}
+					$amp_html.='</div>
+					</div>'; 
+				}
+				$amp_html.='</amp-carousel></div>';
+				
+				}
+			$content = $amp_html.$content;
+			
+		 }
+	}
+ return $content;
+}
+add_action('amp_post_template_css','ampforwp_heista_pro_frontpage_section_css');
+function ampforwp_heista_pro_frontpage_section_css(){
+	global $redux_builder_amp;
+	$ampforwp_frontpage = $redux_builder_amp['amp-frontpage-select-option-pages']?intval($redux_builder_amp['amp-frontpage-select-option-pages']):0;
+	if ( (is_home() || is_page($ampforwp_frontpage)) && function_exists('hestia_run')) {
+		echo '.ampforwp-carousel-cont amp-carousel{height:400px} .ampforwp-carousel-wrapper{position:relative;width:100%;} .ampforwp-carousel-img-wrapper img{filter: brightness(50%);} .ampforwp-carousel-content h1 , .ampforwp-carousel-content p{width:90%;padding: 0px 10px;border-radius:8px} .ampforwp-carousel-content{position:absolute;top:0;bottom:0;right:0;left:0;text-align:center;display: flex;flex-direction: column;align-items: center;justify-content: center;color:#fff;}';
+	}
+}
+
+/*
+* To fix validation error attribute a may not appear in a tag
+* Issue is due to WPBakery Page Builder plugin which is adding a attribute in anchor tag
+*/
+add_filter( 'vc_gitem_post_data_get_link_real_link','ampforwp_fix_a_attr_in_anchor_tag',99,1);
+function ampforwp_fix_a_attr_in_anchor_tag($target_link){
+	if ( function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint() ) {
+		if(preg_match('/a (.*?)/', $target_link)){
+			$target_link = preg_replace('/a (.*?)/', '$1', $target_link); 
+		}
+ 	}
+	return $target_link;
+}
+
+//ftc theme compatibility
+add_action( 'admin_init', 'ampforwp_fTC_theme_remove_scripts');
+function ampforwp_fTC_theme_remove_scripts() {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+    if ( isset ( $_GET['page'] ) && $_GET['page'] == 'amp_options' ) {
+        remove_action('admin_enqueue_scripts', 'ftc_register_admin_scripts');
+    }
+}
+
+//Remove Poll maker to solve validation error
+add_action('wp','ampforwp_poll_maker_remove_html');
+function ampforwp_poll_maker_remove_html(){
+	if((function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint()) || (function_exists('is_amp_endpoint') && is_amp_endpoint())){
+		$plugin_name = 'poll-maker-ays';
+		if (defined('POLL_MAKER_AYS_VERSION')) {
+			$version = POLL_MAKER_AYS_VERSION;
+		} else {
+			$version = '1.0.0';
+		}
+		if(class_exists('Poll_Maker_Ays_Public')){
+			$new = new Poll_Maker_Ays_Public($plugin_name, $version);	
+			remove_shortcode('ays_poll', array($new, 'ays_poll_generate_shortcode'));
+			add_shortcode('ays_poll', 'ampforwp_ays_poll_remove_shortcode');
+		}
+}
+}
+
+function ampforwp_ays_poll_remove_shortcode($atts){
+	return;
+}
+
+/*
+* Adding compatiblity for Amazon Auto Links Plugin
+* since 1.0.96
+*/
+add_filter('the_content','ampforwp_aal_content_fix', 9);
+
+function ampforwp_aal_content_fix( $content ) {
+
+	if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() && class_exists( 'AmazonAutoLinks_Registry_Base' ) ) {
+		$auto_insert ='';
+		// get all post  ids with  post_type aal_auto_insert and are  published. Only need to fetch ids not the whole post
+
+		$posts = get_posts(array(
+			'post_type' => 'aal_auto_insert',
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'posts_per_page' => -1
+		));
+
+		// if there are no posts then return the content as it is
+		if(empty($posts)){
+			return $content;
+		}
+			$position = 'below';
+		foreach($posts as $post){
+			$unit_ids =  get_post_meta( $post, 'unit_ids', true );
+			$status = get_post_meta( $post, 'status', true );
+			$position = get_post_meta( $post, 'position', true );
+			$enable_post_ids = get_post_meta( $post, 'enable_post_ids', true );
+			$enable_page_types = get_post_meta( $post, 'enable_page_types', true );
+			$enable_post_types = get_post_meta( $post, 'enable_post_types', true );
+			$diable_post_ids = get_post_meta( $post, 'diable_post_ids', true );
+			$disable_page_types = get_post_meta( $post, 'disable_page_types', true );
+			$disable_post_types = get_post_meta( $post, 'disable_post_types', true );
+			$pages_types = ['is_singular'=>is_singular(),'is_home'=>is_home(),'is_archive'=>is_archive(),'is_404'=>is_404(),'is_search'=>is_search()];
+			$get_current_post_type = get_post_type();
+			$get_current_post_id  = get_the_ID(); 
+			$enable_post_types_values = array_filter(array_unique(array_values($enable_post_types)));
+			$disable_post_types_values = array_filter(array_unique(array_values($disable_post_types)));
+			$enable_pages_types_values = array_filter(array_unique(array_values($enable_page_types)));
+			$disable_pages_types_values = array_filter(array_unique(array_values($disable_page_types)));
+			$diable_post_ids = array_filter(explode(',',$diable_post_ids));
+			$enable_post_ids = array_filter(explode(',',$enable_post_ids));
+		
+			if($status == '1' && (empty($enable_post_ids)  || (!empty($enable_post_ids) &&in_array($get_current_post_id, $enable_post_ids))) && (!in_array('1', $enable_post_types_values) || (in_array('1', $enable_post_types_values) && isset($enable_post_types[$get_current_post_type]) && $enable_post_types[$get_current_post_type] == 1)) && !in_array($get_current_post_id, $diable_post_ids) && (!in_array('1', $disable_post_types) ||( in_array('1', $disable_post_types_values) && isset($disable_post_types[$get_current_post_type]) && $disable_post_types[$get_current_post_type] == 0)) && ((!in_array('1', $enable_pages_types_values) || (in_array('1', $enable_pages_types_values) && ampforwp_aal_check_pages_types($pages_types,$enable_page_types)) ))&& ((!in_array('1', $disable_pages_types_values) || (in_array('1', $disable_pages_types_values) && ampforwp_aal_check_pages_types($pages_types,$disable_page_types)) )))
+	 		{
+				$auto_insert .= apply_filters( 'aal_filter_output', '', array('id'=>implode(',',$unit_ids)));
+			} 
+
+		}
+
+		if($position == 'above'){
+			$content = $auto_insert.$content;
+		}else if($position == 'both'){
+			$content = $auto_insert.$content.$auto_insert;
+		}else{
+			$content = $content.$auto_insert;
+		}
+		
+		
+	}
+	return $content;
+}
+
+function ampforwp_aal_check_pages_types($pages_types, $enabled_or_not) {
+    foreach ($pages_types as $key => $value) {
+        if ($value && $enabled_or_not[$key] == '1') {
+            return true;
+        }
+    }
+    return false;
+}
+
+add_action('amp_post_template_css','ampforwp_aal_css');
+function ampforwp_aal_css(){
+	if (is_amp_endpoint() && class_exists('AmazonAutoLinks_Registry_Base')) {
+		echo '.amazon-products-container-list{overflow-y:auto;overflow-x:hidden;width:100%}.amazon-products-container-list *{-webkit-box-sizing:border-box;box-sizing:border-box}.amazon-products-container-list a{color:inherit;text-decoration:none}.amazon-products-container-list .amazon-product-container{width:100%;display:block;clear:both;margin-bottom:1.4em}.amazon-products-container-list .amazon-product-title{margin:.1em 0 1em}.amazon-products-container-list .amazon-product-thumbnail-container{width:100%}.amazon-products-container-list .amazon-product-thumbnail{display:table;margin:auto;text-align:center;padding:1em}.amazon-products-container-list .amazon-product-thumbnail a{display:inline-block;background-color:#fff;padding:.8em;border:none;border-radius:4%;-webkit-box-shadow:none;box-shadow:none}.amazon-products-container-list .amazon-product-thumbnail a:focus,.amazon-products-container-list .amazon-product-thumbnail a:hover{-webkit-box-shadow:none;box-shadow:none}.amazon-products-container-list .amazon-product-thumbnail img{max-width:100%;margin-left:auto;margin-right:auto}.amazon-products-container-list .amazon-auto-links-product-body{display:inline-block;width:65.8%}.amazon-products-container-list .crIFrameNumCustReviews{display:inline-block;vertical-align:top;height:auto}.amazon-products-container-list .crAvgStars{white-space:nowrap}.amazon-products-container-list span.crAvgStars a{font-size:inherit}.amazon-products-container-list .amazon-customer-rating-stars{display:inline-block;margin:0 .2em 0 0;vertical-align:middle;line-height:1.6;font-size:88%}.amazon-products-container-list .amazon-customer-rating-stars .review-stars{display:inline;vertical-align:text-bottom;margin-right:.44em;line-height:1}.amazon-products-container-list .amazon-customer-rating-stars .review-stars svg{top:-2px}.amazon-products-container-list .amazon-customer-rating-stars .review-count{margin-top:2px;margin-left:-2px;display:inline}.amazon-products-container-list .pricing-disclaimer a.amazon-disclaimer-tooltip{outline:0}.amazon-products-container-list .pricing-disclaimer a.amazon-disclaimer-tooltip>span.amazon-disclaimer-tooltip-content>.amazon-disclaimer-tooltip-content-text{z-index:999;display:none;padding:14px 20px;margin-top:-30px;margin-left:28px;width:300px;line-height:16px;border-radius:4px;-webkit-box-shadow:5px 5px 8px #ccc;box-shadow:5px 5px 8px #ccc}.amazon-products-container-list .pricing-disclaimer a.amazon-disclaimer-tooltip:hover{text-decoration:none}.amazon-products-container-list .pricing-disclaimer a.amazon-disclaimer-tooltip:hover>span.amazon-disclaimer-tooltip-content{display:inline;position:relative}.amazon-products-container-list .pricing-disclaimer a.amazon-disclaimer-tooltip:hover>span.amazon-disclaimer-tooltip-content>.amazon-disclaimer-tooltip-content-text{display:inline;float:right;position:absolute;color:#111;border:1px solid #dca;background:#fffaf0;margin-left:-100px;margin-top:-140px}.amazon-products-container-list .amazon-auto-links-product-image{vertical-align:top;display:inline-block;width:32%;margin-right:1%;font-size:80%}.amazon-products-container-list .amazon-prices{margin-right:.2em;line-height:1.6;font-size:88%;display:inline-block;vertical-align:middle}.amazon-products-container-list .amazon-prices .offered-price{display:inline}.amazon-products-container-list span.offered-price{color:#b12704;font-weight:700}@media only screen and (max-width:520px){.amazon-products-container-list .amazon-auto-links-product-image{width:100%;margin-bottom:1em}.amazon-products-container-list .amazon-auto-links-product-body{font-size:88%;width:100%}}.amazon-product-thumbnail .amp-wp-enforced-sizes {width:100px;height:100px;}';
+	}
+}
+
+add_filter('amp_post_template_data','ampforwp_aal_compatibility');
+
+function ampforwp_aal_compatibility( $amp_post_template_data ) 
+{
+	if (is_amp_endpoint() && class_exists('AmazonAutoLinks_Registry_Base')) {
+			$content = $amp_post_template_data['post_amp_content'];
+		if (strpos($content, '<div class="amazon-customer-rating-stars">') !== false) {
+    // Perform the replacement within <span class="review-stars">
+		$content = preg_replace('/(<span class="review-stars">.*?<a [^>]*>).*?<svg[^>]*><title>([^<]*)<\/title>.*?<\/svg>(.*?<\/a>.*?<\/span>)/s', '$1$2$3', $content);
+				$amp_post_template_data['post_amp_content'] = $content;
+	} 	
+	}
+
+	return $amp_post_template_data;
+}
+
+/* Disable lazyload of JNews theme when AMP mode is active */
+function ampforwp_jnews_disable_lazyload_image ( $value ){
+	add_filter('theme_mod_jnews_image_load',function($value){
+		return 'normal';
+	});
+}
+
+add_action("amp_init", "ampforwp_jnews_disable_lazyload_image");
+
+if( ! function_exists('ampforwp_getty_image_compatibility') ){
+	function ampforwp_getty_image_compatibility($content){
+	global $getty_img_content;
+	if(is_array($getty_img_content)){
+		if(preg_match_all('/<a id="(.*?)"\sclass="gie-single(.*?)">Embed from Getty Images<\/a>/', $content, $matches)){
+			if(isset($matches[0])){
+				for($i=0;$i<count($matches[0]);$i++){
+					$full_content = $matches[0][$i];
+					$img_id = $matches[1][$i];
+					if(isset($getty_img_content[$i])){
+						if(preg_match('/gie\.widgets\.load\({id:\'(.*?)\',sig:\'(.*?)\',w:\'(.*?)\',h:\'(.*?)\',items:\'(.*?)\'/',$getty_img_content[$i],$match)){
+							if(isset($match[1]) && isset($match[2]) && isset($match[3]) && isset($match[4]) && isset($match[5])){
+								$image_id = $match[1];
+								$image_key = $match[2];
+								$width = $match[3];
+								$height = $match[4];
+								$img_emb_id = $match[5];
+								$iframe = '<iframe src="//embed.gettyimages.com/embed/'.esc_attr($img_emb_id).'?et='.esc_attr($image_id).'&amp;tld=com&sig='.esc_attr($image_key).'&caption=false&ver=2" scrolling="no" frameborder="0" width="'.esc_attr($width).'" height="'.esc_attr($height).'"></iframe>';
+								$description 	= get_the_archive_description();
+								$sanitizer = new AMPFORWP_Content( $iframe, array(), 
+										apply_filters( 'ampforwp_content_sanitizers',
+											array( 
+												'AMP_Style_Sanitizer' 		=> array(),
+												'AMP_Blacklist_Sanitizer' 	=> array(),
+												'AMP_Img_Sanitizer' 		=> array(),
+												'AMP_Video_Sanitizer' 		=> array(),
+												'AMP_Audio_Sanitizer' 		=> array(),
+												'AMP_Iframe_Sanitizer' 		=> array(
+													'add_placeholder' 		=> true,
+												)
+											) ) );
+								$iframe_content = $sanitizer->get_amp_content();
+								$content = str_replace($full_content, $iframe_content, $content );
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return $content;
+	}
 }

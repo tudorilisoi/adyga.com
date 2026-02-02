@@ -2,44 +2,158 @@
 # This file is distributed under the same license as the Plugins - Responsive Lightbox &amp; Gallery - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-05-15 11:15:26+0000\n"
+"PO-Revision-Date: 2026-01-27 17:03:34+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n == 0 || n % 100 >= 2 && n % 100 <= 19) ? 1 : 2);\n"
-"X-Generator: GlotPress/4.0.1\n"
+"X-Generator: GlotPress/4.0.3\n"
 "Language: ro\n"
 "Project-Id-Version: Plugins - Responsive Lightbox &amp; Gallery - Stable (latest release)\n"
 
-#: includes/class-galleries.php:1220
+#: responsive-lightbox.php:1620
+msgid "An error occurred while loading taxonomies."
+msgstr "A apărut o eroare în timpul încărcării taxonomiilor."
+
+#: responsive-lightbox.php:1619
+msgid "An error occurred while processing taxonomies."
+msgstr "A apărut o eroare în timpul procesării taxonomiilor."
+
+#: includes/settings/class-settings-general.php:148
+msgid "Default Gallery"
+msgstr "Galerie implicită"
+
+#: includes/settings/class-settings-folders.php:317
+msgid "No custom taxonomies found."
+msgstr "Nu am găsit nicio taxonomie personalizată."
+
+#: includes/settings/class-settings-folders.php:233
+msgid "Invalid data format."
+msgstr "Formatul pentru date nu este valid."
+
+#: includes/settings/class-settings-folders.php:229
+msgid "Missing required data."
+msgstr "Lipsesc datele obligatorii."
+
+#: includes/settings/class-settings-folders.php:225
+msgid "You do not have permission to perform this action."
+msgstr "Nu ai permisiunea să efectuezi această acțiune."
+
+#: includes/settings/class-settings-folders.php:136
+msgid "Folders Source"
+msgstr "Sursă dosare"
+
+#: includes/settings/class-settings-folders.php:60
+#: includes/settings/class-settings-folders.php:141
+msgid "Custom Taxonomy"
+msgstr "Taxonomie personalizată"
+
+#: includes/settings/class-settings-addons.php:107
+msgid "Invalid request. Please reload the page and try again."
+msgstr "Cererea nu este validă. Te rog să reîncarci pagina și să încerci din nou."
+
+#: includes/settings/class-settings-addons.php:104
+msgid "You are not allowed to access this data."
+msgstr "Nu ai voie să accesezi aceste date."
+
+#: includes/settings/class-settings-addons.php:88
+msgid "Loading extensions..."
+msgstr "Încarc extensiile..."
+
+#: includes/providers/class-flickr.php:51
+msgid "Enable Flickr support."
+msgstr "Activează suportul Flickr."
+
+#: includes/class-settings-data.php:222
+msgid "Attachment Title"
+msgstr "Titlu atașament"
+
+#: includes/providers/class-wikimedia.php:50
+msgid "Enable Wikimedia support."
+msgstr "Activează suportul Wikimedia."
+
+#: includes/providers/class-unsplash.php:46
+msgid "Enable Unsplash support."
+msgstr "Activează suportul Unsplash."
+
+#: includes/class-settings-data.php:132
+msgid "The requested content cannot be loaded. Please try again later."
+msgstr "Conținutul cerut nu poate fi încărcat. Te rog să reîncerci mai târziu."
+
+#: includes/class-settings-api.php:1421
+msgid "Settings saved."
+msgstr "Am salvat setările."
+
+#: includes/class-settings-api.php:1226
+msgid "Open color picker"
+msgstr "Deschide selectorul de culoare"
+
+#: includes/class-galleries.php:656
+msgid "Custom Size"
+msgstr "Dimensiune personalizată"
+
+#: includes/settings/class-settings-lightboxes.php:653
+msgid "Enable loop."
+msgstr "Activează bucla."
+
+#: includes/settings/class-settings-lightboxes.php:641
+msgid "Enable keyboard navigation."
+msgstr "Activează navigarea cu tastatura."
+
+#: includes/settings/class-settings-lightboxes.php:629
+msgid "Display the close button."
+msgstr "Afișează butonul Închide."
+
+#: includes/settings/class-settings-lightboxes.php:627
+msgid "Close Button"
+msgstr "Buton Închide"
+
+#: includes/settings/class-settings-remote-library.php:83
+msgid "MB"
+msgstr "Mo"
+
+#: includes/settings/class-settings-remote-library.php:79
+msgid "Max Image Size"
+msgstr "Dimensiune maximă pentru imagine"
+
+#: includes/class-remote-library.php:205
+msgid "Invalid nonce."
+msgstr "Nunicul nu este valid."
+
+#: includes/class-remote-library.php:201
+msgid "Insufficient permissions."
+msgstr "Permisiuni insuficiente."
+
+#: includes/class-galleries.php:1260
 msgid "No items found."
 msgstr "Nu am găsit niciun element."
 
-#: responsive-lightbox.php:1681
+#: responsive-lightbox.php:1650
 msgid "Embed Video"
 msgstr "Înglobează video"
 
-#: responsive-lightbox.php:1680
+#: responsive-lightbox.php:1649
 msgid "Save changes"
 msgstr "Salvează modificările"
 
-#: responsive-lightbox.php:1679
+#: responsive-lightbox.php:1648
 msgid "Video details"
 msgstr "Detalii video"
 
-#: responsive-lightbox.php:1674
+#: responsive-lightbox.php:1643
 msgid "Use these items"
 msgstr "Folosește aceste elemente"
 
-#: includes/class-galleries.php:1492 includes/class-galleries.php:1494
+#: includes/class-galleries.php:1540 includes/class-galleries.php:1542
 msgid "Embed videos"
 msgstr "Înglobează videouri"
 
-#: responsive-lightbox.php:1675
+#: responsive-lightbox.php:1644
 msgid "Clear selected items"
 msgstr "Șterge elementele selectate"
 
-#: includes/class-settings.php:531 includes/class-tour.php:197
+#: includes/class-tour.php:220
+#: includes/settings/class-settings-capabilities.php:64
 msgid "Capabilities Settings"
 msgstr "Setări capabilități"
 
@@ -47,35 +161,35 @@ msgstr "Setări capabilități"
 msgid "Addons"
 msgstr "Suplimente"
 
-#: responsive-lightbox.php:1011
+#: responsive-lightbox.php:1040
 msgid "Deactivate & Submit"
 msgstr "Dezactivează și trimite"
 
-#: responsive-lightbox.php:1010
+#: responsive-lightbox.php:1039
 msgid "Deactivate"
 msgstr "Dezactivează"
 
-#: responsive-lightbox.php:662
+#: responsive-lightbox.php:691
 msgid "Manage Settings"
 msgstr "Administrează setările"
 
-#: responsive-lightbox.php:656
+#: responsive-lightbox.php:685
 msgid "Delete Published Galleries"
 msgstr "Șterge galeriile publicate"
 
-#: responsive-lightbox.php:655
+#: responsive-lightbox.php:684
 msgid "Delete Galleries"
 msgstr "Șterge galeriile"
 
-#: responsive-lightbox.php:651
+#: responsive-lightbox.php:680
 msgid "Edit Galleries"
 msgstr "Editează galeriile"
 
-#: responsive-lightbox.php:652
+#: responsive-lightbox.php:681
 msgid "Edit Published Galleries"
 msgstr "Editează galeriile publicate"
 
-#: responsive-lightbox.php:650
+#: responsive-lightbox.php:679
 msgid "Publish Galleries"
 msgstr "Publică galeriile"
 
@@ -83,85 +197,85 @@ msgstr "Publică galeriile"
 msgid "Upload and Select"
 msgstr "Încarcă și selectează"
 
-#: includes/class-galleries.php:1659
+#: includes/class-galleries.php:1707
 msgid "Next page"
 msgstr "Pagina următoare"
 
-#: includes/class-galleries.php:1651
+#: includes/class-galleries.php:1699
 msgctxt "paging"
 msgid "%1$s"
 msgstr "%1$s"
 
-#: includes/class-galleries.php:1645
+#: includes/class-galleries.php:1693
 msgid "Current Page"
 msgstr "Pagina curentă"
 
-#: includes/class-galleries.php:1638
+#: includes/class-galleries.php:1686
 msgid "Previous page"
 msgstr "Pagina anterioară"
 
-#: includes/class-galleries.php:1627
+#: includes/class-galleries.php:1675
 msgid "First page"
 msgstr "Prima pagină"
 
-#: includes/class-galleries.php:1258
+#: includes/class-galleries.php:1298
 msgid "Select gallery"
 msgstr "Selectează o galerie"
 
-#: includes/class-galleries.php:1257
+#: includes/class-galleries.php:1297
 msgid "Insert gallery into post"
 msgstr "Inserează galeria în articol"
 
-#: includes/class-galleries.php:1227
+#: includes/class-galleries.php:1267
 msgid "Filter by category"
 msgstr "Filtrează după categorie"
 
-#: includes/class-galleries.php:1190 includes/class-galleries.php:1191
+#: includes/class-galleries.php:1230 includes/class-galleries.php:1231
 msgid "All categories"
 msgstr "Toate categoriile"
 
-#: includes/class-galleries.php:751
+#: includes/class-galleries.php:755
 msgid "You do not have permission to copy this gallery."
 msgstr "Nu ai permisiunea să copiezi această galerie."
 
-#: includes/class-folders.php:1292
+#: includes/class-folders.php:1485
 msgid "Collapse %s"
 msgstr "Restrânge %s"
 
-#: includes/class-folders.php:1291
+#: includes/class-folders.php:1484
 msgid "Expand %s"
 msgstr "Extinde %s"
 
-#: includes/class-folders.php:1290
+#: includes/class-folders.php:1483
 msgid "Delete %s"
 msgstr "Șterge %s"
 
-#: includes/class-folders.php:1288
+#: includes/class-folders.php:1481
 msgid "Save %s"
 msgstr "Salvează %s"
 
-#: includes/class-folders.php:1263
+#: includes/class-folders.php:1456
 msgid "Are you sure you want to delete this folder with all subfolders?"
 msgstr "Sigur vrei să ștergi acest dosar împreună cu toate sub-dosarele lui?"
 
-#: includes/class-folders.php:1262
+#: includes/class-folders.php:1455
 msgid "Are you sure you want to delete this folder?"
 msgstr "Sigur vrei să ștergi acest dosar?"
 
-#: includes/class-folders.php:1261
+#: includes/class-folders.php:1454
 msgid "New Folder"
 msgstr "Dosar nou"
 
-#: includes/class-folders.php:299
+#: includes/class-folders.php:490
 msgid "Upload files to"
 msgstr "Încarcă fișiere în"
 
-#: includes/class-settings.php:436 includes/class-settings.php:447
-#: includes/class-settings.php:922
+#: includes/class-settings-pages.php:107
+#: includes/settings/class-settings-folders.php:131
 msgid "Folders"
 msgstr "Dosare"
 
-#: includes/providers/class-unsplash.php:61
+#: includes/providers/class-unsplash.php:53
 msgid "Access key"
 msgstr "Cheie de acces"
 
@@ -173,192 +287,192 @@ msgstr "Încarcă și inserează"
 msgid "All providers"
 msgstr "Toți furnizorii"
 
-#: includes/class-settings.php:430 includes/class-tour.php:189
+#: includes/class-tour.php:212 includes/settings/class-settings-folders.php:127
 msgid "Folders Settings"
 msgstr "Setări dosare"
 
-#: responsive-lightbox.php:1618
+#: includes/class-folders.php:294
 msgid "No folders found."
 msgstr "Nu am găsit niciun dosar."
 
-#: responsive-lightbox.php:1617
+#: includes/class-folders.php:293
 msgid "New Folder Name"
 msgstr "Nume dosar nou"
 
-#: responsive-lightbox.php:1616
+#: includes/class-folders.php:292
 msgid "Add New Folder"
 msgstr "Adaugă un dosar nou"
 
-#: responsive-lightbox.php:1615
+#: includes/class-folders.php:291
 msgid "Update Folder"
 msgstr "Actualizează dosarul"
 
-#: responsive-lightbox.php:1614
+#: includes/class-folders.php:290
 msgid "Edit Folder"
 msgstr "Editează dosarul"
 
-#: responsive-lightbox.php:1613
+#: includes/class-folders.php:289
 msgid "Parent Folder:"
 msgstr "Dosar părinte:"
 
-#: responsive-lightbox.php:1612
+#: includes/class-folders.php:288
 msgid "Parent Folder"
 msgstr "Dosar părinte"
 
-#: includes/class-folders.php:341 includes/class-folders.php:354
-#: includes/class-folders.php:1207 includes/class-folders.php:1237
-#: includes/class-folders.php:1260 includes/class-folders.php:1269
-#: responsive-lightbox.php:1611
+#: includes/class-folders.php:287 includes/class-folders.php:532
+#: includes/class-folders.php:545 includes/class-folders.php:1400
+#: includes/class-folders.php:1430 includes/class-folders.php:1453
+#: includes/class-folders.php:1462
 msgid "All Files"
 msgstr "Toate fișierele"
 
-#: responsive-lightbox.php:1610
+#: includes/class-folders.php:286
 msgid "Search Folders"
 msgstr "Caută dosare"
 
-#: responsive-lightbox.php:1619
+#: includes/class-folders.php:295
 msgctxt "taxonomy general name"
 msgid "Folders"
 msgstr "Dosare"
 
-#: responsive-lightbox.php:1609
+#: includes/class-folders.php:285
 msgctxt "taxonomy singular name"
 msgid "Media Folder"
 msgstr "Dosar Media"
 
-#: responsive-lightbox.php:1535
+#: includes/class-folders.php:131
 msgid "No tags found."
 msgstr "Nu am găsit nicio etichetă."
 
-#: responsive-lightbox.php:1534
+#: includes/class-folders.php:130
 msgid "New Tag Name"
 msgstr "Nume etichetă nouă"
 
-#: responsive-lightbox.php:1533
+#: includes/class-folders.php:129
 msgid "Add New Tag"
 msgstr "Adaugă o etichetă nouă"
 
-#: responsive-lightbox.php:1532
+#: includes/class-folders.php:128
 msgid "Update Tag"
 msgstr "Actualizează eticheta"
 
-#: responsive-lightbox.php:1531
+#: includes/class-folders.php:127
 msgid "Edit Tag"
 msgstr "Editează eticheta"
 
-#: responsive-lightbox.php:1530
+#: includes/class-folders.php:126
 msgid "All Tags"
 msgstr "Toate etichetele"
 
-#: responsive-lightbox.php:1529
+#: includes/class-folders.php:125
 msgid "Search Tags"
 msgstr "Caută etichete"
 
-#: responsive-lightbox.php:1536
+#: includes/class-folders.php:132
 msgctxt "taxonomy general name"
 msgid "Tags"
 msgstr "Etichete"
 
-#: responsive-lightbox.php:1677
+#: responsive-lightbox.php:1646
 msgid "Edit attachment"
 msgstr "Editează atașamentul"
 
-#: responsive-lightbox.php:1494
+#: responsive-lightbox.php:1577
 msgid "Preview gallery"
 msgstr "Previzualizează galeria"
 
-#: responsive-lightbox.php:1488
+#: responsive-lightbox.php:1571
 msgid "View gallery"
 msgstr "Vezi galeria"
 
-#: responsive-lightbox.php:1482
+#: responsive-lightbox.php:1565
 msgid "Gallery draft updated."
 msgstr "Am actualizat ciorna galeriei."
 
-#: responsive-lightbox.php:1481
+#: responsive-lightbox.php:1564
 msgid "Gallery scheduled for: <strong>%1$s</strong>."
 msgstr "Am programat galeria pentru: <strong>%1$s</strong>."
 
-#: responsive-lightbox.php:1480
+#: responsive-lightbox.php:1563
 msgid "Gallery submitted."
 msgstr "Am trimis galeria."
 
-#: responsive-lightbox.php:1479
+#: responsive-lightbox.php:1562
 msgid "Gallery saved."
 msgstr "Am salvat galeria."
 
-#: responsive-lightbox.php:1478
+#: responsive-lightbox.php:1561
 msgid "Gallery published."
 msgstr "Am publicat galeria."
 
-#: responsive-lightbox.php:1477
+#: responsive-lightbox.php:1560
 msgid "Gallery restored to revision from %s"
 msgstr "Am restaurat galeria la revizia din %s"
 
-#: responsive-lightbox.php:1475 responsive-lightbox.php:1476
+#: responsive-lightbox.php:1558 responsive-lightbox.php:1559
 msgid "Gallery updated."
 msgstr "Am actualizat galeria."
 
-#: responsive-lightbox.php:1214
+#: responsive-lightbox.php:1256
 msgid "All Galleries"
 msgstr "Toate galeriile"
 
-#: responsive-lightbox.php:1213
+#: responsive-lightbox.php:1255
 msgid "No galleries found in trash"
 msgstr "Nu am găsit nicio galerie la gunoi"
 
-#: responsive-lightbox.php:1212
+#: responsive-lightbox.php:1254
 msgid "No galleries found"
 msgstr "Nu am găsit nicio galerie"
 
-#: responsive-lightbox.php:1211
+#: responsive-lightbox.php:1253
 msgid "Search Galleries"
 msgstr "Caută galerii"
 
-#: responsive-lightbox.php:1210
+#: responsive-lightbox.php:1252
 msgid "View Galleries"
 msgstr "Vezi galeriile"
 
-#: responsive-lightbox.php:1209
+#: responsive-lightbox.php:1251
 msgid "View Gallery"
 msgstr "Vezi galeria"
 
-#: responsive-lightbox.php:1208
+#: responsive-lightbox.php:1250
 msgid "New Gallery"
 msgstr "Galerie nouă"
 
-#: responsive-lightbox.php:1207
+#: responsive-lightbox.php:1249
 msgid "Edit Gallery"
 msgstr "Editează galeria"
 
-#: responsive-lightbox.php:1206
+#: responsive-lightbox.php:1248
 msgid "Add New Gallery"
 msgstr "Adaugă o galerie nouă"
 
-#: responsive-lightbox.php:1204
+#: responsive-lightbox.php:1246
 msgctxt "post type singular name"
 msgid "Gallery"
 msgstr "Galerie"
 
-#: responsive-lightbox.php:1203
+#: responsive-lightbox.php:1245
 msgctxt "post type general name"
 msgid "Galleries"
 msgstr "Galerii"
 
-#: responsive-lightbox.php:1122
+#: responsive-lightbox.php:1164
 msgid "All Gallery Categories"
 msgstr "Toate categoriile de galerii"
 
-#: responsive-lightbox.php:1121
+#: responsive-lightbox.php:1163
 msgid "Search Gallery Categories"
 msgstr "Caută categorii de galerii"
 
-#: responsive-lightbox.php:1120
+#: responsive-lightbox.php:1162
 msgctxt "taxonomy singular name"
 msgid "Gallery Category"
 msgstr "Categorie de galerii"
 
-#: responsive-lightbox.php:1119
+#: responsive-lightbox.php:1161
 msgctxt "taxonomy general name"
 msgid "Gallery Categories"
 msgstr "Categorii de galerii"
@@ -367,79 +481,73 @@ msgstr "Categorii de galerii"
 msgid "Go to Settings"
 msgstr "Mergi la Setări"
 
-#: includes/class-settings.php:276
-msgid "Gallery image title"
-msgstr "Titlu imagine galerie"
-
-#: includes/class-settings.php:321
-msgid "Custom events"
+#: includes/settings/class-settings-general.php:211
+msgid "Custom Events"
 msgstr "Evenimente personalizate"
 
-#: includes/class-settings.php:1073
+#: includes/settings/class-settings-lightboxes.php:227
 msgid "Opacity"
 msgstr "Opacitate"
 
-#: includes/class-settings.php:1096
-msgid "Allow expand"
-msgstr "Permite expandare"
-
-#: includes/class-settings.php:1099
+#: includes/settings/class-settings-lightboxes.php:249
 msgid "Allow expanding images."
 msgstr "Permite expandare imagini."
 
-#: includes/class-settings.php:1132
+#: includes/settings/class-settings-lightboxes.php:278
 msgid "Hide Flash"
 msgstr "Ascunde Flash"
 
-#: includes/class-settings.php:1139
+#: includes/settings/class-settings-lightboxes.php:284
 msgid "Flash Window Mode (wmode)"
 msgstr "Flash Window Mode (wmode)"
 
-#: includes/class-settings.php:1182
+#: includes/settings/class-settings-lightboxes.php:321
 msgid "Social (Twitter, Facebook)"
 msgstr "Social (Twitter, Facebook)"
 
-#: includes/class-settings.php:783
+#: includes/settings/class-settings-galleries.php:426
 msgid "Margin"
 msgstr "Margine"
 
-#: includes/class-settings.php:1195
+#: includes/settings/class-settings-lightboxes.php:331
 msgid "Effect"
 msgstr "Efect"
 
-#: includes/providers/class-flickr.php:151
-#: includes/providers/class-unsplash.php:144
-#: includes/providers/class-wikimedia.php:146
+#: includes/providers/class-flickr.php:159
+#: includes/providers/class-unsplash.php:152
+#: includes/providers/class-wikimedia.php:143
 msgid "Responsive Lightbox"
 msgstr "Responsive Lightbox"
 
-#: responsive-lightbox.php:930
+#: responsive-lightbox.php:959
 msgid "Support"
 msgstr "Suport"
 
-#: includes/class-settings.php:957 includes/class-tour.php:227
-#: responsive-lightbox.php:964
+#: includes/class-settings-pages.php:148 includes/class-tour.php:256
+#: responsive-lightbox.php:993
 msgid "Add-ons"
 msgstr "Suplimente"
 
-#: includes/class-settings.php:949 includes/class-settings.php:1799
+#: includes/class-settings-pages.php:141
+#: includes/settings/class-settings-licenses.php:68
 msgid "Licenses"
 msgstr "Licențe"
 
-#: includes/class-settings.php:1344
+#: includes/settings/class-settings-lightboxes.php:461
 msgid "Thumbnails"
 msgstr "Miniaturi"
 
-#: includes/class-settings.php:1607
+#: includes/class-settings.php:108
 msgid "Support forum"
 msgstr "Forum pentru suport"
 
-#: includes/class-settings.php:1117
+#: includes/settings/class-settings-lightboxes.php:265
 msgid "Theme"
 msgstr "Temă"
 
-#: includes/class-welcome.php:68 responsive-lightbox.php:961
-#: responsive-lightbox.php:1293
+#: includes/class-welcome.php:68
+#: includes/settings/class-settings-lightboxes.php:106
+#: responsive-lightbox.php:990 responsive-lightbox.php:1371
 msgid "Settings"
 msgstr "Setări"
 
@@ -448,208 +556,185 @@ msgstr "Setări"
 msgid "dFactory"
 msgstr "dFactory"
 
-#: includes/class-settings.php:2251
+#: includes/settings/class-settings-addons.php:58
 msgid "Add-ons / Extensions"
 msgstr "Suplimente / Extensii"
 
-#: includes/class-settings.php:1150
+#: includes/settings/class-settings-lightboxes.php:293
 msgid "Automatically start videos."
 msgstr "Pornește videourile automat."
 
-#: includes/class-settings.php:1147
-msgid "Video autoplay"
-msgstr "Rulare automată video"
-
-#: includes/class-settings.php:1185
+#: includes/settings/class-settings-lightboxes.php:323
 msgid "Display links to Facebook and Twitter."
 msgstr "Afișează legături la Facebook și Twitter."
 
-#: includes/class-settings.php:1464
-msgid "Show close button"
-msgstr "Arată buton închidere"
-
-#: includes/class-settings.php:1234
+#: includes/settings/class-settings-lightboxes.php:363
 msgid "Animation speed."
 msgstr "Viteză animație."
 
-#: includes/class-settings.php:1039 includes/class-settings.php:1231
-msgid "Animation speed"
-msgstr "Viteză animație"
-
-#: includes/class-settings.php:1330
+#: includes/settings/class-settings-lightboxes.php:448
 msgid "Pagination"
 msgstr "Paginație"
 
-#: includes/class-settings.php:1609
+#: includes/class-settings.php:110
 msgid "Do you like this plugin?"
 msgstr "Îți place acest modul?"
 
-#: includes/class-settings.php:1610
+#: includes/class-settings.php:111
 msgid "Rate it 5"
 msgstr "Evaluează-l la 5 stele"
 
-#: includes/class-settings.php:1611
+#: includes/class-settings.php:112
 msgid "plugin page"
 msgstr "pagină modul"
 
-#: includes/class-settings.php:1612
+#: includes/class-settings.php:113
 msgid "WordPress plugins"
 msgstr "Module WordPress"
 
-#: responsive-lightbox.php:1649
+#: responsive-lightbox.php:1617
 msgid "Are you sure you want to reset these settings to defaults?"
 msgstr "Sigur vrei să resetezi aceste setări la valorile implicite?"
 
-#: includes/class-settings.php:269
-msgid "Gallery image size"
-msgstr "Dimensiune imagine galerie"
-
-#: includes/class-settings.php:336
-msgid "Loading place"
-msgstr "Încărcare loc"
-
-#: includes/class-settings.php:346
-msgid "Conditional loading"
+#: includes/settings/class-settings-general.php:232
+msgid "Conditional Loading"
 msgstr "Încărcare condiționată"
 
-#: includes/class-settings.php:352
-msgid "Delete data"
-msgstr "Șterge date"
-
-#: includes/class-settings.php:355
+#: includes/settings/class-settings-general.php:239
 msgid "Delete all plugin settings on deactivation."
 msgstr "Șterge toate setările modului la dezactivare."
 
-#: includes/class-settings.php:970
-msgid "Animation type"
+#: includes/settings/class-settings-lightboxes.php:133
+msgid "Animation Type"
 msgstr "Tip de animație"
 
-#: includes/class-settings.php:982
+#: includes/settings/class-settings-lightboxes.php:143
 msgid "Enable this if you're having problems with navigation icons not visible on some devices."
 msgstr "Activează asta dacă ai probleme cu iconurile de navigare care nu sunt vizibile pe anumite dispozitive."
 
-#: includes/class-settings.php:993
-msgid "Remove bars on mobile"
-msgstr "Înlătură barele pe mobil"
-
-#: includes/class-settings.php:996
+#: includes/settings/class-settings-lightboxes.php:155
 msgid "Hide the top and bottom bars on mobile devices."
 msgstr "Ascunde barele superioare și inferioare pe dispozitive mobile."
 
-#: includes/class-settings.php:1000
-msgid "Top and bottom bars"
-msgstr "Bare superioare și inferioare"
-
-#: includes/class-settings.php:1006
+#: includes/settings/class-settings-lightboxes.php:161
+#: includes/settings/class-settings-lightboxes.php:165
 msgid "Hide top and bottom bars after a period of time."
 msgstr "Ascunde barele superioare și inferioare după o perioadă de timp."
 
-#: includes/class-settings.php:1011
+#: includes/settings/class-settings-lightboxes.php:170
 msgid "Enter the time after which the top and bottom bars will be hidden (when hiding is enabled)."
 msgstr "Introdu timpul după care barele superioare și inferioare vor fi ascunse (când este activată ascunderea)."
 
-#: includes/class-settings.php:1018
-msgid "Video max width"
+#: includes/settings/class-settings-lightboxes.php:178
+msgid "Video Max Width"
 msgstr "Lățime maximă video"
 
-#: includes/class-settings.php:1026
-msgid "Loop at end"
+#: includes/settings/class-settings-lightboxes.php:185
+msgid "Loop at End"
 msgstr "Buclă la sfârșit"
 
-#: includes/class-settings.php:1059
+#: includes/settings/class-settings-lightboxes.php:213
 msgid "Enter time (in miliseconds)."
 msgstr "Introdu timpul (în milisecunde)."
 
-#: includes/class-settings.php:1085
+#: includes/settings/class-settings-lightboxes.php:237
 msgid "Display image title."
 msgstr "Arată titlu imagine."
 
-#: includes/class-settings.php:1089
-msgid "Allow resize big images"
+#: includes/settings/class-settings-lightboxes.php:241
+msgid "Allow Resize Big Images"
 msgstr "Permite redimensionarea imaginilor mari"
 
-#: includes/class-settings.php:1103
-msgid "Video width"
+#: includes/settings/class-settings-lightboxes.php:253
+msgid "Video Width"
 msgstr "Lățime video"
 
-#: includes/class-settings.php:1110
-msgid "Video height"
+#: includes/settings/class-settings-lightboxes.php:259
+msgid "Video Height"
 msgstr "Înălțime video"
 
-#: includes/class-settings.php:1125
-msgid "Horizontal padding"
+#: includes/settings/class-settings-lightboxes.php:272
+msgid "Horizontal Padding"
 msgstr "Distanțare pe orizontală"
 
-#: includes/class-settings.php:1285
+#: includes/settings/class-settings-lightboxes.php:406
 msgid "slide"
 msgstr "diapozitiv"
 
-#: includes/class-settings.php:687 includes/class-settings.php:1305
+#: includes/settings/class-settings-galleries.php:322
+#: includes/settings/class-settings-lightboxes.php:424
 msgid "Autoplay"
 msgstr "Redare automată"
 
-#: includes/class-settings.php:1395
+#: includes/settings/class-settings-lightboxes.php:506
 msgid "Toggle if pressing Esc button closes lightbox."
 msgstr "Comută dacă apăsarea tastei Esc închide caseta luminoasă."
 
-#: includes/class-settings.php:1606
+#: includes/class-settings.php:107
 msgid "Need support?"
 msgstr "Ai nevoie de suport?"
 
-#: includes/class-settings.php:2396
+#: includes/settings/class-settings-licenses.php:219
 msgid "%s license successfully activated."
 msgid_plural "%s licenses successfully activated."
 msgstr[0] "%s licență activată cu succes."
 msgstr[1] "%s licențe activate cu succes."
 msgstr[2] "%s de licențe activate cu succes."
 
-#: includes/class-settings.php:2444
+#: includes/settings/class-settings-licenses.php:267
 msgid "%s license successfully deactivated."
 msgid_plural "%s licenses successfully deactivated."
 msgstr[0] "%s licență dezactivată cu succes."
 msgstr[1] "%s licențe dezactivate cu succes."
 msgstr[2] "%s de licențe dezactivate cu succes."
 
-#: includes/class-settings.php:2400
+#: includes/settings/class-settings-licenses.php:223
 msgid "%s license activation failed."
 msgid_plural "%s licenses activation failed."
 msgstr[0] "Activarea unei licențe a eșuat."
 msgstr[1] "Activarea a %s licențe a eșuat."
 msgstr[2] "Activarea a %s de licențe a eșuat."
 
-#: includes/class-settings.php:1048
+#: includes/settings/class-settings-lightboxes.php:203
 msgid "Slideshow"
 msgstr "Prezentare"
 
-#: includes/class-settings.php:1175
-msgid "Keyboard shortcuts"
+#: includes/settings/class-settings-lightboxes.php:315
+msgid "Keyboard Shortcuts"
 msgstr "Scurtături tastatură"
 
-#: includes/class-settings.php:1343
+#: includes/settings/class-settings-lightboxes.php:460
 msgid "Bullets"
 msgstr "Buline"
 
-#: includes/class-settings.php:1665
+#: includes/class-settings-api.php:534
 msgid "Reset to defaults"
 msgstr "Resetează la valorile implicite"
 
-#: includes/class-settings.php:1280
-msgid "Transition effect"
+#: includes/settings/class-settings-lightboxes.php:402
+msgid "Transition Effect"
 msgstr "Efect de tranziție"
 
-#: includes/class-settings.php:1082
-msgid "Show title"
+#: includes/settings/class-settings-lightboxes.php:235
+msgid "Show Title"
 msgstr "Arată titlul"
 
-#: includes/class-settings.php:2126 includes/class-settings.php:2183
+#: includes/class-settings-api.php:1446
+#: includes/settings/class-settings-builder.php:38
+#: includes/settings/class-settings-capabilities.php:204
+#: includes/settings/class-settings-folders.php:50
+#: includes/settings/class-settings-galleries.php:102
+#: includes/settings/class-settings-general.php:38
+#: includes/settings/class-settings-lightboxes.php:56
+#: includes/settings/class-settings-remote-library.php:47
 msgid "Settings restored to defaults."
 msgstr "Am restaurat setările la valorile implicite."
 
-#: includes/class-settings.php:1610
+#: includes/class-settings.php:111
 msgid "%s on WordPress.org"
 msgstr "%s pe WordPress.org"
 
-#: includes/class-settings.php:1612
+#: includes/class-settings.php:113
 msgid "Check out our other %s."
 msgstr "Vezi și alte %s."
 
@@ -663,148 +748,168 @@ msgstr "http://www.dfactory.co/"
 msgid "http://www.dfactory.co/products/responsive-lightbox/"
 msgstr "http://www.dfactory.co/products/responsive-lightbox/"
 
-#: includes/class-settings.php:1154
+#: includes/settings/class-settings-lightboxes.php:297
 msgid "Modal"
 msgstr "Fereastră modală"
 
-#: includes/class-settings.php:1217
-msgid "Error message"
+#: includes/settings/class-settings-lightboxes.php:350
+msgid "Error Message"
 msgstr "Mesaj pentru eroare"
 
-#: includes/class-settings.php:94
+#: includes/settings/class-settings-lightboxes.php:291
+msgid "Video Autoplay"
+msgstr "Redare automată video"
+
+#: includes/settings/class-settings-lightboxes.php:565
+msgid "Show Close Button"
+msgstr "Arată butonul Închide"
+
+#: includes/settings/class-settings-general.php:237
+msgid "Delete Data"
+msgstr "Șterge datele"
+
+#: includes/settings/class-settings-lightboxes.php:153
+msgid "Remove Bars on Mobile"
+msgstr "Înlătură barele pe dispozitive mobile"
+
+#: includes/class-settings-data.php:69
 msgid "prettyPhoto"
 msgstr "prettyPhoto"
 
-#: includes/class-settings.php:97
+#: includes/class-settings-data.php:74
 msgid "normal"
 msgstr "normal"
 
-#: includes/class-settings.php:98
+#: includes/class-settings-data.php:73
 msgid "fast"
 msgstr "rapid"
 
-#: includes/class-settings.php:106
+#: includes/class-settings-data.php:83
 msgid "facebook"
 msgstr "facebook"
 
-#: includes/class-settings.php:110
+#: includes/class-settings-data.php:87
 msgid "transparent"
 msgstr "transparent"
 
-#: includes/class-settings.php:111
+#: includes/class-settings-data.php:86
 msgid "opaque"
 msgstr "opac"
 
-#: includes/class-settings.php:112
+#: includes/class-settings-data.php:89
 msgid "direct"
 msgstr "direct"
 
-#: includes/class-settings.php:113
-msgid "gpu"
-msgstr "gpu"
-
-#: includes/class-settings.php:86
+#: includes/class-settings-data.php:53
 msgid "SwipeBox"
 msgstr "SwipeBox"
 
-#: includes/class-settings.php:88
+#: includes/class-settings-data.php:57
 msgid "CSS"
 msgstr "CSS"
 
-#: includes/class-settings.php:89
+#: includes/class-settings-data.php:58
 msgid "jQuery"
 msgstr "jQuery"
 
-#: includes/class-settings.php:118
+#: includes/class-settings-data.php:116
 msgid "Nivo Lightbox"
 msgstr "Nivo Lightbox"
 
-#: includes/class-settings.php:131
+#: includes/class-settings-data.php:136
 msgid "Image Lightbox"
 msgstr "Image Lightbox"
 
-#: includes/class-settings.php:135
+#: includes/class-settings-data.php:149
 msgid "TosRUs"
 msgstr "TosRUs"
 
-#: includes/class-settings.php:167
+#: includes/class-settings-data.php:241
+#: includes/settings/class-settings-general.php:78
 msgid "Medium"
 msgstr "Mediu"
 
-#: includes/class-settings.php:168
+#: includes/class-settings-data.php:240
+#: includes/settings/class-settings-general.php:79
 msgid "Large"
 msgstr "Mare"
 
-#: includes/class-settings.php:209
+#: includes/settings/class-settings-general.php:116
 msgid "Selector"
 msgstr "Selector"
 
-#: includes/class-settings.php:241 includes/class-settings.php:905
-#: responsive-lightbox.php:1335 responsive-lightbox.php:1341
-#: responsive-lightbox.php:1352 responsive-lightbox.php:1367
+#: includes/class-galleries.php:2452 includes/class-settings-pages.php:98
+#: includes/settings/class-settings-general.php:143
+#: responsive-lightbox.php:1418 responsive-lightbox.php:1424
+#: responsive-lightbox.php:1435 responsive-lightbox.php:1450
 msgid "Galleries"
 msgstr "Galerii"
 
-#: includes/class-settings.php:166
+#: includes/class-settings-data.php:242
+#: includes/settings/class-settings-general.php:77
 msgid "Thumbnail"
 msgstr "Miniatură"
 
-#: includes/class-settings.php:341
+#: includes/settings/class-settings-general.php:227
 msgid "Header"
 msgstr "Antet"
 
-#: includes/class-settings.php:342
+#: includes/settings/class-settings-general.php:228
 msgid "Footer"
 msgstr "Subsol"
 
-#: includes/class-settings.php:101
+#: includes/class-settings-data.php:78
 msgid "default"
 msgstr "implicit"
 
-#: includes/class-settings.php:109
+#: includes/class-settings-data.php:88
 msgid "window"
 msgstr "fereastră"
 
-#: includes/class-galleries.php:679 includes/class-settings.php:152
+#: includes/class-galleries.php:680 includes/class-settings-data.php:224
 msgid "Image Caption"
 msgstr "Text asociat imagine"
 
-#: includes/class-settings.php:221
-msgid "Single image title"
+#: includes/class-settings-data.php:239
+msgid "Full Size (default)"
+msgstr "Dimensiune completă (implicit)"
+
+#: includes/settings/class-settings-general.php:126
+msgid "Single Image Title"
 msgstr "Titlu imagine singulară"
 
-#: includes/class-settings.php:224
+#: includes/settings/class-settings-general.php:128
 msgid "Select title for single images."
 msgstr "Selectează titlul pentru imagini singulare."
 
-#: includes/class-settings.php:235
-msgid "Single images as gallery"
+#: includes/settings/class-settings-general.php:138
+msgid "Single Images as Gallery"
 msgstr "Imagini singulare ca galerie"
 
-#: includes/class-settings.php:238
+#: includes/settings/class-settings-general.php:140
 msgid "Display single post images as a gallery."
 msgstr "Afișează imaginile singulare ale articolelor ca o galerie."
 
-#: includes/class-galleries.php:500 includes/class-galleries.php:519
+#: includes/class-galleries.php:501 includes/class-galleries.php:520
 msgid "none"
 msgstr "niciunul"
 
-#: includes/class-settings.php:120 includes/class-settings.php:1286
+#: includes/settings/class-settings-lightboxes.php:407
 msgid "fade"
 msgstr "estompare"
 
-#: includes/class-settings.php:96
+#: includes/class-settings-data.php:75
 msgid "slow"
 msgstr "încet"
 
-#: includes/class-settings.php:153
+#: includes/class-settings-data.php:225
 msgid "Image Alt Text"
 msgstr "Text alternativ pentru imagine"
 
-#: includes/class-settings.php:154
+#: includes/class-settings-data.php:226
 msgid "Image Description"
 msgstr "Descriere imagine"
 
-#: includes/class-galleries.php:672 includes/class-settings.php:151
+#: includes/class-galleries.php:673 includes/class-settings-data.php:223
 msgid "Image Title"
 msgstr "Titlu imagine"

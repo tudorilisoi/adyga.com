@@ -11,17 +11,21 @@ if(!function_exists('ampforwp_framework_get_sideabr')){
 		unset($data['action']);
 		switch(strtolower($action)) {
 			case 'start':
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo (ampforwp_sideber_begin($data));
 				do_action('amp_sidebar_start');
 				break;
 			case 'end':
 				do_action('amp_sidebar_end');
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo (ampforwp_sideber_end());
 				break;
 			case 'open-button':
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo (ampforwp_sidebar_opening_button($data));
 				break;
 			case 'close-button':
+				//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo (ampforwp_sidebar_close_button($data));
 				break;
 			default:
@@ -39,7 +43,7 @@ function ampforwp_sidebar_close_button($data=array() ){
 	if(isset($data['class'])){
 		$class .= $data['class'];
 	}
-	return '<div role="button" tabindex="0" on="tap:'.esc_attr( $id ).'.close" class="'.esc_attr( $class ).'">X</div>';
+	return '<div role="button" tabindex="0" on="tap:'.esc_attr( $id ).'.close" aria-label="Close" class="'.esc_attr( $class ).'">X</div>';
 }
 function ampforwp_sidebar_opening_button($data=array()){
 	$id = 'sidebar';
@@ -50,8 +54,8 @@ function ampforwp_sidebar_opening_button($data=array()){
 	if(isset($data['class'])){
 		$class = $data['class'];
 	}
-	return '<div on="tap:'.esc_attr( $id ).'.toggle" role="button" tabindex="0" class="'. esc_attr( $class ) .'">
-						<a href="#" class="amp-sidebar-toggle">
+	return '<div on="tap:'.esc_attr( $id ).'.toggle" role="button" tabindex="0" aria-label="Sidebar Button" class="'. esc_attr( $class ) .'">
+						<a href="#" aria-label="Sidebar Button Toggle" class="amp-sidebar-toggle">
 							<span></span>
 							<span></span>
 							<span></span>

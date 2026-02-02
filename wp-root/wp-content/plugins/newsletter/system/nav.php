@@ -1,4 +1,6 @@
-<?php ?>
+<?php
+/** @var array $system_warnings */
+?>
 <ul class="tnp-nav">
     <li class="tnp-nav-title"><?php esc_html_e('System', 'newsletter') ?></li>
     <li class="<?php echo $_GET['page'] === 'newsletter_system_status' ? 'active' : '' ?>">
@@ -7,7 +9,7 @@
         <?php } ?>
         <a href="?page=newsletter_system_status">General</a>
     </li>
-    <li class="<?php echo $_GET['page'] === 'newsletter_system_delivery' ? 'active' : '' ?>"><a href="?page=newsletter_system_delivery">Delivery</a></li>
+    <li class="<?php echo $_GET['page'] === 'newsletter_system_delivery' ? 'active' : '' ?>"><a href="?page=newsletter_system_delivery">Sending</a></li>
     <li class="<?php echo $_GET['page'] === 'newsletter_system_scheduler' ? 'active' : '' ?>">
         <?php if ($system_warnings['scheduler']) { ?>
             <i class="fas fa-exclamation-triangle tnp-menu-warning" style="color: red;"></i>

@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	          $structured_data_main_logo = ampforwp_get_setting('opt-media','url');
 	        }
 	        if (! empty( $ampforwp_sd_logo ) ) {
-	          $structured_data_logo = esc_url( __(ampforwp_get_setting('amp-structured-data-logo','url'), 'accelerated-mobile-pages') );
+	          $structured_data_logo = ampforwp_get_setting('amp-structured-data-logo','url');
 	        }
 	        if ( $structured_data_logo ) {
 	          $structured_data_logo = $structured_data_logo;
@@ -76,7 +76,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			if ( $post_image_check == false) {
 
 				if (! empty( $ampforwp_sd_img_placeholder ) ) {
-					$structured_data_image_url = esc_url(__(ampforwp_get_setting('amp-structured-data-placeholder-image','url'), 'accelerated-mobile-pages') );
+					$structured_data_image_url = ampforwp_get_setting('amp-structured-data-placeholder-image','url');
 				}
 					$structured_data_image = $structured_data_image_url;
 					$structured_data_height = intval(ampforwp_get_setting('amp-structured-data-placeholder-image-height'));
@@ -91,7 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 			// Custom Structured Data information for Archive, Categories and tag pages.
 			if ( is_archive() ) {
-					$structured_data_image = esc_url( __(ampforwp_get_setting('amp-structured-data-placeholder-image','url'), 'accelerated-mobile-pages') );
+					$structured_data_image = ampforwp_get_setting('amp-structured-data-placeholder-image','url');
 					$structured_data_height = intval(ampforwp_get_setting('amp-structured-data-placeholder-image-height'));
 					$structured_data_width = intval(ampforwp_get_setting('amp-structured-data-placeholder-image-width'));
 					$structured_data_archive_title 	= esc_html(get_the_archive_title());
@@ -126,7 +126,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				}
 
 				// Get image metadata from The Content
-				if( true == $redux_builder_amp['ampforwp-featured-image-from-content'] && ampforwp_get_featured_image_from_content() ){
+				if( isset($redux_builder_amp['ampforwp-featured-image-from-content']) && $redux_builder_amp['ampforwp-featured-image-from-content'] && ampforwp_get_featured_image_from_content() ){
 					$metadata['image'] = array(
 							'@type' 	=> 'ImageObject',
 							'url' 		=> ampforwp_get_featured_image_from_content('url') ,
@@ -170,7 +170,7 @@ function ampforwp_search_or_homepage_or_staticpage_metadata( $metadata, $post ) 
 			$ampforwp_sd_img_placeholder = ampforwp_get_setting('amp-structured-data-placeholder-image','url');
 			// placeholder Image area
 			if (! empty( $ampforwp_sd_img_placeholder ) ) {
-				$structured_data_image_url = esc_url(__(ampforwp_get_setting('amp-structured-data-placeholder-image','url'), 'accelerated-mobile-pages'));
+				$structured_data_image_url = ampforwp_get_setting('amp-structured-data-placeholder-image','url');
 			}
 			$structured_data_image =  $structured_data_image_url; //  Placeholder Image URL
 			$structured_data_height = intval(ampforwp_get_setting('amp-structured-data-placeholder-image-height')); //  Placeholder Image width
@@ -181,8 +181,8 @@ function ampforwp_search_or_homepage_or_staticpage_metadata( $metadata, $post ) 
 					$ID = ampforwp_get_frontpage_id();
 					$headline =  get_the_title( $ID ) . ' | ' . get_option('blogname');
 					$static_page_data = get_post( $ID );
-					$datePublished = $static_page_data->post_date;
-					$dateModified = $static_page_data->post_modified;
+					$datePublished = isset($static_page_data->post_date) ? $static_page_data->post_date : '';
+					$dateModified = isset($static_page_data->post_modified) ? $static_page_data->post_modified : '';
 					$featured_image_array = wp_get_attachment_image_src( get_post_thumbnail_id($ID), 'full' ); 
 					// Featured Image structured Data
 					if( $featured_image_array ) {
@@ -212,9 +212,9 @@ function ampforwp_search_or_homepage_or_staticpage_metadata( $metadata, $post ) 
 					}
 					else {
 						// To DO : check the entire else section .... time for search and homepage...wierd ???
-						$datePublished = date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) - 2 );
+						$datePublished = gmdate( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) - 2 );
 						// time difference is 2 minute between published and modified date
-						$dateModified = date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) );
+						$dateModified = gmdate( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) );
 					}
 				}
 			$metadata['image'] = array(
@@ -338,7 +338,7 @@ if ( ! function_exists('ampforwp_structured_data_video_thumb') ) {
 			// If there's no featured image, take default from settings
 			if ( false == $post_image ) {
 				if ( ! empty( $sd_video_thumb ) ) {
-						$structured_data_video_thumb_url = esc_url( __(ampforwp_get_setting('amporwp-structured-data-video-thumb-url','url'), 'accelerated-mobile-pages') );
+						$structured_data_video_thumb_url = ampforwp_get_setting('amporwp-structured-data-video-thumb-url','url');
 					}
 			}
 			// If featured image is present, take it as thumbnail
@@ -348,12 +348,12 @@ if ( ! function_exists('ampforwp_structured_data_video_thumb') ) {
 			$metadata['name'] = $metadata['headline'];
 			$metadata['uploadDate'] = $metadata['datePublished'];
 			$metadata['thumbnailUrl'] = $structured_data_video_thumb_url;
-			$desc = $post->post_content;
+			$desc = isset($post->post_content) ? $post->post_content : '';
 			if(ampforwp_is_home()){
 				$desc = get_bloginfo('description');
 			}
 			if($desc){
-				$desc = addslashes( wp_trim_words( strip_tags( $desc ) , 30 ) );
+				$desc = addslashes( wp_trim_words( wp_strip_all_tags( $desc ) , 30 ) );
 				$metadata['description'] = $desc;	
 			}	       
 		}
@@ -443,7 +443,7 @@ function ampforwp_sd_sitenavigation(){
 	    $description = (
 	      Bunyad::posts()->meta('review_verdict_text') 
 	        ? Bunyad::posts()->meta('review_verdict_text') 
-	        : strip_tags(Bunyad::posts()->excerpt(null, 180, ['add_more' => false]))
+	        : wp_strip_all_tags(Bunyad::posts()->excerpt(null, 180, ['add_more' => false]))
 	    );
 	    $author_data = [
 	      '@type' => $item_author_type ? ucfirst($item_author_type) : 'Person',
@@ -493,7 +493,7 @@ function ampforwp_sd_sitenavigation(){
 	    }else{
 	      return;
 	    }
-	    echo '<script type="application/ld+json">' . json_encode($schema) . "</script>";
+	    echo '<script type="application/ld+json">' . wp_json_encode($schema) . "</script>";
     }
     if ( ! class_exists('saswp_fields_generator') && ampforwp_get_setting('ampforwp-sd-navigation-schema')) {
 	    $input = array();           

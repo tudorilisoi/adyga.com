@@ -1,6 +1,0 @@
-*.map
-/.developer/node_modules
-/.developer/.delete
-/build
-build
-*.zip

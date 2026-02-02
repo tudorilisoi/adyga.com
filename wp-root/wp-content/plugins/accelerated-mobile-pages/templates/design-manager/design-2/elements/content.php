@@ -2,7 +2,7 @@
 	<?php 
 
 	if ( 'above-content' ==  ampforwp_get_setting('design-1-2-3-addthis-pos') ){
-		echo ampforwp_addThis_support(); 
+		ampforwp_addthis_support(); 
 	}	?>
 	<!--Post Content here-->
 	<div class="amp-wp-content the_content">
@@ -11,7 +11,7 @@
 	<?php do_action( 'ampforwp_after_the_post_content_wrp' ); ?>
 	<?php 
 	if ( 'below-content' ==  ampforwp_get_setting('design-1-2-3-addthis-pos') ){
-		echo ampforwp_addThis_support();
+		ampforwp_addthis_support();
 	} ?>
 	<!--Post Content Ends here-->
 
@@ -29,7 +29,11 @@
 							if(true == ampforwp_get_setting('single-next-prev-to-nonamp')){
 								$next_link = get_permalink( $next_post->ID );
 							} ?>
-						<a href="<?php echo esc_url($next_link); ?>"><?php echo apply_filters('ampforwp_next_link',$next_text ); ?> &raquo;</a>
+						<a href="<?php echo esc_url($next_link); ?>">
+							<?php 
+							//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo apply_filters('ampforwp_next_link',$next_text ); 
+							?> &raquo;</a>
 						</div>
 					<?php }
 					$prev_post = get_previous_post();
@@ -40,7 +44,10 @@
 							if(true == ampforwp_get_setting('single-next-prev-to-nonamp')){
 								$prev_link = get_permalink( $prev_post->ID );
 							} ?>
-							<a href="<?php echo esc_url($prev_link); ?>"> &laquo; <?php echo apply_filters('ampforwp_prev_link',$prev_text ); ?></a> <?php } ?>
+							<a href="<?php echo esc_url($prev_link); ?>"> &laquo; 
+								<?php
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								 echo apply_filters('ampforwp_prev_link',$prev_text ); ?></a> <?php } ?>
 						</div>					
 					<div class="clearfix"></div>
 				</div>

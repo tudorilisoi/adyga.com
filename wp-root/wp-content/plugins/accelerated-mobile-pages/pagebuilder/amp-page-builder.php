@@ -47,11 +47,13 @@ function amp_content_pagebuilder_title_callback( $post ){
 		update_post_meta($amp_current_post_id, 'use_ampforwp_page_builder','yes');
 	}
 	//Disable page builder
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 	if(isset($_GET['ramppb']) && sanitize_text_field( wp_unslash($_GET['ramppb']))=='1'){
 		delete_post_meta($amp_current_post_id, 'use_ampforwp_page_builder','yes');
 		delete_post_meta($amp_current_post_id, 'ampforwp_page_builder_enable','yes');
 	}
 	//Enable page builder
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 	if(isset($_GET['use_amp_pagebuilder']) && sanitize_text_field( wp_unslash($_GET['use_amp_pagebuilder']))=='1'){
 		update_post_meta($amp_current_post_id, 'use_ampforwp_page_builder','yes');
 	}
@@ -69,7 +71,9 @@ function ampforwp_call_page_builder(){
 	if($post!=null){
 		$postId = $post->ID;
 	}
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 	if(isset($_GET['post_id'])){
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 		$id = intval($_GET['post_id']);
 		$postId = sanitize_text_field( wp_unslash($id));
 	}
@@ -77,9 +81,10 @@ function ampforwp_call_page_builder(){
 	
 	$previousData = get_post_meta($postId,'amp-page-builder');
 	$ampforwp_pagebuilder_enable = get_post_meta($postId,'ampforwp_page_builder_enable', true);
-	$previousData = isset($previousData[0])? $previousData[0]: null;
-	
-	$previousData = (str_replace("'", "&apos;", $previousData));
+	$previousData = isset($previousData[0])? $previousData[0]: '';
+	if($previousData!=''){
+		$previousData = str_replace("'", "&apos;", $previousData);
+	}
 	
 	$totalRows = 1;
 	$totalmodules = 1;
@@ -88,12 +93,12 @@ function ampforwp_call_page_builder(){
 		if(is_array($jsonData) && isset($jsonData['rows']) && count($jsonData['rows'])>0){
 			$totalRows = $jsonData['totalrows'];
 			$totalmodules = $jsonData['totalmodules'];
-			$previousData = json_encode($jsonData);
+			$previousData = wp_json_encode($jsonData);
 		}else{
 			$jsonData['rows'] = array();
 			$jsonData['totalrows']=1;
 			$jsonData['totalmodules'] = 1;
-			$previousData = json_encode($jsonData);
+			$previousData = wp_json_encode($jsonData);
 		}
 	}
 	$pageBuilderData = array(
@@ -135,7 +140,12 @@ function ampforwp_call_page_builder(){
 	if(class_exists('WPSEO_Frontend') && true == ampforwp_get_setting('ampforwp-yoast-seo-analysis') && (true == ampforwp_get_setting('ampforwp-amp-takeover') || $mob_pres_link == true) ) { 
 		$pb_content = get_post_field('amp-page-builder',$post->ID);
 		?>
-		<script type="text/template" class="hide" id="amp-page-builder-ready"><?php echo stripcslashes( $pb_content ); ?></script>
+		<script type="text/template" class="hide" id="amp-page-builder-ready">
+			<?php 
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo stripcslashes( $pb_content ); 
+			?>
+		</script>
 	<?php } ?>
 	<div id="ampForWpPageBuilder_container">
 		<div id="start_amp_pb_post" class="start_amp_pb" data-postId="<?php echo esc_attr(get_the_ID()) ?>" v-if="startPagebuilder==0" @click="amppb_startFunction($event)"><?php echo esc_html__('Start the AMP Page Builder','accelerated-mobile-pages'); ?></div>
@@ -145,7 +155,9 @@ function ampforwp_call_page_builder(){
 		</div>
 		<div id="amp-page-builder" v-if="startPagebuilder==1">
 	 		<?php wp_nonce_field( "amppb_nonce_action", "amppb_nonce" ) ?>
-	        <input type="hidden" name="amp-page-builder" id="amp-page-builder-data" class="amp-data" v-model="JSON.stringify(mainContent)" value='<?php echo $previousData; // nothing to escaped ?>'>
+	        <input type="hidden" name="amp-page-builder" id="amp-page-builder-data" class="amp-data" v-model="JSON.stringify(mainContent)" value='<?php 
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $previousData; // nothing to escaped ?>'>
 	        <?php /* This is where we gonna add & manage rows */ ?>
 			<div id="sorted_rows" class="amppb-rows drop" >
 				<drop class="drop" :class="{'row-dropping':rowOverDrop}" @drop="handleDrop" @dragover="rowOverDrop = true"
@@ -170,7 +182,7 @@ function ampforwp_call_page_builder(){
 						            <span class="amppb-handle dashicons dashicons-move"></span>
 						            <span class="amppb-row-title-text">1 <?php echo esc_html__('Column','accelerated-mobile-pages'); ?></span>
 						            <span @click="reomve_row(key)" data-confirm="Delete Row?" class="amppb-remove dashicons dashicons-trash"></span>
-						            <span @click="showRowSettingPopUp($event)" class="rowBoxContainer" title="Row settings column 1" :data-popupContent='JSON.stringify(<?php echo json_encode($backendRowSetting); ?>)'
+						            <span @click="showRowSettingPopUp($event)" class="rowBoxContainer" title="Row settings column 1" :data-popupContent='JSON.stringify(<?php echo wp_json_encode($backendRowSetting); ?>)'
 						            :data-container_id="row.id"
 						            >
 						            	<i class="tools-icon dashicons dashicons-menu"></i>
@@ -210,7 +222,7 @@ function ampforwp_call_page_builder(){
 						            <span class="amppb-handle dashicons dashicons-move"></span>
 						            <span class="amppb-row-title-text">2 <?php echo esc_html__('Columns','accelerated-mobile-pages'); ?></span> 
 						            <span @click="reomve_row(key)" data-confirm="Delete Row?" class="amppb-remove amppb-item-remove dashicons dashicons-trash"></span>
-						            <span href="#" class="rowBoxContainer" title="Row settings column 2" @click="showRowSettingPopUp($event)" :data-popupContent='JSON.stringify(<?php echo json_encode($backendRowSetting); ?>)'
+						            <span href="#" class="rowBoxContainer" title="Row settings column 2" @click="showRowSettingPopUp($event)" :data-popupContent='JSON.stringify(<?php echo wp_json_encode($backendRowSetting); ?>)'
 						            :data-container_id="row.id"
 						            >
 						            	<span class="tools-icon dashicons dashicons-menu"></span>
@@ -279,12 +291,12 @@ function ampforwp_call_page_builder(){
 		</div><!-- .amppb-rows -->
 
 		<div class="modules-options">
-         	<div class="amppb-actions" id="amppb-actions-container" data-containerid="<?php echo $totalRows; // nothing to escaped ?>">
-	        	<drag class="drag" :transfer-data='{type: "column",value: "col-1",rowSettingJson:<?php echo json_encode($backendRowSetting); ?>}' :draggable="true" :effect-allowed="'copy'">
+         	<div class="amppb-actions" id="amppb-actions-container" data-containerid="<?php echo esc_attr($totalRows); // nothing to escaped ?>">
+	        	<drag class="drag" :transfer-data='{type: "column",value: "col-1",rowSettingJson:<?php echo wp_json_encode($backendRowSetting); ?>}' :draggable="true" :effect-allowed="'copy'">
 				    <span id="action-col-1" class="amppb-add-row button-primary button-large module-col-1" data-template="col-1"
 				    >1 Column</span>
 				</drag>
-				<drag class="drag" :transfer-data='{type: "column",value: "col-2", rowSettingJson:<?php echo json_encode($backendRowSetting); ?>}' :draggable="true" :effect-allowed="'copy'">
+				<drag class="drag" :transfer-data='{type: "column",value: "col-2", rowSettingJson:<?php echo wp_json_encode($backendRowSetting); ?>}' :draggable="true" :effect-allowed="'copy'">
 				    <span id="action-col-2" class="amppb-add-row button-primary button-large draggable module-col-2" data-template="col-2"
 				    >2 Columns</span>
 				</drag>
@@ -317,10 +329,10 @@ function ampforwp_call_page_builder(){
 	                }
 			    	$moduleJson = array('type'=> 'module','moduleDraggable'=>true ,'modulename'=>strtolower($module['name']),'moduleJson'=>$module);
 			    	echo '
-			    	<drag class="drag" :transfer-data=\''.json_encode($moduleJson).'\' :draggable="true" :effect-allowed="\'copy\'">
+			    	<drag class="drag" :transfer-data=\''.wp_json_encode($moduleJson).'\' :draggable="true" :effect-allowed="\'copy\'">
 				    	<span class="amppb-add-row button-primary button-large draggable module-'.esc_attr(strtolower($module['name'])).'"
 				    	>
-				    		'.$module['label'].'
+				    		'.esc_attr($module['label']).'
 				    	</span>
 			    	</drag>
 			    	';

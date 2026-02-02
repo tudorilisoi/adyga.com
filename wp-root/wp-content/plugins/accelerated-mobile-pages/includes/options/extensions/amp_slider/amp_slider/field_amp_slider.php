@@ -36,8 +36,12 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_amp_slider' ) ) 
         private $display_label = 1;
         private $display_text = 2;
         private $display_select = 3;
-		
-		 
+        private $parent;
+        private $field = array();
+        private $value = array();
+        private $extension_dir;
+        private $extension_url;
+        private $time;
 
         function __construct( $field = array(), $value = '', $parent = ' ' ) {
 
@@ -322,7 +326,7 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_amp_slider' ) ) 
                 echo '<input type="text"
                          name="' . esc_attr($nameOne) . '"
                          id="' . esc_attr($idOne) . '"
-                         value="' . $valOne . '"
+                         value="' . esc_attr($valOne) . '"
                          class="redux-amp_slider-input redux-amp_slider-input-one-' . esc_attr($fieldID) . ' ' . esc_attr($this->field['class']) . '"/>';
 
             // LABEL output
@@ -332,8 +336,8 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_amp_slider' ) ) 
                 $labelNum = $twoHandles ? '-one' : '';
 
                 echo '<div class="redux-amp_slider-label' . esc_attr($labelNum) . '"
-                       id="redux-slider-label-one-' . $fieldID . '"
-                       name="' . $nameOne . '">
+                       id="redux-slider-label-one-' . esc_attr($fieldID) . '"
+                       name="' . esc_attr($nameOne) . '">
                   </div>';
 
             // SELECT output
@@ -341,7 +345,7 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_amp_slider' ) ) 
                 $showSelect = true;
 
                 if ( isset( $this->field['select2'] ) ) { // if there are any let's pass them to js
-                    $select2_params = json_encode( $this->field['select2'] );
+                    $select2_params = wp_json_encode( $this->field['select2'] );
                     $select2_params = htmlspecialchars( $select2_params, ENT_QUOTES );
 
                     echo '<input type="hidden" class="select2_params" value="' . esc_attr($select2_params) . '">';
@@ -355,6 +359,7 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_amp_slider' ) ) 
             }
 
             // DIV output
+            //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo 
             '<div
                 class="redux-amp_slider-container ' . esc_attr($this->field['class']) . '"
@@ -368,7 +373,7 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_amp_slider' ) ) 
                 data-rtl="' . esc_attr(is_rtl()) . '"
                 data-forced="' . esc_attr($this->field['forced']) . '"
                 data-float-mark="' . esc_attr($this->field['float_mark']) . '"
-                data-resolution="' . esc_attr($this->field['resolution']) . '" ' . $html . '>
+                data-resolution="' . esc_attr($this->field['resolution']) . '" ' . /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ $html . '>
             </div>';
 
             // Double slider output

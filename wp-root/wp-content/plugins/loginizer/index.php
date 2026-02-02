@@ -1,1 +1,1 @@
-<?php //prevent directory listing
+<?php // Silence is Golden

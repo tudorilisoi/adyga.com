@@ -40,6 +40,7 @@ namespace ReduxCore\ReduxFramework;
             public static $theInstance;
             public static $version = "4.0";
             public $is_field = false;
+            public $field_name = '';
 
             /**
              * Class Constructor. Defines the args for the extions class
@@ -134,6 +135,7 @@ namespace ReduxCore\ReduxFramework;
             }
 
             function link_options() {
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                 if ( ! isset( $_GET['secret'] ) || $_GET['secret'] != md5( md5( Redux_Helpers::get_auth_key_secret_key() ) . '-' . $this->parent->args['opt_name'] ) ) {
                     wp_die( 'Invalid Secret for options use' );
                     exit;
@@ -145,12 +147,13 @@ namespace ReduxCore\ReduxFramework;
                     unset( $var['REDUX_imported'] );
                 }
 
-                echo json_encode( $var );
+                echo wp_json_encode( $var );
 
                 die();
             }
 
             public function download_options() {
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                 if ( ! isset( $_GET['secret'] ) || $_GET['secret'] != md5( md5( Redux_Helpers::get_auth_key_secret_key() ) . '-' . $this->parent->args['opt_name'] ) ) {
                     wp_die( 'Invalid Secret for options use' );
                     exit;
@@ -163,18 +166,18 @@ namespace ReduxCore\ReduxFramework;
                     unset( $backup_options['REDUX_imported'] );
                 }
 
-                // No need to escape this, as it's been properly escaped previously and through json_encode
-                $content = json_encode( $backup_options );
-
+                // No need to escape this, as it's been properly escaped previously and through wp_json_encode
+                $content = wp_json_encode( $backup_options );
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                 if ( isset( $_GET['action'] ) && $_GET['action'] == 'redux_download_options-' . $this->parent->args['opt_name'] ) {
                     header( 'Content-Description: File Transfer' );
                     header( 'Content-type: application/txt' );
-                    header( 'Content-Disposition: attachment; filename="redux_options_' . $this->parent->args['opt_name'] . '_backup_' . date( 'd-m-Y' ) . '.json"' );
+                    header( 'Content-Disposition: attachment; filename="redux_options_' . $this->parent->args['opt_name'] . '_backup_' . gmdate( 'd-m-Y' ) . '.json"' );
                     header( 'Content-Transfer-Encoding: binary' );
                     header( 'Expires: 0' );
                     header( 'Cache-Control: must-revalidate' );
                     header( 'Pragma: public' );
-
+/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo $content;
                     exit;
                 } else {
@@ -187,6 +190,7 @@ namespace ReduxCore\ReduxFramework;
 
                     // Can't include the type. Thanks old Firefox and IE. BAH.
                     //header("Content-type: application/json");
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo $content;
                     exit;
                 }
@@ -199,6 +203,7 @@ namespace ReduxCore\ReduxFramework;
 
             public function remove_cookie() {
                 // Remove the import/export tab cookie.
+                /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated */
                 if ( $_COOKIE['redux_current_tab'] == 'import_export_default' ) {
                     setcookie( 'redux_current_tab', '', 1, '/' );
                     $_COOKIE['redux_current_tab'] = 1;

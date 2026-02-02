@@ -1,6 +1,7 @@
 <?php
-/* @var $this NewsletterSubscriptionAdmin */
-/* @var $controls NewsletterSubscriptionAdmin */
+/** @var NewsletterSubscriptionAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
 
 defined('ABSPATH') || exit;
 
@@ -9,7 +10,7 @@ if (!$controls->is_action()) {
 }
 
 if ($controls->is_action('save')) {
-    if (!current_user_can('unfiltered_html')) {
+    if (!$this->is_html_allowed()) {
         $controls->data = wp_kses_post_deep($controls->data);
     }
     $this->save_main_options($controls->data, 'htmlforms');

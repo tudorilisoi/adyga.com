@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             function __construct( $parent, $field, $value, $current ) {
                 $this->parent       = $parent;
                 $this->field        = $field;
-                $this->field['msg'] = ( isset( $this->field['msg'] ) ) ? $this->field['msg'] : __( 'You must not enter any HTML in this field, all HTML tags have been removed.', 'redux-framework' );
+                $this->field['msg'] = ( isset( $this->field['msg'] ) ) ? $this->field['msg'] : __( 'You must not enter any HTML in this field, all HTML tags have been removed.', 'accelerated-mobile-pages' );
                 $this->value        = $value;
                 $this->current      = $current;
 
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
              */
             function validate() {
 
-                $newvalue = strip_tags( $this->value );
+                $newvalue = wp_strip_all_tags( $this->value );
 
                 if ( $this->value != $newvalue ) {
                     $this->warning = $this->field;

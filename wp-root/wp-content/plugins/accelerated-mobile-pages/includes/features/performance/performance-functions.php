@@ -10,6 +10,7 @@ function ampforwp_minify_html_output($content_buffer){
     //Removed trbidi attribute #3687
     $content_buffer = str_replace('trbidi="on"', '', $content_buffer);
     $content_buffer = str_replace("trbidi='on'", '', $content_buffer);
+    $content_buffer = str_replace('action=""', 'action-xhr="#"', $content_buffer);
     //Picture-tag is not working in AMP #4051
     if(preg_match('/<picture(.*?)<amp-img(.*?)><\/amp-img>(.*?)<\/picture>/s', $content_buffer)){
         $content_buffer = preg_replace('/<picture(.*?)<amp-img(.*?)><\/amp-img>(.*?)<\/picture>/s', '<noscript><picture$1</picture></noscript><amp-img$2></amp-img>$3', $content_buffer);
@@ -40,16 +41,21 @@ function ampforwp_minify_html_output($content_buffer){
         $content_buffer = preg_replace('/&lt;/', '<', $content_buffer);
         $content_buffer = preg_replace('/&gt;/', '>', $content_buffer);
     }
+    /* phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript */
     if(function_exists('googlesitekit_activate_plugin') && preg_match('/<script custom-element="amp-auto-ads"(.*?)src="(.*?)" async><\/script>(.*?)<amp-auto-ads/', $content_buffer)==0){
+        /* phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript */
         $content_buffer = preg_replace('/<script custom-element="amp-auto-ads"(.*?)src="(.*?)" async><\/script>/', '', $content_buffer);
     }
     if(preg_match('/<form(.*?)for="categories-dropdown-(.*?)"(.*?)class="postform(.*?)>/', $content_buffer)){
         $content_buffer = preg_replace('/<form(.*?)for="categories-dropdown-(.*?)"(.*?)class="postform(.*?)>/', '<form id="amp-wp-widget-categories-1" on="change:amp-wp-widget-categories-1.submit" $1for="categories-dropdown-$2"$3class="postform$4>', $content_buffer);
     }
+
     if (function_exists('aioseo_pro_just_activated') && preg_match('/<link rel="canonical" href="([^>]*)\/amp\/" \/>/', $content_buffer)) {
         $content_buffer = preg_replace('/<link rel="canonical" href="([^>]*)\/amp\/" \/>/','<link rel="canonical" href="$1/" />', $content_buffer);
     }
+    /* phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript */
     if(preg_match('/<script(.*?)src="https:\/\/www.google-analytics.com\/analytics.js"><\/script>/', $content_buffer)){
+        /* phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript */
         $content_buffer = preg_replace('/<script(.*?)src="https:\/\/www.google-analytics.com\/analytics.js"><\/script>/', '', $content_buffer);
     }
     if(preg_match('/<blockquote class="imgur-embed(.*?)"(.*?)data-id="(.*?)"(.*?)<\/blockquote>/', $content_buffer)){
@@ -86,6 +92,7 @@ function ampforwp_minify_html_output($content_buffer){
         $content_buffer = preg_replace('/<lite-youtube(.*?)videoid="(.*?)"(.*?)><\/lite-youtube>/', '<amp-youtube width="480" height="270" layout="responsive" data-videoid="$2"></amp-youtube>', $content_buffer);
     }    
     if (function_exists('qoxag_setup')) {
+        /* phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet */
         $content_buffer = preg_replace('/<link rel="stylesheet"(.*?)href="(.*?).css">/', '', $content_buffer);
     }
     if(preg_match('/<fw-embed-feed(.*?)<\/fw-embed-feed>/', $content_buffer)){
@@ -95,6 +102,16 @@ function ampforwp_minify_html_output($content_buffer){
     if(preg_match('/<blockquote\sclass="wp-embedded-content"(.*?)<a href="(.*?)"(.*?)<\/blockquote>/', $content_buffer)){
         $content_buffer = preg_replace('/<blockquote\sclass="wp-embedded-content"(.*?)<a href="(.*?)"(.*?)<\/blockquote>/', '<amp-wordpress-embed width="400" height="400" data-url="$2" ></amp-wordpress-embed>', $content_buffer);
         $content_buffer = preg_replace('/<amp-iframe(.*?)class="wp-embedded-content(.*?)<\/amp-iframe>/', '', $content_buffer);
+    }
+    if(preg_match('/<amp-iframe(.*?)\ssrc="(.*?)"(.*?)>/', $content_buffer)){
+        $content_buffer = preg_replace_callback('/<amp-iframe(.*?)\ssrc="(.*?)"(.*?)>/', 
+            function($matches){
+                $src = $matches[2];
+                if(strpos($src, '%7B')!==false && strpos($src, '%7D')!==false){
+                    $src = urldecode($src);
+                }
+                return '<amp-iframe'.$matches[1].' src="'.esc_attr($src).'"'.$matches[3].'>';
+            }, $content_buffer);
     }
     if (function_exists('wp_faq_schema_load_plugin_textdomain')) {
         $content_buffer = preg_replace('/<div\sclass="">(.*?)<\/div>/s', '$1', $content_buffer);
@@ -116,7 +133,7 @@ function ampforwp_minify_html_output($content_buffer){
     }
 
     global $redux_builder_amp;
-    if(!$redux_builder_amp['ampforwp_cache_minimize_mode']){
+    if( isset($redux_builder_amp['ampforwp_cache_minimize_mode']) && !$redux_builder_amp['ampforwp_cache_minimize_mode']){
            return $content_buffer;       
     }
     $buffer = $content_buffer ; 
@@ -167,6 +184,7 @@ function ampforwp_minify_html_output($content_buffer){
 
         if(function_exists('tec_amp_compatibility_orgs_venues_support')){
             global $wp;
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
             $current_url = home_url(add_query_arg(array($_GET), $wp->request));
             if(preg_match('/months/', $current_url)){
                 $process = preg_replace(array ('/\>[^\S ]+' . $mod, '/[^\S ]+\<' . $mod, '/\s+/' ), array('> ', ' <', '  '), $process);
@@ -215,9 +233,10 @@ if( true == ampforwp_get_setting('ampforwp_leverage_browser_caching_mode')){
 function ampforwp_leverage_browser_caching_remove(){
     $htaccess_file = wp_normalize_path( ABSPATH . '.htaccess' );
     if ( file_exists( $htaccess_file ) ) {
-
+/* phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable */
         if ( is_readable( $htaccess_file ) && is_writable( $htaccess_file ) ) {
             $unique_string    = 'AMPFORWPLBROWSERCSTART';
+            /* phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents */
             $htaccess_cntn    = file_get_contents( $htaccess_file );
             $valid            = false;
 
@@ -228,6 +247,7 @@ function ampforwp_leverage_browser_caching_remove(){
                 $pattern          = '/#\s?AMPFORWPLBROWSERCSTART.*?AMPFORWPLBROWSERCEND/s';
                 $htaccess_cntn    = preg_replace( $pattern, '', $htaccess_cntn );
                 $htaccess_cntn    = preg_replace( "/\n+/","\n", $htaccess_cntn );
+                /* phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents */
                 file_put_contents( $htaccess_file, $htaccess_cntn );
             }
         } else {
@@ -241,8 +261,10 @@ function ampforwp_leverage_browser_caching(){
     global $pagenow;
     $htaccess_file = wp_normalize_path( ABSPATH . '.htaccess' );
     if ( file_exists( $htaccess_file ) ) {
+        /* phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable */
         if ( is_readable( $htaccess_file ) && is_writable( $htaccess_file ) ) {
             $unique_string    = 'AMPFORWPLBROWSERCSTART';
+            /* phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents */
             $htaccess_cntn    = file_get_contents( $htaccess_file );
             $valid            = false;
             if ( strpos( $htaccess_cntn, $unique_string ) !== false ) {
@@ -250,14 +272,17 @@ function ampforwp_leverage_browser_caching(){
             }
             if ( ! $valid ) {
                 $htaccess_cntn = $htaccess_cntn . ampforwp_code_to_add_in_htaccess();
+                /* phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents */
                 file_put_contents( $htaccess_file, $htaccess_cntn );
             }
         } else {
+            /* phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
             if( $pagenow == 'admin.php' && isset($_GET['page']) && esc_attr($_GET['page']) == 'amp_options'){
                 add_action( 'admin_notices', 'ampforwp_no_htaccess_access_notice' );
             }
         }
     }else {
+        /* phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
         if( $pagenow == 'admin.php' && isset($_GET['page']) && esc_attr($_GET['page']) == 'amp_options'){
             add_action( 'admin_notices', 'ampforwp_no_htaccess_notice');
         }
@@ -418,6 +443,7 @@ if( !function_exists("ampforwp_clear_tree_shaking") ) {
 		}
         $nonceCheck = false;
         if(isset($_GET['nonce'])){
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
             $nonceCheck = wp_verify_nonce( $_GET['nonce'], 'ampforwp_clear_tree_shaking' );
         }	
 		if ( is_admin() && ( ( $nonceCheck && ampforwp_get_setting( 'ampforwp_css_tree_shaking' ) && $options == '' ) || ( count( $changed_values ) != 0 && (ampforwp_get_setting( 'ampforwp_css_tree_shaking' ) || isset($changed_values['ampforwp_css_tree_shaking'])) ) ) ) {
@@ -430,12 +456,12 @@ if( !function_exists("ampforwp_clear_tree_shaking") ) {
 					//Make sure that this is a file and not a directory.
 					if ( is_file( $file ) && strpos( $file, '_transient' ) !== false ) {
 						//Use the unlink function to delete the file.
-						unlink( $file );
+						wp_delete_file( $file );
 					}
 				}
 			}
 			if ( $options == '' && ampforwp_get_setting( 'ampforwp_css_tree_shaking' ) ) {
-				echo json_encode( array( "status" => 200, "message" => "CSS Cache Cleared Successfully" ) );
+				echo wp_json_encode( array( "status" => 200, "message" => "CSS Cache Cleared Successfully" ) );
 				wp_die();
 			}
 		}
@@ -456,7 +482,7 @@ function ampforwp_clear_tree_shaking_on_activity($plugin='', $network=''){
                 //Make sure that this is a file and not a directory.
                 if ( is_file( $file ) && strpos( $file, '_transient' ) !== false ) {
                     //Use the unlink function to delete the file.
-                    unlink( $file );
+                    wp_delete_file( $file );
                 }
             }
         }
@@ -491,7 +517,7 @@ if( !function_exists("ampforwp_clear_tree_shaking_post") ) {
     				$upload_dir = wp_upload_dir();
     				$ts_file = $upload_dir['basedir'] . '/' . 'ampforwp-tree-shaking/_transient_'.esc_attr($transient_filename).".css";
     				if(file_exists($ts_file) && is_file($ts_file)){
-    					unlink($ts_file);
+    					wp_delete_file( $ts_file );
     				}
                 }
 			}
@@ -503,7 +529,9 @@ if(!function_exists('ampforwp_clear_css_on_transposh_rtl')){
     function ampforwp_clear_css_on_transposh_rtl($css){
         if(class_exists('transposh_plugin')){
             $rtl_lang_arr = array('ar', 'he', 'fa', 'ur', 'yi');
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
             if(isset($_GET['lang'])){
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
                 if(in_array(esc_attr($_GET['lang']), $rtl_lang_arr)){
                     if(!preg_match('/m-ctr{margin-right:0%}/', $css)){
                         if(ampforwp_get_setting('ampforwp_css_tree_shaking')){
@@ -516,7 +544,7 @@ if(!function_exists('ampforwp_clear_css_on_transposh_rtl')){
                               //Make sure that this is a file and not a directory.
                               if ( is_file( $file ) && strpos( $file, '_transient' ) !== false ) {
                                 //Use the unlink function to delete the file.
-                                unlink( $file );
+                                wp_delete_file( $file );
                               }
                             }
                           }

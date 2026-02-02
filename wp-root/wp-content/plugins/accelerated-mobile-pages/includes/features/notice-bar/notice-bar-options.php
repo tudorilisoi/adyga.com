@@ -9,6 +9,7 @@ function ampforwp_notice_bar_options($opt_name){
   include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
      if(!is_plugin_active( 'AMP-cta/amp-cta.php' )){
   $cta_AD_URL = "http://ampforwp.com/call-to-action/#utm_source=options-panel&utm_medium=call-to-action_banner_in_notification_bar&utm_campaign=AMP%20Plugin";
+  /* phpcs:ignore 	PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
   $cta_desc = '<a href="'.$cta_AD_URL.'"  target="_blank"><img class="ampforwp-ad-img-banner" src="'.AMPFORWP_IMAGE_DIR . '/cta-banner.png" width="560" height="85" /></a>';
   }
  // Notifications SECTION
@@ -154,8 +155,8 @@ function ampforwp_notice_bar_options($opt_name){
                'id'        =>'amp-gdpr-compliance-textarea',
                'type'      => 'textarea',
                'title'     => esc_html__('Message to Visitor', 'accelerated-mobile-pages'),
-               'subtitle'     => esc_html__('', 'accelerated-mobile-pages'),
-               'default'   => '',
+               'subtitle'     => "",
+               'default'   => 'You can control the ways in which we improve and personalize your experience. Please choose whether you wish to allow the following:',
                'required' =>  array(  array('amp-gdpr-compliance-switch', '=' , '1', ), array('gdpr-type', '=' , '1' ) ),
            ),
            
@@ -211,6 +212,38 @@ function ampforwp_notice_bar_options($opt_name){
                'default'   => 'Click Here',
                'required' => array('amp-gdpr-compliance-switch', '=' , '1'),
            ),
+           array(
+            'class'  => 'child_opt',
+            'id'        =>'amp-gdpr-compliance-enable-options',
+            'type'      => 'switch',
+            'title'     => esc_html__('Enable Cookie Selection', 'accelerated-mobile-pages'),
+            'default'   => 1,
+            'required' => array('amp-gdpr-compliance-switch', '=' , '1'),
+        ),
+        array(
+            'class'  => 'child_opt',
+            'id'    => 'amp-gdpr-compliance-options',
+           'title'  => esc_html__('Cookies to display', 'accelerated-mobile-pages'),
+           'type'   => 'checkbox',
+           'default'=> array('marketing'=>1,'conversion'=>1,'analytics'=>1),
+           'options'=> array(
+                'marketing' => esc_html__('Marketing cookies', 'accelerated-mobile-pages'),
+                'conversion' => esc_html__('Conversion tracking cookies', 'accelerated-mobile-pages'),
+                'analytics' => esc_html__('Analytics', 'accelerated-mobile-pages')
+            ),
+            'required' => array(
+                array('amp-gdpr-compliance-switch','=',1),
+                array('amp-gdpr-compliance-enable-options','=',1)
+            )
+        ),
+        array(
+            'class'  => 'child_opt',
+            'id'        =>'amp-gdpr-compliance-enable-toggle',
+            'type'      => 'switch',
+            'title'     => esc_html__('Enable Cookie Setting Toggle', 'accelerated-mobile-pages'),
+            'default'   => 1,
+            'required' => array('amp-gdpr-compliance-switch', '=' , '1'),
+        ),
            array(
                'id'        =>'amp-gdpr-newguidelines-switch',
                'type'      => 'switch',
@@ -283,9 +316,56 @@ function ampforwp_notice_bar_options($opt_name){
                'required' => array('amp-quantcast-notice-switch', '=' , '1'),
            ),
            array(
+            'id' => 'ampforwp-notice-inmobi',
+            'type' => 'section',
+            'title' => esc_html__('InMobi Notice Bar in AMP', 'accelerated-mobile-pages'),
+            'indent' => true,
+            'layout_type' => 'accordion',
+            'accordion-open'=> 1, 
+                  ),
+           array(
+               'id'        =>'amp-inmobi-notice-switch',
+               'type'      => 'switch',
+               'title'     => esc_html__('InMobi Notice Bar', 'accelerated-mobile-pages'),
+               'default'   => 0
+           ),
+           array(
+               'class'  => 'child_opt',
+               'id'        =>'amp-inmobi-id',
+               'type'      => 'text',
+               'title'     => esc_html__('Account Id', 'accelerated-mobile-pages'),
+               'placeholder'=> 'InMobi Account Id',
+               'required' => array('amp-inmobi-notice-switch', '=' , '1'),
+           ),
+           array(
+               'class'  => 'child_opt',
+               'id'        =>'amp-inmobi-hashcode',
+               'type'      => 'text',
+               'title'     => esc_html__('Hash Code', 'accelerated-mobile-pages'),
+               'placeholder'=> '3BDXDqoakCk4Q4LzQqBGVQ',
+               'required' => array('amp-inmobi-notice-switch', '=' , '1'),
+           ),
+           array(
+               'class'  => 'child_opt',
+               'id'        =>'amp-inmobi-publishercountrycode',
+               'type'      => 'text',
+               'title'     => esc_html__('Publisher Country Code', 'accelerated-mobile-pages'),
+               'placeholder'=> 'US',
+               'required' => array('amp-inmobi-notice-switch', '=' , '1'),
+           ),
+           array(
+               'class'  => 'child_opt',
+               'id'        =>'amp-inmobi-privacy-mode',
+               'type'      => 'text',
+               'title'     => esc_html__('Privacy Mode', 'accelerated-mobile-pages'),
+               'placeholder'=> 'GDPR',
+               'required' => array('amp-inmobi-notice-switch', '=' , '1'),
+           ),
+           array(
            'class' => 'amp-popup-fld',
            'id'   => 'info_normal_amp_popup',
            'type'     => 'info',
+           /* phpcs:ignore 	PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
             'desc' => '<a href="https://ampforwp.com/amp-popup/"  target="_blank"><img class="ampforwp-ad-img-banner" src="'.AMPFORWP_IMAGE_DIR . '/popup_ext.png" width="560" height="85" /></a>',   
            ),    
        ),

@@ -14,16 +14,15 @@ var epdofitvids = epdofitvids || function ($)
         if (!document.getElementById('fit-vids-style'))
         {
 
-            var div = document.createElement('div'),
+            var styleContainer = document.createElement('style'),
                     ref = document.getElementsByTagName('base')[0] || document.getElementsByTagName('script')[0],
-                    cssStyles = '&shy;<style>.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style>';
+                    cssStyles = '.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}';
 
-            div.className = 'fit-vids-style';
-            div.id = 'fit-vids-style';
-            div.style.display = 'none';
-            div.innerHTML = cssStyles;
+            styleContainer.className = 'fit-vids-style';
+            styleContainer.id = 'fit-vids-style';
+            styleContainer.textContent = cssStyles;
 
-            ref.parentNode.insertBefore(div, ref);
+            ref.parentNode.insertBefore(styleContainer, ref);
 
         }
 
@@ -66,21 +65,50 @@ var epdofitvids = epdofitvids || function ($)
                 {
                     $this.attr('height', $this.data('origheight'));
                 }
+
                 var height = (this.tagName.toLowerCase() === 'object' || ($this.attr('height') && !isNaN(parseInt($this.attr('height'), 10)))) ? parseInt($this.attr('height'), 10) : $this.height(),
                         width = !isNaN(parseInt($this.attr('width'), 10)) ? parseInt($this.attr('width'), 10) : $this.width(),
                         aspectRatio = height / width;
+
                 if (!$this.attr('id'))
                 {
                     var videoID = 'fitvid' + Math.floor(Math.random() * 999999);
                     $this.attr('id', videoID);
                 }
 
+                var attrWidth = $this.attr('width');
+                var attrHeight = $this.attr('height');
                 if ($this.parent().hasClass('epyt-video-wrapper'))
                 {
                     try
                     {
                         $this.parent().addClass('fluid-width-video-wrapper').attr('style', 'padding-top: ' + (aspectRatio * 100) + "% !important;");
                         $this.removeAttr('height').removeAttr('width');
+
+                        setTimeout(function ()
+                        {
+                            var resizeEvent = null;
+                            if (typeof (Event) === 'function')
+                            {
+                                resizeEvent = new Event('resize');
+                            }
+                            else
+                            {
+                                resizeEvent = document.createEvent('Event');
+                                resizeEvent.initEvent('resize', true, true);
+                            }
+                            window.dispatchEvent(resizeEvent);
+                        }, 10);
+
+                        setTimeout(function ()
+                        {
+                            if (parseInt($this.parent().css('padding-top'), 10) > $this.height() + 20)
+                            {
+                                $this.parent().removeClass('fluid-width-video-wrapper').css('padding-top', '');
+                                $this.attr('width', attrWidth);
+                                $this.attr('height', attrHeight);
+                            }
+                        }, 100);
                     }
                     catch (wraperr)
                     {
@@ -94,6 +122,31 @@ var epdofitvids = epdofitvids || function ($)
                     {
                         $this.wrap(fwvwrap).parent('.fluid-width-video-wrapper').attr('style', 'padding-top: ' + (aspectRatio * 100) + "% !important;");
                         $this.removeAttr('height').removeAttr('width');
+
+                        setTimeout(function ()
+                        {
+                            var resizeEvent = null;
+                            if (typeof (Event) === 'function')
+                            {
+                                resizeEvent = new Event('resize');
+                            }
+                            else
+                            {
+                                resizeEvent = document.createEvent('Event');
+                                resizeEvent.initEvent('resize', true, true);
+                            }
+                            window.dispatchEvent(resizeEvent);
+                        }, 10);
+
+                        setTimeout(function ()
+                        {
+                            if (parseInt($this.parent().css('padding-top'), 10) > $this.height() + 20)
+                            {
+                                $this.parent().removeClass('fluid-width-video-wrapper').css('padding-top', '');
+                                $this.attr('width', attrWidth);
+                                $this.attr('height', attrHeight);
+                            }
+                        }, 100);
                     }
                     catch (wraperr)
                     {

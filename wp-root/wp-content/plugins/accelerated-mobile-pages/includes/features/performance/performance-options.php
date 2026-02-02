@@ -9,7 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) {
   include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
      if(!is_plugin_active( 'amp-cache/ampforwp-cache.php' )){
   $cache_AD_URL = "http://ampforwp.com/amp-cache/#utm_source=options-panel&utm_medium=performance-tab&utm_campaign=AMP%20Plugin";
+  /* phpcs:ignore 	PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
   $cache_desc = '<a href="'.$cache_AD_URL.'"  target="_blank"><img class="ampforwp-ad-img-banner" src="'.AMPFORWP_IMAGE_DIR . '/amp_cache_b.png" width="560" height="85" /></a>';
+  }
+  $pwa_install = '';  
+  if(function_exists('pwaforwp_add_plugin_meta_links')){
+      $pwa_install = '<a href="'.admin_url('admin.php?page=pwaforwp').'"><div class="ampforwp-recommendation-btn updated-message"><p>'.esc_html__('Go to PWA settings','accelerated-mobile-pages').'</p></div></a>';
+  }else{
+        $pwa_install = '<div class="install-now ampforwp-activation-call-module-upgrade button  " id="ampforwp-pwa-activation-call" data-secure="'.wp_create_nonce('verify_module').'"><p>'.esc_html__('Upgrade for Free','accelerated-mobile-pages').'</p></div>';
+  }
+  if(file_exists(AMPFORWP_MAIN_PLUGIN_DIR."pwa-for-wp/pwa-for-wp.php") && !function_exists('pwaforwp_add_plugin_meta_links')){
+      $activation_url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=pwa-for-wp/pwa-for-wp.php&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_pwa-for-wp/pwa-for-wp.php' );
+      $pwa_install = '<div class="install-now ampforwp-activation-plugin button button-primary" id="ampforwp-pwa-activate" style="color: #fff;text-decoration: none;" data-href="'.$activation_url.'" >'.esc_html__('Activate Plugin','accelerated-mobile-pages').'</div>';
   }
   // Performance SECTION
   Redux::setSection( $opt_name, array(
@@ -26,13 +37,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                   'layout_type' => 'accordion',
                     'accordion-open'=> 1,
               ),
-
            array(
                  'id'       => 'ampforwp_pwa_module',
                  'type'     => 'raw',
                  'title'     => esc_html__('PWA Support', 'accelerated-mobile-pages'),
                  'content'  => (!is_plugin_active('pwa-for-wp/pwa-for-wp.php')? 
-                                  '<div class="install-now ampforwp-activation-call-module-upgrade button  " id="ampforwp-pwa-activation-call" data-secure="'.wp_create_nonce('verify_module').'">Activate this Module</div>'
+                                  $pwa_install
                               : '<div class="col-wrapper">
                                      <a href="'.admin_url('admin.php?page=pwaforwp&reference=ampforwp').'"> <div class="ampforwp-recommendation-btn updated-message"><p>Go to PWA Settings</p></div> </a> 
                                   </div>
@@ -83,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                'class' => 'child_opt child_opt_arrow',
                'title'     => esc_html__('Want to clear the Cache?', 'accelerated-mobile-pages'),
                'content'   => "<span class='button button-primary button-small' id='ampforwp-clear-clearcss-data' target='_blank'  data-nonce='".wp_create_nonce( 'ampforwp_clear_tree_shaking')."'><i class='el el-trash'></i> Clear Cache</span><span id='ampforwp-clear-clcss-msg' ></span>",
-               'tooltip-subtitle' => esc_html__('This will remove all the generated cache.', 'amp-pagebuilder-compatibility'),
+               'tooltip-subtitle' => esc_html__( 'This will remove all the generated cache.', 'accelerated-mobile-pages' ),
                'full_width' => false,
                'section_id'=>'amp-content-builder',
                'required'=>array('ampforwp_css_tree_shaking','=','1')

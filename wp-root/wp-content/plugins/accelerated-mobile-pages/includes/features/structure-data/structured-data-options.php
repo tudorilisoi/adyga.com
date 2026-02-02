@@ -51,7 +51,8 @@ function ampforwp_add_sd_fields($fields){
                   $schema_install = '<div class="install-now ampforwp-activation-call-module-upgrade button  " id="ampforwp-structure-data-activation-call" data-secure="'.wp_create_nonce('verify_module').'"><p>'.esc_html__('Upgrade for Free','accelerated-mobile-pages').'</p></div>';
               }
               if(file_exists(AMPFORWP_MAIN_PLUGIN_DIR."schema-and-structured-data-for-wp/structured-data-for-wp.php") && !function_exists('saswp_add_plugin_meta_links')){
-                     $schema_install = '<div class="install-now button"><a style="text-decoration: none;" target="_blank" href="'.admin_url('plugins.php').'">'.esc_html__('Activate Plugin','accelerated-mobile-pages').'</a></div>';
+                    $activation_url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=schema-and-structured-data-for-wp/structured-data-for-wp.php&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_schema-and-structured-data-for-wp/structured-data-for-wp.php' );
+                    $schema_install = '<div class="install-now ampforwp-activation-plugin button button-primary" id="ampforwp-structured-data-activate" style="color: #fff;text-decoration: none;" data-href="'.$activation_url.'" >'.esc_html__('Activate Plugin','accelerated-mobile-pages').'</div>';
                   }
              $fields[] =    array(
                                 'id' => 'ampforwp-sd_modules_section',
@@ -237,7 +238,7 @@ if( ! function_exists('saswp_non_amp') ) {
                   'id'       => 'ampforwp-sd-type-'.esc_attr($p_type),
                   'type'     => 'select',
                   'class'    => 'child_opt child_opt_arrow',
-                  'title'    => esc_html__($post_type, 'accelerated-mobile-pages'),
+                  'title'    => esc_html($post_type),
                   'tooltip-subtitle' => 'Select the Structured Data Type for '.esc_attr($p_type),
                   'options'  =>  ampforwp_get_sd_types(),
                   'default'  => 'BlogPosting',

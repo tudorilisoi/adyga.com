@@ -5,7 +5,9 @@ require_once  ABSPATH . WPINC . '/category.php';
 add_filter('ampforwp_content_module_args','ampforwp_content_module_pagination',10,2);
 function ampforwp_content_module_pagination($args, $fieldValues){
   if(isset($fieldValues['pagination']) && $fieldValues['pagination'] == 1 ){
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
       if( isset($_GET['pageno']) && $_GET['pageno']!=''){
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
           $paged = intval($_GET['pageno']);
       }else{
           $paged = 1;
@@ -20,7 +22,7 @@ function ampforwp_content_module_pagination($args, $fieldValues){
     return $args;
   }
 }
- $output = '{{if_condition_content_layout_type==1}}
+$output = '{{if_condition_content_layout_type==1}}
             <div {{if_id}}id="{{id}}"{{ifend_id}} class="pb_mod cm {{user_class}}">
             {{if_content_title}}<h4>{{content_title}}</h4> {{ifend_content_title}}
                 <div id="cat-jump{{id}}" class="wrap"><ul>{{category_selection}}</ul></div>
@@ -252,7 +254,7 @@ if ( is_admin() ) {
             array(    
               'type'  =>'select',   
               'name'  =>"taxonomy_selection",   
-              'label' => esc_html__("Select Taxonomy","accelerated-mobile-pages"),
+              'label' => did_action( 'init' ) ? esc_html__("Select Taxonomy","accelerated-mobile-pages") : esc_html("Select Taxonomy"),
               'tab'     =>'customizer',
               'default' =>'',    
               'options' => $options,    
@@ -283,7 +285,7 @@ if ( is_admin() ) {
             array(    
             'type'    =>'text',   
             'name'    =>'posts_offset',
-            'label'   => esc_html__('Offset','accelerated-mobile-pages'),  
+            'label'   => did_action( 'init' ) ? esc_html__('Offset','accelerated-mobile-pages') : esc_html('Offset'),  
             'tab'     =>'customizer',
             'default' =>'0',
             'content_type'=>'html',
@@ -310,7 +312,7 @@ if ( is_admin() ) {
             array(    
             'type'    =>'text',
             'name'    =>"ampforwp_read_more",
-            'label'   =>esc_html__("Read More Text","accelerated-mobile-pages"),
+            'label'   => did_action( 'init' ) ? esc_html__("Read More Text","accelerated-mobile-pages") : esc_html("Read More Text"),
             'tab'     =>'customizer',
             'default' =>'Read More',    
             'content_type'=>'html',
@@ -480,7 +482,7 @@ if ( is_admin() ) {
                     $readMore = $fieldValues['ampforwp_read_more'];
                     $read_more_link = '<a href="'.esc_url($ampforwp_post_url).'" > '.esc_html($readMore).'</a>';
                   }   
-                 $excerptContent = '<p>'.wp_trim_words( strip_tags( strip_shortcodes( $content ) ) , (int) $ampforwp_excerpt_length ).$read_more_link.'</p>';
+                 $excerptContent = '<p>'.wp_trim_words( wp_strip_all_tags( strip_shortcodes( $content ) ) , (int) $ampforwp_excerpt_length ).$read_more_link.'</p>';
               }
                $loopdate = "";
                $loopdate =  human_time_diff(
@@ -578,7 +580,9 @@ if ( is_admin() ) {
         }else{
           $total_num_pages = $the_query->max_num_pages - $offset_num;
         }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
         if(isset($_GET[$pagination_text]) && $_GET[$pagination_text]!='' ){
+          // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
             $paged = intval($_GET[$pagination_text]);
         }else{
             $paged = 1;
@@ -591,7 +595,7 @@ if ( is_admin() ) {
           $prev_page = add_query_arg( array( $pagination_text => $paged - 1 ), $queryUrl );
           $nextLabel = (isset($fieldValues['ampforwp_pb_cat_pagination_next']) && !empty($fieldValues['ampforwp_pb_cat_pagination_next'])) ? $fieldValues['ampforwp_pb_cat_pagination_next'] : "Next";
 
-          $pagination_links .= "<a class='pagi-first' href = ".esc_url($first_page)."> ".esc_html__($nextLabel,'accelerated-mobile-pages')."</a>";
+          $pagination_links .= "<a class='pagi-first' href = ".esc_url($first_page)."> ".esc_html($nextLabel)."</a>";
           //$pagination_links .= "<a href = ".$prev_page."> Prev </a>";
         }
 
@@ -603,11 +607,11 @@ if ( is_admin() ) {
         $endPage = min( $total_num_pages, $paged + $count);
         for($i = $startPage ; $i <= $endPage ; $i++){
           if( $paged == $i && $startPage!=$endPage){
-              $pagination_links .= "<a class='active' href='#/' >".esc_html__($i, 'accelerated-mobile-pages')."</a>";
+              $pagination_links .= "<a class='active' href='#/' >".esc_html($i)."</a>";
           }else{
             $allPages = add_query_arg( array( $pagination_text => $i ), $queryUrl ) . '#cat-jump'.esc_html($fieldValues['id']);
             if($startPage!=$endPage){
-              $pagination_links .= "<a href =".esc_url($allPages)." >".esc_html__($i, 'accelerated-mobile-pages')."</a>";
+              $pagination_links .= "<a href =".esc_url($allPages)." >".esc_html($i)."</a>";
             }
           }
 
@@ -621,7 +625,7 @@ if ( is_admin() ) {
 	        $lastLabel = (isset($fieldValues['ampforwp_pb_cat_pagination_last']) && !empty($fieldValues['ampforwp_pb_cat_pagination_last'])) ? $fieldValues['ampforwp_pb_cat_pagination_last'] : "Last";
           $next_page = add_query_arg( array( $pagination_text => $total_num_pages ), $queryUrl );
           $next_page .= '#cat-jump'. esc_html($fieldValues['id']);
-          $pagination_links .= "<a class='pagi-last' href =".esc_url($next_page)." >".esc_html__($lastLabel, 'accelerated-mobile-pages')."</a>";
+          $pagination_links .= "<a class='pagi-last' href =".esc_url($next_page)." >".esc_html($lastLabel)."</a>";
         }
         $pagination_links .= '</div>';
         

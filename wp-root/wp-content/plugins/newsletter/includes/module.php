@@ -5,8 +5,6 @@ defined('ABSPATH') || exit;
 require_once __DIR__ . '/logger.php';
 require_once __DIR__ . '/store.php';
 require_once __DIR__ . '/composer.php';
-require_once __DIR__ . '/addon.php';
-require_once __DIR__ . '/mailer.php';
 require_once __DIR__ . '/themes.php';
 
 /**
@@ -429,6 +427,7 @@ class NewsletterModule extends NewsletterModuleBase {
 
         $id = 0;
         $user = null;
+        $token = '';
 
         if (isset($_REQUEST['nk'])) {
             list($id, $token) = explode('-', wp_unslash($_REQUEST['nk']), 2);
@@ -621,7 +620,7 @@ class NewsletterModule extends NewsletterModuleBase {
      * @return TNP_List
      */
     function get_list($id, $language = '') {
-        $lists = $this->get_lists($language);
+        $lists = $this->get_lists();
         if (!isset($lists['' . $id])) {
             return null;
         }
@@ -736,7 +735,7 @@ class NewsletterModule extends NewsletterModuleBase {
 
 
 
-        return self::add_qs($url, $params, false);
+        return self::add_qs($url, $params);
     }
 
     function get_subscribe_url() {
@@ -798,10 +797,8 @@ class NewsletterModule extends NewsletterModuleBase {
 
         $name = $this->sanitize_name($user->name);
         if (empty($name)) {
-            $text = str_replace(' {name}', '', $text);
-            $text = str_replace('{name}', '', $text);
-            $text = str_replace(' {first_name}', '', $text);
-            $text = str_replace('{first_name}', '', $text);
+            $text = str_replace('{name}', esc_html($this->get_text('name_default', 'form')), $text);
+            $text = str_replace('{first_name}', esc_html($this->get_text('name_default', 'form')), $text);
         } else {
             $text = str_replace('{name}', esc_html($name), $text);
             $text = str_replace('{first_name}', esc_html($name), $text);
@@ -813,8 +810,7 @@ class NewsletterModule extends NewsletterModuleBase {
 
         $full_name = trim($name . ' ' . $surname);
         if (empty($full_name)) {
-            $text = str_replace(' {full_name}', '', $text);
-            $text = str_replace('{full_name}', '', $text);
+            $text = str_replace('{full_name}', esc_html($this->get_text('name_default', 'form')), $text);
         } else {
             $text = str_replace('{full_name}', esc_html($full_name), $text);
         }
@@ -846,6 +842,7 @@ class NewsletterModule extends NewsletterModuleBase {
         $text = $this->replace_url($text, 'subscription_confirm_url', $this->build_action_url('c', $user, $email));
         $text = $this->replace_url($text, 'activation_url', $this->build_action_url('c', $user, $email));
         $text = $this->replace_url($text, 'confirmation_url', $this->build_action_url('c', $user, $email));
+        $text = $this->replace_url($text, 'confirm_url', $this->build_action_url('c', $user, $email));
 
         // To be moved to the "content lock" addon
         $text = $this->replace_url($text, 'unlock_url', $this->build_action_url('ul', $user));
@@ -948,10 +945,11 @@ class NewsletterModule extends NewsletterModuleBase {
             $name = $this->sanitize_user_field($name);
 
             if (empty($name)) {
-                $text = str_replace(' {name}', '', $text);
-                $text = str_replace('{name}', '', $text);
+                $text = str_replace('{name}', esc_html($this->get_text('name_default', 'form')), $text);
+                $text = str_replace('{first_name}', esc_html($this->get_text('name_default', 'form')), $text);
             } else {
                 $text = str_replace('{name}', esc_html($name), $text);
+                $text = str_replace('{first_name}', esc_html($name), $text);
             }
 
             switch ($user->sex) {
@@ -969,8 +967,7 @@ class NewsletterModule extends NewsletterModuleBase {
 
             $full_name = esc_html(trim($name . ' ' . $surname));
             if (empty($full_name)) {
-                $text = str_replace(' {full_name}', '', $text);
-                $text = str_replace('{full_name}', '', $text);
+                $text = str_replace('{full_name}', esc_html($this->get_text('name_default', 'form')), $text);
             } else {
                 $text = str_replace('{full_name}', $full_name, $text);
             }
@@ -1227,14 +1224,6 @@ class NewsletterModule extends NewsletterModuleBase {
         }
         $key = NewsletterStatistics::instance()->options['key'];
         return md5($text . $key) === $signature;
-    }
-
-    static function get_home_url() {
-        static $url = false;
-        if (!$url) {
-            $url = home_url('/');
-        }
-        return $url;
     }
 
     static function clean_eol($text) {

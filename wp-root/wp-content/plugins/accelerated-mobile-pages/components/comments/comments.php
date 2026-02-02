@@ -9,6 +9,7 @@ function ampforwp_framework_get_comments(){
 	do_action('ampforwp_comment_start_hook');
 	if ( $display_comments_on ) {
 		if ( $redux_builder_amp['ampforwp-facebook-comments-support']  ) { 
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		 	echo ampforwp_framework_get_facebook_comments(); 
 		}
 
@@ -63,8 +64,10 @@ function ampforwp_framework_get_comments(){
 													 printf('<b class="fn">%s</b> <span class="says">'.esc_html(ampforwp_translation(ampforwp_get_setting('amp-translator-says-text'),'says')).':</span>', get_comment_author_link()) ?>
 												</div>
 												<div class="cmt-metadata">
-													<a href="<?php echo htmlspecialchars( trailingslashit( get_comment_link( $comment->comment_ID ) ) ) ?>">
-														<?php printf( ampforwp_translation( ('%1$s '. ampforwp_translation($redux_builder_amp['amp-translator-at-text'],'at').' %2$s'), '%1$s at %2$s') , get_comment_date(),  get_comment_time())?>
+													<a href="<?php echo esc_url(htmlspecialchars( trailingslashit( get_comment_link( $comment->comment_ID ) ) )) ?>">
+														<?php 
+														//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+														printf( ampforwp_translation( ('%1$s '. ampforwp_translation($redux_builder_amp['amp-translator-at-text'],'at').' %2$s'), '%1$s at %2$s') , get_comment_date(),  get_comment_time())?>
 													</a>
 													<?php edit_comment_link(  ampforwp_translation( $redux_builder_amp['amp-translator-Edit-text'], 'Edit' )  ) ?>
 												</div>
@@ -82,6 +85,7 @@ function ampforwp_framework_get_comments(){
                                    								'add_placeholder' => true,
                                 							) ) ) );
 						                         $sanitized_comment_content =  $sanitizer->get_amp_content();
+												 //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						                          echo make_clickable( $sanitized_comment_content );   ?>
 											</div>
 										<?php do_action('ampforwp_reply_comment_form', $comment, $args, $depth); ?>
@@ -112,7 +116,9 @@ function ampforwp_framework_get_comments(){
 								}
 						    if ( paginate_comments_links($args) ) { ?>
 								<div class="cmts-wrap">
-					     			<?php echo paginate_comments_links( $args ); ?>
+					     			<?php 
+									//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo paginate_comments_links( $args ); ?>
 					     		</div>
 				     		<?php } ?>
 						</div> <!-- .amp-comments-wrapper -->
@@ -126,7 +132,9 @@ function ampforwp_framework_get_comments(){
 									$nofollow = 'rel=nofollow';
 								}
 							 ?>
-							 <a href="<?php echo ampforwp_comment_button_url(); ?>" title="<?php echo ampforwp_get_setting('amp-translator-leave-a-comment-text')?>" <?php echo esc_html($nofollow) ?> ><?php echo esc_html(ampforwp_translation( ampforwp_get_setting('amp-translator-leave-a-comment-text'), 'Leave a Comment' ) ); ?></a> <?php } ?>
+							 <a href="<?php 
+							 //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							 echo ampforwp_comment_button_url(); ?>" title="<?php echo esc_attr(ampforwp_get_setting('amp-translator-leave-a-comment-text'))?>" <?php echo esc_html($nofollow) ?> ><?php echo esc_html(ampforwp_translation( ampforwp_get_setting('amp-translator-leave-a-comment-text'), 'Leave a Comment' ) ); ?></a> <?php } ?>
 						</div>	 
 				<?php } ?>
 				</div>
@@ -141,14 +149,15 @@ function ampforwp_framework_get_facebook_comments(){
 global $redux_builder_amp;
 	$facebook_comments_markup = $lang = $locale = '';
 	$lang = ampforwp_get_setting('ampforwp-fb-comments-lang');
-	if ( $redux_builder_amp['ampforwp-facebook-comments-support'] ) {
+	if ( isset($redux_builder_amp['ampforwp-facebook-comments-support']) && $redux_builder_amp['ampforwp-facebook-comments-support'] ) {
 	if( ampforwp_is_non_amp() && isset($redux_builder_amp['ampforwp-amp-convert-to-wp']) && $redux_builder_amp['ampforwp-amp-convert-to-wp']) {
-		$facebook_comments_markup = '<div class="fb-comments" data-href="' . get_permalink() . '" data-width="800px" data-numposts="'.$redux_builder_amp['ampforwp-number-of-fb-no-of-comments'].'"></div>';
+		$facebook_comments_markup = '<div class="fb-comments" data-href="' . esc_url(get_permalink()) . '" data-width="800px" data-numposts="'.esc_attr($redux_builder_amp['ampforwp-number-of-fb-no-of-comments']).'"></div>';
 	}
 	else {  
 		$facebook_comments_markup = '<section class="amp-facebook-comments">';
 		if(true == ampforwp_get_setting('ampforwp-facebook-comments-title')){
-			$facebook_comments_markup .= '<h5>'. esc_html__(ampforwp_translation(ampforwp_get_setting('ampforwp-facebook-comments-title'), 'Leave a Comment'),'accelerated-mobile-pages') .'</h5>';
+			
+			$facebook_comments_markup .= '<h5>'. esc_html(ampforwp_translation(ampforwp_get_setting('ampforwp-facebook-comments-title'), 'Leave a Comment')) .'</h5>';
 		}
 		$facebook_comments_markup .= '<amp-facebook-comments width=486 height=357
 	    		layout="responsive" '.'data-locale = "'.esc_attr($lang).'"'.' data-numposts=';
@@ -156,7 +165,7 @@ global $redux_builder_amp;
 	    if(ampforwp_get_data_consent()){
 	    	$facebook_comments_markup .= ' data-block-on-consent ';
 	    }
-		$facebook_comments_markup .= 'data-href="' . esc_html(get_permalink()) . '"';
+		$facebook_comments_markup .= 'data-href="' . esc_url(get_permalink()) . '"';
 	    $facebook_comments_markup .= '></amp-facebook-comments></section>';
 	}
 		return $facebook_comments_markup;
@@ -202,6 +211,7 @@ function ampforwp_framework_get_disqus_comments(){
 	}
 }
 function ampforwp_framework_get_vuukle_comments(){
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo ampforwp_vuukle_comments_markup();
 }
 function ampforwp_framework_get_spotim_comments(){
@@ -218,6 +228,7 @@ function ampforwp_framework_get_spotim_comments(){
 	  <amp-img placeholder height="815" layout="fill" src="//amp.spot.im/loader.png"></amp-img>
 	  <div overflow class="spot-im-amp-overflow" tabindex="0" role="button" aria-label="Read more">'.esc_html__('Load more...','accelerated-mobile-pages').'</div>
 	</amp-iframe>';
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo $spotim_html; // escaped above
 }
 
@@ -237,7 +248,7 @@ function ampforwp_framework_comments_scripts( $data ) {
 				$data['amp_component_scripts']['amp-facebook-comments'] = 'https://cdn.ampproject.org/v0/amp-facebook-comments-0.1.js';
 			}
 		}
-	if ( $redux_builder_amp['ampforwp-disqus-comments-support'] && $display_comments_on  && comments_open() && !$is_pb_enabled ) {
+	if ( isset($redux_builder_amp['ampforwp-disqus-comments-support']) && $redux_builder_amp['ampforwp-disqus-comments-support'] && $display_comments_on  && comments_open() && !$is_pb_enabled ) {
 		if( $redux_builder_amp['ampforwp-disqus-comments-name'] !== '' ) {
 			if ( empty( $data['amp_component_scripts']['amp-iframe'] ) ) {
 				$data['amp_component_scripts']['amp-iframe'] = 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js';

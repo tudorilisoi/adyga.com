@@ -158,3 +158,6 @@ https://static.pexels.com/photos/6762/wood-light-fashion-people.jpg
 ### 1.1.8 - November 30, 2020
 * minor fixes
 * Gutenberg compatible
+
+### 1.1.9 - May 14, 2024
+* minor css fixes

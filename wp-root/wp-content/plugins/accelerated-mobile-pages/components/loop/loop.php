@@ -8,6 +8,20 @@ function amp_archive_title(){
 		$author_name = esc_attr(get_query_var('author_name'));
 		$author = esc_attr(get_query_var('author'));
 		$curauth = (get_query_var('author_name')) ? get_user_by('slug', $author_name) : get_userdata($author);
+		//added code for guest author compatibility for plugin coauthors
+		if(!$curauth && function_exists('get_the_coauthor_meta') )
+		{
+			$thumb_url=ampforwp_get_coauthor_meta('avatar_url');		
+			if($thumb_url){
+					$display_name=ampforwp_get_coauthor_meta('display_name');
+				?>
+					<div class="amp-wp-content author-img">
+						<amp-img src="<?php echo esc_url($thumb_url); ?>" width="90" height="90" layout="responsive" alt="<?php echo esc_html($display_name); ?>"></amp-img>
+					</div>
+				<?php }
+		
+		}
+		else{
 		if( true == ampforwp_gravatar_checker($curauth->user_email) ){
 			$curauth_url = get_avatar_url( $curauth->user_email, array('size'=>180) );
 			if($curauth_url){ ?>
@@ -15,6 +29,7 @@ function amp_archive_title(){
 					<amp-img src="<?php echo esc_url($curauth_url); ?>" width="90" height="90" layout="responsive" alt="<?php echo esc_html(get_the_author()); ?>"></amp-img>
 				</div>
 			<?php }
+		}
 	}
 }
 	if ( is_archive() ) {
@@ -62,7 +77,8 @@ function amp_archive_title(){
 	    $parent_cat_id 	= get_queried_object_id();
 	 	$cat_childs 	= get_terms( array(
 	  						'taxonomy' => get_queried_object()->taxonomy,
-	  						'parent'   => $parent_cat_id )
+	  						'parent'   => $parent_cat_id 
+							)
 						);
 		if( !empty( $cat_childs ) ){
 			echo "<div class='amp-sub-archives'><ul>";
@@ -83,9 +99,9 @@ function amp_archive_title(){
 		}
 
 		if(ampforwp_default_logo()){
-			echo '<h1 class="amp-loop-label">'.$label . '  ' . get_search_query().'</h1>';	
+			echo '<h1 class="amp-loop-label">'.esc_attr($label) . '  ' . get_search_query().'</h1>';	
 		}else{	
-			echo '<h2 class="amp-loop-label">'.$label . '  ' . get_search_query().'</h2>';
+			echo '<h2 class="amp-loop-label">'.esc_attr($label) . '  ' . get_search_query().'</h2>';
 		}
 	}
 }
@@ -109,17 +125,20 @@ function call_loops_standard($data=array()){
 		$exclude_ids = ampforwp_exclude_posts();
 		$qobj = get_queried_object();
 		if( !is_date() ){
+				
 				$args = array(
 							'no_found_rows' 	  => true,
 							'post_type'           => $post_type,
 							'orderby'             => 'date',
 							'ignore_sticky_posts' => 1,
 							'paged'               => esc_attr($paged),
+							/* phpcs:ignore  WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 							'post__not_in' 		  => $exclude_ids,
 							'has_password' => false ,
 							'post_status'=> 'publish'
 						 );
 			if ( is_category() || ( isset($qobj->taxonomy) && taxonomy_exists($qobj->taxonomy)) ) {
+				/* phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query */
 				$args['tax_query'] = array(
 						        		array(
 								          'taxonomy' => $qobj->taxonomy,
@@ -140,6 +159,7 @@ function call_loops_standard($data=array()){
 								array('year' => esc_attr($year))
 						),
 						'paged'         => esc_attr($paged),
+						/* phpcs:ignore  WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 						'post__not_in' 	=> $exclude_ids,
 						'has_password' 	=> false ,
 						'post_status'	=> 'publish',
@@ -158,11 +178,13 @@ function call_loops_standard($data=array()){
 	}
 	if ( is_home() ) {
 		$exclude_ids = ampforwp_exclude_posts();
+		
 		$args = array(
 			'no_found_rows' 	  => true,
 			'post_type'           => 'post',
 			'orderby'             => 'date',
 			'paged'               => esc_attr($paged),
+			/* phpcs:ignore  WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 			'post__not_in' 		  => $exclude_ids,
 			'has_password'		  => false ,
 			'post_status'		  => 'publish'
@@ -171,10 +193,12 @@ function call_loops_standard($data=array()){
 
 	if ( is_search() ) {
 		$exclude_ids = ampforwp_exclude_posts();
+		
 		$args = array(
 			's' 				  => get_search_query() ,
 			'ignore_sticky_posts' => 1,
 			'paged'               => esc_attr($paged),
+			/* phpcs:ignore  WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 			'post__not_in' 		  => $exclude_ids,
 			'has_password' 		  => false ,
 			'post_status'		  => 'publish',
@@ -183,14 +207,15 @@ function call_loops_standard($data=array()){
 	}
 	if(is_author()){
 		$exclude_ids = ampforwp_exclude_posts();
-		$author = esc_attr(get_query_var( 'author_name' ));
-		$author = get_user_by( 'slug', $author);
+		$author_name = esc_attr(get_query_var( 'author_name' ));
+		
 		$args =  array(
-			'author'        	  =>  $author->ID,
+			'author_name'         =>  $author_name,
 			'post_type'           => 'post',
 			'orderby'             => 'date',
 			'ignore_sticky_posts' => 1,
 			'paged'               => esc_attr($paged),
+			/* phpcs:ignore  WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 			'post__not_in' 		  => $exclude_ids,
 			'has_password' 		  => false ,
 			'post_status'		  => 'publish',
@@ -201,12 +226,14 @@ function call_loops_standard($data=array()){
 		global $post;
 		$exclude_ids = ampforwp_exclude_posts();
 		$exclude_ids[] = $post->ID;
+		
 		$args =  array(
 			'no_found_rows' 	  => true,
 			'post_type'           => get_post_type($post),
 			'orderby'             => 'date',
 			'ignore_sticky_posts' => 1,
 			'paged'               => esc_attr($paged),
+			/* phpcs:ignore  WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 			'post__not_in' 		  => $exclude_ids,
 			'has_password' 		  => false ,
 			'post_status'		  => 'publish'
@@ -221,7 +248,6 @@ function call_loops_standard($data=array()){
 	if( isset( $data['posts_per_page'] ) && $data['posts_per_page']>0 ){
 		$args['posts_per_page'] = $data['posts_per_page'];
 	}
-	
 	$filtered_args = apply_filters('ampforwp_query_args', $args);
 	$amp_q = new WP_Query( $filtered_args );
 
@@ -305,10 +331,12 @@ function amp_pagination($args =array()) {
 	    }else{
 	    if ( get_next_posts_link( $args['next_text'], $amp_q->max_num_pages ) ) { 
     	 	$next_link = '<div class="right">'. apply_filters('ampforwp_next_posts_link',get_next_posts_link( ampforwp_translation($redux_builder_amp['amp-translator-show-more-posts-text'] , $args['next_text']), $amp_q->max_num_pages ), $paged) .'</div>';
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     	 	echo $next_link; // escaped above
 	    }
 	    if ( get_previous_posts_link() ) { 
 	    	$pre_link = '<div class="left">'.apply_filters('ampforwp_previous_posts_link',get_previous_posts_link( ampforwp_translation($redux_builder_amp['amp-translator-show-previous-posts-text'], $args['previous_text'] ) ), $paged )  .'</div>';
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	    	echo $pre_link; // escaped above 
     	} ?>
 	    <div class="clearfix"></div>
@@ -365,11 +393,12 @@ function amp_loop_title($data=array()){
 			}
 		} 
 	}
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo '<'.esc_attr($tag).' '.$attr_val.' '.$data_val.'>';
 		if(!isset($data['link']) ){
 			echo '<a href="'. esc_url(amp_loop_permalink(true)) .'">';
 		}
-	echo the_title('','',false);
+	echo esc_attr(the_title('','',false));
 	
 		if(!isset($data['link']) ){
 			echo  '</a>';
@@ -417,8 +446,10 @@ function amp_loop_excerpt($excerpt_length = 15,$tag = 'p', $class = ''){
 	}
 
 	if( ampforwp_get_setting('ampforwp-homepage-loop-readmore-link') == 1 ) {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ('<'.esc_attr($tag).' class="'.esc_attr($class).'">'. wp_trim_words(  $content, $excerpt_length ) .' '.'<a href="'. ampforwp_url_controller(get_permalink($post->ID)) . '">'. ampforwp_translation($redux_builder_amp['amp-translator-read-more'],'Read More') . '</a></'.esc_attr($tag).'>');
 	} else {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ('<'.esc_attr($tag).' class="'.esc_attr($class).'">'. wp_trim_words(  $content, $excerpt_length ) .'</'.esc_attr($tag).'>');
 	}
 	
@@ -426,7 +457,8 @@ function amp_loop_excerpt($excerpt_length = 15,$tag = 'p', $class = ''){
 
 function amp_loop_all_content($tag = 'p'){
 	$fullContent = strip_shortcodes( get_the_content() );
-	echo ('<'.$tag.'>'. $fullContent .'</'.$tag.'>');
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo ('<'.esc_attr($tag).'>'. $fullContent .'</'.esc_attr($tag).'>');
 }
 
 function amp_loop_permalink($return = ''){
@@ -436,6 +468,7 @@ function amp_loop_permalink($return = ''){
 		$url = ampforwp_url_controller( get_permalink() ) ;
 	}
 	$url = apply_filters('ampforwp_loop_permalink_update',$url);
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	return $url;
 }
 	
@@ -446,6 +479,7 @@ if (! function_exists('amp_loop_get_permalink')){
 }
 if (! function_exists('amp_loop_the_permalink')){
 	function amp_loop_the_permalink(){
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo amp_loop_get_permalink();
 	}
 }
@@ -540,7 +574,8 @@ function amp_loop_image( $data=array() ) {
 				if(function_exists('ampforwp_add_fallback_element')){
 					$img_content = ampforwp_add_fallback_element($img_content,'amp-img');
 				}
-		    	echo $img_content;
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		    echo $img_content;
 			echo '</a>';
 			echo '</'.esc_attr($tag).'>';
 		}

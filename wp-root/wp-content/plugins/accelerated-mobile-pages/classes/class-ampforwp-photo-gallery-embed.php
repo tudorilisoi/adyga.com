@@ -44,14 +44,23 @@ class AMPforWP_Photo_Gallery_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_E
     $params['ajax'] = TRUE;
     if ( isset($params['id']) && $params['id'] ) {
       global $wpdb;
-      $shortcode = $wpdb->get_var($wpdb->prepare("SELECT tagtext FROM " . $wpdb->prefix . "bwg_shortcode WHERE id='%d'", $params['id']));
+    
+      $cache_key = 'bwg_shortcode_cache_key_'.$params['id'];
+      $shortcode = wp_cache_get( $cache_key );   
+      if ( false === $shortcode ) {
+        /* phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery */
+        $shortcode = $wpdb->get_var($wpdb->prepare("SELECT tagtext FROM " . $wpdb->prefix . "bwg_shortcode WHERE id=%d", $params['id']));
+        wp_cache_set( $cache_key, $shortcode );
+      }
       if ($shortcode) {
         $shortcode_params = explode('" ', $shortcode);
-        foreach ($shortcode_params as $shortcode_param) {
-          $shortcode_param = str_replace('"', '', $shortcode_param);
-          $shortcode_elem = explode('=', $shortcode_param);
-          $params[str_replace(' ', '', $shortcode_elem[0])] = $shortcode_elem[1];
-        }
+        if(!empty($shortcode_params)){
+          foreach ($shortcode_params as $shortcode_param) {
+            $shortcode_param = str_replace('"', '', $shortcode_param);
+            $shortcode_elem = explode('=', $shortcode_param);
+            $params[str_replace(' ', '', $shortcode_elem[0])] = $shortcode_elem[1];
+          }
+       }
       }
       else {
         return;
@@ -253,7 +262,7 @@ public function front_end($params) {
     }// foreach Closed
 
     //replacements
-      $r = rand(1,100);
+      $r = wp_rand(1,100);
       $amp_carousel = AMP_HTML_Utils::build_tag(
               'amp-carousel',
               array(

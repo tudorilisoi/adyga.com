@@ -20,14 +20,18 @@ if( isset( $redux_builder_amp['ampforwp-single-order-of-related-posts'] ) && $re
 if( $current_post_type = get_post_type( $post )) {
 // The query arguments
 	if($current_post_type != 'page'){
+		
+		
     $args = array(
     	'fields'=>'ids',
         'posts_per_page'=> $int_number_of_related_posts,
+		/* phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
         'post__not_in' => array($post->ID),
         'order' => 'DESC',
         'orderby' => $orderby,
         'post_type' => $current_post_type,
         'no_found_rows' 	  => true,
+		/* phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query */
         'meta_query' => array(
 					array(
 						'key'        => 'ampforwp-amp-on-off',
@@ -44,6 +48,7 @@ if(ampforwp_get_setting('ampforwp-single-select-type-of-related')==2){
 	if ($categories) {
 		$category_ids = array();
 		foreach($categories as $individual_category) $category_ids[] = $individual_category->term_id;
+		
 		$args=array(
 			'fields'=>'ids',
 		    'category__in'		 => $category_ids,
@@ -53,6 +58,7 @@ if(ampforwp_get_setting('ampforwp-single-select-type-of-related')==2){
 			'post_status'		 => 'publish',
 			'no_found_rows' 	  => true,
 			'orderby' 			 => $orderby,
+			/* phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query */
 		    'meta_query' => array(
 		    	array(
 		    		'key' => 'ampforwp-amp-on-off',
@@ -68,17 +74,21 @@ if(ampforwp_get_setting('ampforwp-single-select-type-of-related')==1) {
 	if ($ampforwp_tags) {
 			$tag_ids = array();
 			foreach($ampforwp_tags as $individual_tag) $tag_ids[] = $individual_tag->term_id;
+			
+			
 				$args=array(
 					'fields'=>'ids',
 				   'tag__in' 			 => $tag_ids,
 				   
 				    'posts_per_page'	 => $int_number_of_related_posts,
+					/* phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
 				    'post__not_in' => array($post->ID),
 				    'ignore_sticky_posts'=> 1,
 						'has_password' 	 => false ,
 						'post_status'	 => 'publish',
 						'no_found_rows' 	  => true,
 						'orderby' 		 => $orderby,
+						/* phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query */
                        'meta_query' => array(
 							array(
 								'key'        => 'ampforwp-amp-on-off',
@@ -95,9 +105,9 @@ if ( isset($redux_builder_amp['ampforwp-related-posts-days-switch']) && true == 
 	$args['date_query'] = array(
 				            array(
 				                'after' => array(
-				                    'year'  => date('Y', $date_range ),
-				                    'month' => date('m', $date_range ),
-				                    'day'   => date('d', $date_range ),
+				                    'year'  => gmdate( 'Y', $date_range ),
+				                    'month' => gmdate( 'm', $date_range ),
+				                    'day'   => gmdate( 'd', $date_range ),
 				                	),
 				            	)
 				       		); 
@@ -110,7 +120,8 @@ if( isset($redux_builder_amp['ampforwp-single-related-posts-switch']) && $redux_
 			    <div class="rp">
 			    	<span class="related-title">
 				    <?php if (function_exists('pll__')) {
-			    		echo pll__(esc_html__( ampforwp_get_setting('amp-translator-related-text'), 'accelerated-mobile-pages'));
+						//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			    		echo pll__(esc_html( ampforwp_get_setting('amp-translator-related-text')));
 			    	}else{
 			    		echo esc_attr(ampforwp_translation( ampforwp_get_setting('amp-translator-related-text'), 'Related Post' ));
 			    	} ?></span>
@@ -143,6 +154,7 @@ if( isset($redux_builder_amp['ampforwp-single-related-posts-switch']) && $redux_
 				            	if(function_exists('ampforwp_add_fallback_element')){
 									$img_content = ampforwp_add_fallback_element($img_content,'amp-img');
 				            	}
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						    	echo $img_content;
 							}
 							}?>
@@ -161,7 +173,7 @@ if( isset($redux_builder_amp['ampforwp-single-related-posts-switch']) && $redux_
 										}else{
 											$content = get_the_content();
 										} ?>
-				                     <p class="<?php echo $class; ?>"><?php 
+				                     <p class="<?php echo esc_attr($class); ?>"><?php 
 				                    $excerpt_length = ampforwp_get_setting('enable-excerpt-single-related-posts');
 				                    if(empty($excerpt_length)){
 										$excerpt_length = 15;
@@ -169,7 +181,8 @@ if( isset($redux_builder_amp['ampforwp-single-related-posts-switch']) && $redux_
 				                   if (true == ampforwp_get_setting('excerpt-option-rp-read-more')){
 											$content .= '...&nbsp;';
 										}
-				                    echo wp_trim_words( strip_shortcodes( $content ) , $excerpt_length ); ?><?php if (true == ampforwp_get_setting('excerpt-option-rp-read-more')){?><a class="readmore-rp" href="<?php echo esc_url( $related_post_permalink ); ?>"><?php echo ampforwp_translation(ampforwp_get_setting('amp-translator-read-more'),'Read More') ?></a></p>
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				                    echo wp_trim_words( strip_shortcodes( $content ) , $excerpt_length ); ?><?php if (true == ampforwp_get_setting('excerpt-option-rp-read-more')){?><a class="readmore-rp" href="<?php echo esc_url( $related_post_permalink ); ?>"><?php echo esc_attr(ampforwp_translation(ampforwp_get_setting('amp-translator-read-more'),'Read More')); ?></a></p>
 				                <?php } } ?>  
 			                </div>
 		            		</li>

@@ -126,7 +126,46 @@ class AMP_Rev_Slider_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_Embed_Han
 				if ( $image_id ) {
 				 	$img_data = wp_get_attachment_metadata( $image_id );
 				}
-				if($bgtype == 'external' || !empty($layers)){
+				if( $bgtype == 'image' && !empty($layers) ){
+					$width = 480;
+					$height = 270;
+					if(isset($img_data['width'])){
+						$width = $img_data['width'];
+					}
+					if(isset($img_data['height'])){
+						$height = $img_data['height'];
+					}
+					if(empty($layers)){
+						$urls[] = apply_filters('amp_gallery_image_params', array(
+							'url' => $url,
+							'width' => intval($width),
+							'height' => intval($height),
+							'bgtype' => esc_attr($bgtype)
+						),$image_id);
+					}elseif(!empty($layers)){
+						foreach ($layers as $key => $layer) {
+							if($layer['type'] == 'text'){
+								$text = $layer['text'];
+								if(!empty($text)){
+								$urls[] = apply_filters('amp_gallery_image_params', array(
+									'url' => esc_attr($url),
+									'width' => intval($width),
+									'height' => intval($height),
+									'caption' => $text,
+									'bgtype' => esc_attr($bgtype)
+								),$image_id);
+								}
+							}else{
+								$urls[] = apply_filters('amp_gallery_image_params', array(
+									'url' => $url,
+									'width' => intval($width),
+									'height' => intval($height),
+									'bgtype' => esc_attr($bgtype)
+								),$image_id);
+							}
+						}
+					}
+				}elseif($bgtype == 'external' || !empty($layers)){
 					$url = esc_url($slide->get_param(array('bg','externalSrc'), ''));
 					$imgalt = esc_attr($slide->get_param('alt_attr', ''));
 					$img_title = esc_attr($slide->get_param('title_attr', ''));
@@ -267,9 +306,19 @@ class AMP_Rev_Slider_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_Embed_Han
 				}
 			}
 		}
+
+		$new_urls = array();
+
+		if(is_array($urls)){
+			foreach ($urls as $k => $v) {
+			  $new_urls[implode($v)] = $v;
+			}
+		}
+
+		$new_urls = array_values($new_urls);
 		
 		return $this->render( array(
-			'images' => $urls,
+			'images' => $new_urls,
 		) );
 	}
 
@@ -341,6 +390,9 @@ class AMP_Rev_Slider_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_Embed_Han
 		$amp_images = array();
 		$tag_type = '';
 		foreach ( $args['images'] as $key => $image ) {
+
+			$amp_img_arr = array();
+
 			if($image['bgtype'] =="image" || $image['bgtype'] =="external" ){
 				$amp_img_arr = array(
 					'src' => $image['url'],
@@ -401,7 +453,9 @@ class AMP_Rev_Slider_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_Embed_Han
 			if(  3 == ampforwp_get_setting('ampforwp-gallery-design-type') || true == ampforwp_get_setting('ampforwp-gallery-lightbox') ){
 				$design3_additional_attr = array('on'=> 'tap:gallery-lightbox', 'role'=>'button', 
                 	'tabindex'=>$key);
-				$amp_img_arr = array_merge($amp_img_arr, $design3_additional_attr);
+				if( is_array($amp_img_arr) && !empty($amp_img_arr) ){
+					$amp_img_arr = array_merge($amp_img_arr, $design3_additional_attr);
+				}				
 				$amp_image_lightbox = '<amp-image-lightbox id="gallery-lightbox" layout="nodisplay">
 					      <div on="tap:gallery-lightbox.close" role="button"
 					          tabindex="0">
@@ -476,7 +530,7 @@ class AMP_Rev_Slider_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_Embed_Han
 		}// foreach Closed
 
 		//replacements
-			$r = rand(1,100);
+			$r = wp_rand(1,100);
 
 			$carousel_args = array(
 								'width' => $this->args['width'],

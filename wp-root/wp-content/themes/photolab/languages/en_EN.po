@@ -1,14 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: photolab\n"
-"POT-Creation-Date: 2015-02-19 16:45+0200\n"
-"PO-Revision-Date: 2015-02-19 16:45+0200\n"
+"POT-Creation-Date: 2015-05-17 16:10+0200\n"
+"PO-Revision-Date: 2015-05-17 16:11+0200\n"
 "Last-Translator: Duena <Duena@demomail.org>\n"
 "Language-Team: photolab <photolab@demomail.org>\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.7.6\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;esc_attr_e;_e;_x\n"
 "X-Poedit-Basepath: ./\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -86,6 +87,7 @@ msgid ""
 "searching can help."
 msgstr ""
 
+#. translators: used between list items, there is a space after the comma
 #: ../content-single.php:25 ../content-single.php:28
 msgid ", "
 msgstr ""
@@ -112,24 +114,48 @@ msgstr ""
 msgid "Primary Menu"
 msgstr ""
 
-#: ../functions.php:136 ../functions.php:142
+#: ../functions.php:131
+msgid "Facebook"
+msgstr ""
+
+#: ../functions.php:135
+msgid "Twitter"
+msgstr ""
+
+#: ../functions.php:139
+msgid "Google+"
+msgstr ""
+
+#: ../functions.php:143
+msgid "Instagram"
+msgstr ""
+
+#: ../functions.php:147
+msgid "LinkedIn"
+msgstr ""
+
+#: ../functions.php:151
+msgid "Dribbble"
+msgstr ""
+
+#: ../functions.php:155
+msgid "YouTube"
+msgstr ""
+
+#: ../functions.php:179 ../functions.php:185
 msgid "on"
 msgstr ""
 
-#: ../functions.php:190
+#: ../functions.php:233
 msgid "Sidebar"
 msgstr ""
 
-#: ../functions.php:200
+#: ../functions.php:235
+msgid "Allowed only on static pages"
+msgstr ""
+
+#: ../functions.php:243
 msgid "Footer Widget Area"
-msgstr ""
-
-#: ../sidebar-footer.php:18 ../sidebar.php:16 ../inc/template-tags.php:613
-msgid "Archives"
-msgstr ""
-
-#: ../sidebar-footer.php:25 ../sidebar.php:23
-msgid "Meta"
 msgstr ""
 
 #: ../inc/custom-header.php:43
@@ -145,75 +171,100 @@ msgstr ""
 msgid "Header slogan text"
 msgstr ""
 
-#: ../inc/customizer.php:56
+#: ../inc/customizer.php:57
+msgid "Socials"
+msgstr ""
+
+#: ../inc/customizer.php:68
+msgid "Enable social links block"
+msgstr ""
+
+#: ../inc/customizer.php:82
+msgid "Show social links in:"
+msgstr ""
+
+#: ../inc/customizer.php:87
+msgid "Header"
+msgstr ""
+
+#: ../inc/customizer.php:88
+msgid "Footer"
+msgstr ""
+
+#: ../inc/customizer.php:105
+#, php-format
+msgid "%s url"
+msgstr ""
+
+#: ../inc/customizer.php:114
 msgid "Welcome Message"
 msgstr ""
 
-#: ../inc/customizer.php:67
+#: ../inc/customizer.php:125
 msgid "Welcome message label"
 msgstr ""
 
-#: ../inc/customizer.php:81
+#: ../inc/customizer.php:139
 msgid "Welcome message image"
 msgstr ""
 
-#: ../inc/customizer.php:94
+#: ../inc/customizer.php:152
 msgid "Welcome message title"
 msgstr ""
 
-#: ../inc/customizer.php:108
+#: ../inc/customizer.php:166
 msgid "Welcome message text"
 msgstr ""
 
-#: ../inc/customizer.php:116
+#: ../inc/customizer.php:174
 msgid "Misc"
 msgstr ""
 
-#: ../inc/customizer.php:122
+#: ../inc/customizer.php:180
 msgid "Featured"
 msgstr ""
 
-#: ../inc/customizer.php:127
+#: ../inc/customizer.php:185
 msgid "Featured Post Label"
 msgstr ""
 
-#: ../inc/customizer.php:136
+#: ../inc/customizer.php:194
 msgid "My Blog"
 msgstr ""
 
-#: ../inc/customizer.php:141
+#: ../inc/customizer.php:199
 msgid "Blog Label"
 msgstr ""
 
-#: ../inc/customizer.php:155
+#: ../inc/customizer.php:213
 msgid "Post content on blog page"
 msgstr ""
 
-#: ../inc/customizer.php:160
+#: ../inc/customizer.php:218
 msgid "Only Excerpt"
 msgstr ""
 
-#: ../inc/customizer.php:161
+#: ../inc/customizer.php:219
 msgid "Full Content"
 msgstr ""
 
-#: ../inc/customizer.php:173
+#: ../inc/customizer.php:231
 msgid "Featured image on blog page"
 msgstr ""
 
-#: ../inc/customizer.php:178
+#: ../inc/customizer.php:236
 msgid "Small"
 msgstr ""
 
-#: ../inc/customizer.php:179
+#: ../inc/customizer.php:237
 msgid "Fullwidth"
 msgstr ""
 
-#: ../inc/customizer.php:186 ../inc/template-tags.php:313
+#: ../inc/customizer.php:244 ../inc/template-tags.php:313
 msgid "Read More"
 msgstr ""
 
-#: ../inc/customizer.php:191
+#: ../inc/customizer.php:249
 msgid "Blog \"Read More\" button text"
 msgstr ""
 
@@ -345,4 +396,12 @@ msgstr ""
 
 #: ../inc/template-tags.php:609
 msgid "Error 404"
+msgstr ""
+
+#: ../inc/template-tags.php:613 ../sidebar-footer.php:18 ../sidebar.php:16
+msgid "Archives"
+msgstr ""
+
+#: ../sidebar-footer.php:25 ../sidebar.php:23
+msgid "Meta"
 msgstr ""

@@ -39,6 +39,7 @@ class AMPFORWP_Slide_Anything_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_
 			'orderby'    => 'menu_order ID',
 			'id'         => $post ? $post->ID : 0,
 			'include'    => '',
+			/* phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude  */
 			'exclude'    => '',
 			//'size'       => array( $this->args['width'], $this->args['height'] ),
 			//'size'		=> isset($attr['size'])? $attr['size']:'thumbnail',
@@ -211,12 +212,14 @@ class AMPFORWP_Slide_Anything_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_
 				$slide_data['num_slides'] = $metadata['sa_num_slides'][0];
 				for ($i = 1; $i <= $slide_data['num_slides']; $i++) {
 					if (isset($metadata["sa_slide".$i."_content"][0])) {
+						$metadata["sa_slide".$i."_content"][0] = preg_replace('/\[[caption|\/].*?\]/', '', $metadata["sa_slide".$i."_content"][0]);
 						$amp_images[$i-1] = AMP_HTML_Utils::build_tag(
 						'div',  array( 'slideampcontent' => esc_attr($metadata["sa_slide".$i."_content"][0]))
 						); 
 					}	
 				} 
 			}
+
 
 			//Small Thumbnail Images
 			$thumb_url = ampforwp_aq_resize( $image['url'], 120, 60, true, false ); //resize & crop the image
@@ -265,7 +268,7 @@ class AMPFORWP_Slide_Anything_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_
 		}// foreach Closed
 
 		//replacements
-			$r = rand(1,100);
+			$r = wp_rand(1,100);
 			$carousel_args = array(
 								'width' => $this->args['width'],
 								'height' => $this->args['height'],
@@ -306,8 +309,9 @@ class AMPFORWP_Slide_Anything_Embed_Handler extends AMPforWP\AMPVendor\AMP_Base_
 		$returnCompleteHtml = str_replace('{{amp_image_lightbox}}', $amp_image_lightbox, $returnCompleteHtml);
 		$returnCompleteHtml = str_replace('{{with_images}}', implode( PHP_EOL, $images ), $returnCompleteHtml);
 		$returnCompleteHtml = preg_replace('/<div slideampcontent="(.*?)"><\/div>/s', '<div>$1</div>', $returnCompleteHtml);
-        $returnCompleteHtml = str_replace('&lt;', '<', $returnCompleteHtml);
-        $returnCompleteHtml = str_replace('&gt;', '>', $returnCompleteHtml);
+        //$returnCompleteHtml = str_replace('&lt;', '<', $returnCompleteHtml);
+        //$returnCompleteHtml = str_replace('&gt;', '>', $returnCompleteHtml);
+        $returnCompleteHtml = htmlspecialchars_decode($returnCompleteHtml);
 		return $returnCompleteHtml;
 	}
 }// Class closed

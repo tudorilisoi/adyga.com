@@ -308,6 +308,7 @@ class NewsletterFields {
         }
         if ($attrs['reload']) {
             echo ' onchange="tnpc_reload_options(event)"';
+            echo ' data-after-rendering="reload"';
         }
         if (!empty($attrs['after-rendering'])) {
             echo ' data-after-rendering="', esc_attr($attrs['after-rendering']), '"';
@@ -544,7 +545,7 @@ class NewsletterFields {
 
         $value = $this->controls->get_value($name);
 
-        echo '<select id="', $this->_id($name), '" name="options[' . esc_attr($name) . ']" onchange="tnpc_reload_options(event); return false;">';
+        echo '<select id="', $this->_id($name), '" name="options[' . esc_attr($name) . ']" onchange="tnpc_reload_options(event); return false;" data-after-rendering="reload">';
 //        if (!empty($first)) {
 //            echo '<option value="">' . esc_html($first) . '</option>';
 //        }
@@ -576,7 +577,7 @@ class NewsletterFields {
             }
         }
 
-        $args = array_merge(array('filters' => array(
+        $args = array_merge_recursive(array('filters' => array(
                 'posts_per_page' => 5,
                 'offset' => 0,
                 'category' => '',
@@ -702,7 +703,7 @@ class NewsletterFields {
         } else {
             $name = 'tax_' . $taxonomy;
         }
-        if (empty($label)) {
+        if (!$label) {
             $label = __('Terms', 'newsletter');
         }
         $attrs = $this->_merge_attrs($attrs);

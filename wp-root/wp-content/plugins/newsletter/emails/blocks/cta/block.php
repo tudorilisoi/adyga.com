@@ -6,6 +6,11 @@
  * Description: Call to action button
  */
 
+/** @var array $options */
+/** @var array $composer */
+/** @var array $info */
+/** @var string $context */
+
 $defaults = array(
     'button_label' => 'Call to action',
     'button_url' => home_url(),
@@ -17,12 +22,18 @@ $defaults = array(
     'button_border_color' => '',
     'align' => 'center',
     'block_background' => '',
-    'button_width' => '200',
+    'button_width' => '0',
     'button_align' => 'center',
     'block_padding_top' => 20,
     'block_padding_bottom' => 20,
     'block_style' => '',
 );
+
+if ($context['type'] === 'confirmation') {
+
+    $defaults['button_url'] = '{confirmation_url}';
+    $defaults['button_label'] = __('Confirm subscription', 'newsletter');
+}
 
 if (!empty($options['block_style'])) {
     if ($options['block_style'] === 'wire') {
@@ -80,11 +91,9 @@ if (method_exists('NewsletterReports', 'build_lists_change_url')) {
         $lists[$options['unlist']] = 0;
     }
     if ($lists) {
+        // @phpstan-ignore-next-line
         $button_options["button_url"] = NewsletterReports::build_lists_change_url($options["button_url"], $lists);
     }
 }
-?>
 
-<?php echo TNP_Composer::button($button_options, 'button', $composer); ?>
-
-
+echo TNP_Composer::button($button_options, 'button', $composer);

@@ -61,7 +61,7 @@ function add_amp_icon($args=array()){
 			$amp_icons_css[$key] = $amp_icons_css_array[$key]; 
 	}
 	// Design-1,2,3
-	if ( 1 == $redux_builder_amp['amp-design-selector'] || 2 == $redux_builder_amp['amp-design-selector'] || 3 == $redux_builder_amp['amp-design-selector'] ) {
+	if ( isset($redux_builder_amp['amp-design-selector']) && ( 1 == $redux_builder_amp['amp-design-selector'] || 2 == $redux_builder_amp['amp-design-selector'] || 3 == $redux_builder_amp['amp-design-selector'] ) ) {
 		add_action('amp_post_template_css', 'amp_icon_css',999);
 
 	}
@@ -73,6 +73,7 @@ function amp_icon_css(){
 	global $amp_icons_css, $redux_builder_amp;
 	foreach ($amp_icons_css as $key => $value) {
 		// TODO: https://github.com/ahmedkaludi/accelerated-mobile-pages/issues/2651 
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	    echo $value;
 	}
 	$icon_url = plugin_dir_url(__FILE__);
@@ -118,13 +119,13 @@ function amp_title(){
 		do_action('ampforwp_above_the_title'); 
 		$ampforwp_title = get_the_title($ID);
 		$ampforwp_title =  apply_filters('ampforwp_filter_single_title', $ampforwp_title);
-		if(!empty($ampforwp_title) && ampforwp_default_logo() && ampforwp_get_setting('opt-media','url')!=''){
+		if(!empty($ampforwp_title)){
 			$title_tag = '<h1 class="amp-post-title">' . wp_kses_data( $ampforwp_title ) . '</h1>'; 
-		}else{ 
-			$title_tag = '<h2 class="amp-post-title">' . wp_kses_data( $ampforwp_title ) . '</h2>'; 
 		}
 		$title_tag = apply_filters('ampforwp_modify_title_tag',$title_tag,$ampforwp_title);
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $title_tag; // Escaped above 
+		do_action('ampforwp_post_subtitle');
 		do_action('ampforwp_below_the_title');
     }
 }
@@ -140,9 +141,12 @@ function amp_excerpt( $no_of_words=260 ) {
 			 if ( has_excerpt() ) {
 				$content = get_the_excerpt();
 			}
-			/* `wp_trim_words` will strip all the tags 
-			   as it has `wp_strip_all_tags` inside to clean */
-			echo wp_trim_words( strip_shortcodes( $content ) , $no_of_words );  
+			/*
+			 Encoding $content  as HTML entities, then trimming it to a certain number of words, decoding it back from   HTML entities, and finally ensuring that all HTML tags are properly balanced.
+			 We are  doing this since the excerpt may contain HTML tags and wp_trim_words strips all HTML tags.
+			*/
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo force_balance_tags( html_entity_decode( wp_trim_words( htmlentities( $content ), $no_of_words) ) );
 		?></p><?php
     }
 }
@@ -171,6 +175,7 @@ function amp_menu($echo=true, $menu_args=array(), $type='header'){
 			return $amp_menu;
 		}
 		else
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $amp_menu; // escaped above
 	}
 }
@@ -185,6 +190,7 @@ function amp_alter_menu($echo=true){
 			return amp_menu_html($echo, array(),'amp-alternative-menu');
 		}
 		else
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo amp_menu_html($echo, array(), 'amp-alternative-menu');
 	}
 }
@@ -255,6 +261,7 @@ function amp_comments( ){
 function amp_post_navigation( ){
 	global $loadComponent;
 	if(isset($loadComponent['AMP-post-navigation']) && $loadComponent['AMP-post-navigation']==true){
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ampforwp_framework_get_post_navigation();
 	}
 }
@@ -263,6 +270,7 @@ function amp_post_navigation( ){
 function amp_related_posts($argsdata = array()){
 	global $loadComponent;
 	if(isset($loadComponent['AMP-related-posts']) && $loadComponent['AMP-related-posts']==true){
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ampforwp_framework_get_related_posts( $argsdata);
 	}
 }
@@ -271,6 +279,7 @@ function amp_related_posts($argsdata = array()){
 function amp_post_pagination($args='' ){
 	global $loadComponent;
 	if(isset($loadComponent['AMP-post-pagination']) && $loadComponent['AMP-post-pagination']==true){
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		  ampforwp_framework_get_post_pagination($args);
 	}
 }
@@ -279,6 +288,7 @@ function amp_post_pagination($args='' ){
 function amp_breadcrumb(){
 	global $loadComponent;
 	if ( isset($loadComponent['AMP-breadcrumb']) && true == $loadComponent['AMP-breadcrumb'] ) {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo amp_breadcrumb_output();
 	}
 }
@@ -288,6 +298,7 @@ function amp_gdpr(){
 	global $loadComponent;
 	$gdpr = apply_filters('ampforwp_on_off_gdpr', true);
 	if ( isset($loadComponent['AMP-gdpr']) && true == $loadComponent['AMP-gdpr'] && $gdpr) {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo amp_gdpr_output();
 	}
 }
@@ -371,7 +382,10 @@ function amp_header_core(){
     	$lightbox = 'data-amp-auto-lightbox-disable';
     }
 	?><!doctype html>
-	<html <?php echo esc_attr(ampforwp_amp_nonamp_convert('amp ')); ?><?php echo AMP_HTML_Utils::build_attributes_string( $thisTemplate->get( 'html_tag_attributes' ) ); ?>>
+	<html <?php echo esc_attr(ampforwp_amp_nonamp_convert('amp ')); ?>
+	<?php 
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo AMP_HTML_Utils::build_attributes_string( $thisTemplate->get( 'html_tag_attributes' ) ); ?>>
 		<head>
 		<meta charset="utf-8"> 
 			<?php do_action('amp_experiment_meta', $thisTemplate); ?>
@@ -402,8 +416,10 @@ function amp_header_core(){
 		    			}
 					  $custom_css .= $wp_filesystem->get_contents(AMPFORWP_PLUGIN_DIR."/includes/sassy-style-optimized.css");
 					}
+					  $custom_css = apply_filters('ampforwp_custom_css_output', $custom_css);
 					  $custom_css = str_replace(array('.accordion-mod'), array('.apac'), $custom_css);
 					  $sanitized_css = ampforwp_sanitize_i_amphtml($custom_css);
+					  //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					  echo $sanitized_css; // sanitized above ?>
 			</style>
 			<?php do_action('ampforwp_before_head', $thisTemplate);  ?>
@@ -464,9 +480,11 @@ function amp_footer_core(){
 function amp_non_amp_link(){
 	$allowed_tags = '<p><a><b><strong><i><u><ul><ol><li><h1><h2><h3><h4><h5><h6><table><tr><th><td><em><span>'; 
     if (function_exists('pll__')) {
-		echo '<span>' . strip_tags(pll__(ampforwp_get_setting('amp-translator-footer-text'),'All Rights Reserved'),$allowed_tags) . '</span>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '<span>' . wp_strip_all_tags(pll__(ampforwp_get_setting('amp-translator-footer-text'),'All Rights Reserved'),$allowed_tags) . '</span>';
 	}else {
-		echo '<span>' . strip_tags(ampforwp_translation(do_shortcode(ampforwp_get_setting('amp-translator-footer-text')),'All Rights Reserved'),$allowed_tags) . '</span>';
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '<span>' . wp_strip_all_tags(ampforwp_translation(do_shortcode(ampforwp_get_setting('amp-translator-footer-text')),'All Rights Reserved'),$allowed_tags) . '</span>';
 	}
     if(ampforwp_get_setting('amp-footer-link-non-amp-page')=='1') { ampforwp_view_nonamp(); }
 }
@@ -565,6 +583,7 @@ function amp_content($post_id= ''){
 		$ampforwp_the_content = ampforwp_sassy_share_icons($ampforwp_the_content);
 	}
 	$ampforwp_the_content = apply_filters('ampforwp_modify_the_content',$ampforwp_the_content);
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo $ampforwp_the_content; // amphtml content, no kses
 	do_action('ampforwp_after_post_content',$thisTemplate); 
 }
@@ -594,7 +613,7 @@ function amp_date( $args=array() ) {
     $post_date = apply_filters('ampforwp_modify_post_date', $post_date);
 
    	if(isset($args['custom_format']) && $args['custom_format']!=""){
-	    $post_date = date($args['custom_format'],get_the_time('U', get_the_ID() ));
+	    $post_date = gmdate($args['custom_format'],get_the_time('U', get_the_ID() ));
 	}
     if ( 'date' == $args || 'time' == $args ) {
         echo esc_html( $post_date ) .' ';
@@ -609,9 +628,7 @@ function amp_date( $args=array() ) {
 		global $fontComponent;
 		if(count($fontComponent)){
 			$fontComponent = array_unique($fontComponent);
-			foreach ($fontComponent as $key => $value) {
-			?>
-			<link rel="stylesheet" href="<?php echo esc_url( $value ); ?>">
+			foreach ($fontComponent as $key => $value) { /* phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet */ ?><link rel="stylesheet" href="<?php echo esc_url( $value ); ?>">
 			<?php		
 			}
 		}
@@ -658,6 +675,7 @@ function amp_author_meta( $args ) {
 	$post_author = get_userdata($post->post_author);
 	$author_link = get_author_posts_url($post_author->ID);
 	if ( $author_name ) {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ' <a href="'. ampforwp_url_controller($author_link).'"> ' .esc_html( $post_author->display_name ).'</a>';
  	}
  	if ( $avatar && true == ampforwp_gravatar_checker($post_author->user_email) ) {
@@ -669,6 +687,7 @@ function amp_author_meta( $args ) {
     	$avatar_img = get_avatar( $post_author->user_email, $avatar_size );
     	$amp_html_sanitizer = new AMPFORWP_Content( $avatar_img, array(), apply_filters( 'ampforwp_content_sanitizers', array( 'AMP_Img_Sanitizer' => array() ) ) );
 	    $amp_html =  $amp_html_sanitizer->get_amp_content();
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $amp_html; // amphtml content, no kses
      } 
 	 
@@ -684,7 +703,6 @@ function ampforwp_backtotop_global_css(){?>
 	.sharedaddy li{display:none}
 	sub {vertical-align: sub;font-size: small;}
 	sup {vertical-align: super;font-size: small;}
-	amp-call-tracking a {display: none;}
 	@media only screen and (max-width: 480px) {
 	svg {max-width: 250px;max-height: 250px;}
 	}
@@ -692,6 +710,16 @@ function ampforwp_backtotop_global_css(){?>
     word-break: break-word;
     word-wrap: break-word;
 	}
+	h2.amp-wp-sub-title {
+    word-break: break-word;
+    word-wrap: break-word;
+	}
+	h2.amp-wp-sub-title{ font-size: 20px;line-height: 1.4em; margin-top: 0px;color: #a0a0a0; }
+	h2.amp-wp-sub-title.center{text-align:center}
+	@media (min-width: 768px){
+	.artl-cnt .wp-block-column {
+		max-width: 100%;
+	}}
 	<?php if (function_exists('wp_pagenavi')) {?>
 	  .wp-pagenavi {
 	      border: 1px solid #BFBFBF;
@@ -796,8 +824,8 @@ function ampforwp_backtotop_global_css(){?>
 	<?php } ?>	
 	
 	<?php if( ampforwp_get_setting('amp_font_selector_heading')) { ?>
-		h1,h2,h3,h4,h5,h6{
-		font-family:<?php echo ampforwp_get_setting('amp_font_selector_heading'); ?>
+		h1,h2,h3,h4,h5,h6,.amp-wp-title{
+		font-family:<?php echo esc_attr(ampforwp_get_setting('amp_font_selector_heading')); ?>
 		}	
 	<?php } ?>	
 	<?php if( ampforwp_get_setting('ampforwp-infinite-scroll-new-features')) { ?>
@@ -944,6 +972,7 @@ function ampforwp_backtotop_global_css(){?>
     .has-text-align-left { text-align: left;}
     .has-text-align-right { text-align: right;}
     .has-text-align-center { text-align: center;}
+	 .collapsible-captions amp-img img {object-fit: contain;}
     <?php if (ampforwp_get_setting('ampforwp-web-push-onesignal') && ampforwp_get_setting('ampforwp-web-push-onesignal-popup') && is_single()) { ?>
     @media (min-width:1281px){
 		.onesignal-popup{
@@ -981,7 +1010,12 @@ function ampforwp_backtotop_global_css(){?>
  	html {
     scroll-behavior: smooth;
   	}
-<?php } }
+<?php } ?>
+.web-stories-list__story-poster amp-img {
+    width: 100%;
+    height: 100%;
+}
+<?php }
 // Fallback for amp_call_now #2782
 if ( !function_exists('amp_call_now') ) {
 	function amp_call_now(){
@@ -989,11 +1023,11 @@ if ( !function_exists('amp_call_now') ) {
 	}
 }
 // AddThis Support #2416
-function ampforwp_addThis_support(){
+function ampforwp_addthis_support() {
+	
 	$data_pub_id = ampforwp_get_setting('add-this-pub-id');
 	$data_widget_id = ampforwp_get_setting('add-this-widget-id');
-	$addthisWidth = '';
-	$amp_addthis = '';
+	$addthisWidth = '';	
 	if ( ( is_single() || (is_page() && ampforwp_get_setting('ampforwp-page-social')) ) && !checkAMPforPageBuilderStatus(ampforwp_get_the_ID()) ) {
 	 	if( ampforwp_get_setting('enable-add-this-option') ) {
 	
@@ -1003,13 +1037,20 @@ function ampforwp_addThis_support(){
 	 		else{
 				$addthisWidth = 320; 
 			}
-			if( ampforwp_get_setting('addthis-inline-share') == true){
-				$amp_addthis .= '<div class="amp-wp-content"><amp-addthis width="'.$addthisWidth.'" height="92" data-pub-id="'.esc_attr($data_pub_id).'" data-widget-id="'. esc_attr($data_widget_id).'"></amp-addthis></div>';
-			}
 
 			do_action('ampforwp_before_social_icons_hook');
-			return $amp_addthis;
-			do_action('ampforwp_after_social_icons_hook');
+
+			if ( ampforwp_get_setting('addthis-inline-share') == true ) {
+
+				?>
+				
+				<div class="amp-wp-content"><amp-addthis width="<?php echo esc_attr($addthisWidth); ?>" height="92" data-pub-id="<?php echo esc_attr($data_pub_id); ?>" data-widget-id="<?php echo esc_attr($data_widget_id); ?>"></amp-addthis></div>
+
+				<?php
+			}
+
+			do_action('ampforwp_after_social_icons_hook');						
+			
 		}
 	}
 }
@@ -1030,7 +1071,7 @@ function ampforwp_addthis_floating_social_share(){
 		if( ampforwp_get_setting('amp-design-selector') == 4){ ?>	
 			<amp-state id="sidemenu">
 				<script type="application/json">
-				  <?php echo json_encode(array('offcanvas_menu'=> false));?>
+				  <?php echo wp_json_encode(array('offcanvas_menu'=> false));?>
 				</script>
 			</amp-state>
 		<?php }

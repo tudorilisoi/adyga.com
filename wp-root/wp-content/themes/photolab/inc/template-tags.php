@@ -499,131 +499,273 @@ function photolab_show_pages_header( $header_image ) {
 
 	$header_class .= ' header-type-' . rand(1,8);
 
-	if ( is_singular() ) {
-		if ( has_post_thumbnail() ) {
+	if ( is_singular() ) 
+	{
+		if ( has_post_thumbnail() ) 
+		{
 			$header_class .= ' with-img';
 			echo get_the_post_thumbnail( get_the_id(), 'full' );
-		} elseif ( $header_image ) {
+		} 
+		elseif ( $header_image ) 
+		{
 			$header_class .= ' with-img';
 			echo '<img src="' . esc_url( $header_image ) . '" alt="' . get_bloginfo( 'name' ) . '">';
 		}
-	} else {
-		if ( $header_image ) {
+	} 
+	else 
+	{
+		if ( $header_image ) 
+		{
 			$header_class .= ' with-img';
 			echo '<img src="' . esc_url( $header_image ) . '" alt="' . get_bloginfo( 'name' ) . '">';
 		}
 	}
+
+	if(get_option('show_title_on_header') == '') 
+		$header_class .= ' invisibility';
 	?>
 		<div class="container">
 			<div class="<?php echo esc_attr( $header_class ); ?>">
-				<?php
-					if ( is_category() ) :
-						echo '<h1>';
-							single_cat_title();
-						echo '</h1>';
-
-					elseif ( is_tag() ) :
-						echo '<h1>';
-							single_tag_title();
-						echo '</h1>';
-
-					elseif ( is_author() ) :
-						echo '<h1>';
-							printf( __( 'Author: %s', 'photolab' ), '<span class="vcard">' . get_the_author() . '</span>' );
-						echo '</h1>';
-
-					elseif ( is_day() ) :
-						echo '<h1>';
-							printf( __( 'Day: %s', 'photolab' ), '<span>' . get_the_date() . '</span>' );
-						echo '</h1>';
-
-					elseif ( is_month() ) :
-						echo '<h1>';
-							printf( __( 'Month: %s', 'photolab' ), '<span>' . get_the_date( _x( 'F Y', 'monthly archives date format', 'photolab' ) ) . '</span>' );
-						echo '</h1>';
-
-					elseif ( is_year() ) :
-						echo '<h1>';
-							printf( __( 'Year: %s', 'photolab' ), '<span>' . get_the_date( _x( 'Y', 'yearly archives date format', 'photolab' ) ) . '</span>' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-aside' ) ) :
-						echo '<h1>';
-							_e( 'Asides', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-gallery' ) ) :
-						echo '<h1>';
-							_e( 'Galleries', 'photolab');
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-image' ) ) :
-						echo '<h1>';
-							_e( 'Images', 'photolab');
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-video' ) ) :
-						echo '<h1>';
-							_e( 'Videos', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-quote' ) ) :
-						echo '<h1>';
-							_e( 'Quotes', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-link' ) ) :
-						echo '<h1>';
-							_e( 'Links', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-status' ) ) :
-						echo '<h1>';
-							_e( 'Statuses', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-audio' ) ) :
-						echo '<h1>';
-							_e( 'Audios', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_tax( 'post_format', 'post-format-chat' ) ) :
-						echo '<h1>';
-							_e( 'Chats', 'photolab' );
-						echo '</h1>';
-
-					elseif ( is_search() ) :
-						?><h1 class="page-title"><?php printf( __( 'Search Results for: %s', 'photolab' ), '<span>' . get_search_query() . '</span>' ); ?></h1><?php
-
-					elseif ( is_single() ) :
-					?>
-					<div class="entry-meta">
-						<?php photolab_posted_on(); ?>
-					</div><!-- .entry-meta -->
-					<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
-					<?php
-					elseif ( is_page() ) :
-						the_title( '<h1 class="entry-title">', '</h1>' );
-
-					elseif ( is_404() ) :
-						echo '<h1 class="entry-title">' . __( 'Error 404', 'photolab' ) . '</h1>';
-					
-					else :
-						echo '<h1>';
-							_e( 'Archives', 'photolab' );
-						echo '</h1>';
-
-					endif;
-				?>
-				<?php
-					// Show an optional term description.
-					$term_description = term_description();
-					if ( ! empty( $term_description ) ) :
-						printf( '<div class="taxonomy-description">%s</div>', $term_description );
-					endif;
-				?>
+				<?php echo renderTitle(); ?>
 			</div>
 		</div>
 	</div>
 	<?php
+}
+
+/**
+ * Render title
+ * @return string --- HTML code
+ */
+function renderTitle()
+{
+	ob_start();
+	?>
+	<?php
+		if ( is_category() ) :
+			echo '<h1>';
+				single_cat_title();
+			echo '</h1>';
+
+		elseif ( is_tag() ) :
+			echo '<h1>';
+				single_tag_title();
+			echo '</h1>';
+
+		elseif ( is_author() ) :
+			echo '<h1>';
+				printf( __( 'Author: %s', 'photolab' ), '<span class="vcard">' . get_the_author() . '</span>' );
+			echo '</h1>';
+
+		elseif ( is_day() ) :
+			echo '<h1>';
+				printf( __( 'Day: %s', 'photolab' ), '<span>' . get_the_date() . '</span>' );
+			echo '</h1>';
+
+		elseif ( is_month() ) :
+			echo '<h1>';
+				printf( __( 'Month: %s', 'photolab' ), '<span>' . get_the_date( _x( 'F Y', 'monthly archives date format', 'photolab' ) ) . '</span>' );
+			echo '</h1>';
+
+		elseif ( is_year() ) :
+			echo '<h1>';
+				printf( __( 'Year: %s', 'photolab' ), '<span>' . get_the_date( _x( 'Y', 'yearly archives date format', 'photolab' ) ) . '</span>' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-aside' ) ) :
+			echo '<h1>';
+				_e( 'Asides', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-gallery' ) ) :
+			echo '<h1>';
+				_e( 'Galleries', 'photolab');
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-image' ) ) :
+			echo '<h1>';
+				_e( 'Images', 'photolab');
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-video' ) ) :
+			echo '<h1>';
+				_e( 'Videos', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-quote' ) ) :
+			echo '<h1>';
+				_e( 'Quotes', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-link' ) ) :
+			echo '<h1>';
+				_e( 'Links', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-status' ) ) :
+			echo '<h1>';
+				_e( 'Statuses', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-audio' ) ) :
+			echo '<h1>';
+				_e( 'Audios', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_tax( 'post_format', 'post-format-chat' ) ) :
+			echo '<h1>';
+				_e( 'Chats', 'photolab' );
+			echo '</h1>';
+
+		elseif ( is_search() ) :
+			?><h1 class="page-title"><?php printf( __( 'Search Results for: %s', 'photolab' ), '<span>' . get_search_query() . '</span>' ); ?></h1><?php
+
+		elseif ( is_single() ) :
+		?>
+		<div class="entry-meta">
+			<?php photolab_posted_on(); ?>
+		</div><!-- .entry-meta -->
+		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+		<?php
+		elseif ( is_page() ) :
+			the_title( '<h1 class="entry-title">', '</h1>' );
+
+		elseif ( is_404() ) :
+			echo '<h1 class="entry-title">' . __( 'Error 404', 'photolab' ) . '</h1>';
+		
+		else :
+			echo '<h1>';
+				_e( 'Archives', 'photolab' );
+			echo '</h1>';
+
+		endif;
+	?>
+	<?php
+		// Show an optional term description.
+		$term_description = term_description();
+		if ( ! empty( $term_description ) ) :
+			printf( '<div class="taxonomy-description">%s</div>', $term_description );
+		endif;
+	?>
+	<?php
+	
+	$var = ob_get_contents();
+	ob_end_clean();
+	return $var;
+}
+
+/**
+ * Add title to content
+ * @param string $content --- html code
+ */
+function addTitleToContent( $content ) 
+{
+	$custom_content = '';
+	if(get_option('show_title_on_header') == '')	
+    	$custom_content = renderTitle();
+    $custom_content .= $content;
+    return $custom_content;
+}
+add_filter( 'the_content', 'addTitleToContent' );
+
+/**
+ * Show social links list
+ */
+function photolab_social_list( $where = 'header', $echo = true ) {
+
+	ob_start();
+
+	$data     = get_option( 'photolab' );
+	$position = isset( $data['socials_position'] ) ? esc_attr( $data['socials_position'] ) : 'header';
+	
+	$photolab_socials_position_header = get_option('photolab_socials_position_header');
+	$photolab_socials_position_footer = get_option('photolab_socials_position_footer');
+
+	if($where == 'header' && $photolab_socials_position_header == '') return;
+	if($where == 'footer' && $photolab_socials_position_footer == '') return;
+
+	$socials = photolab_allowed_socials();
+
+	$item_format = apply_filters( 
+		'photolab_social_list_itemformat', 
+		'<li class="social-list_item item-%1$s"><a class="social-list_item_link" href="%2$s"><i class="fa %3$s"></i></a></li>' 
+	);
+
+	$list = '';
+	foreach ( $socials as $social_id => $social_data ) {
+		if ( empty( $data[ $social_id . '_url' ] ) ) {
+			continue;
+		}
+		$url  = esc_url( $data[ $social_id . '_url' ] );
+		$icon = isset( $social_data['icon'] ) ? $social_data['icon'] : false;
+		
+		$list .= sprintf( $item_format, $social_id, $url, $icon );
+	}
+
+	if ( ! $list ) {
+		return;
+	}
+
+	printf( '<ul class="social-list list-%1$s">%2$s</ul>', $where, $list );
+
+	$var = ob_get_contents();
+	ob_end_clean();
+	if($echo == true)
+		echo $var;
+	else
+		return $var;
+}
+
+/**
+ * Get sidebars type
+ * @return string --- sidebars type
+ */
+function getSidebarSideType()
+{
+	$key   = sprintf(
+		'l%sr%s', 
+		SidebarSettingsModel::getModeLeft(),
+		SidebarSettingsModel::getModeRight()
+	);
+	$values = array(
+		'lr'   => 'hide',
+		'l1r'  => 'left',
+		'lr1'  => 'right',
+		'l1r1' => 'leftright',
+	);	
+	if(!BlogSettingsModel::isDefaultLayout())
+	{
+		$values['l1r1'] = 'left';
+	}
+	return $values[$key];
+}
+
+/**
+ * Adjust brightness
+ * @param  string $hex --- color hex
+ * @param  int $steps --- steps
+ * @return string --- color hex
+ */
+function adjustBrightness($hex, $steps) 
+{
+    // Steps should be between -255 and 255. Negative = darker, positive = lighter
+    $steps = max(-255, min(255, $steps));
+
+    // Normalize into a six character long hex string
+    $hex = str_replace('#', '', $hex);
+    if (strlen($hex) == 3) {
+        $hex = str_repeat(substr($hex,0,1), 2).str_repeat(substr($hex,1,1), 2).str_repeat(substr($hex,2,1), 2);
+    }
+
+    // Split into three parts: R, G and B
+    $color_parts = str_split($hex, 2);
+    $return = '#';
+
+    foreach ($color_parts as $color) {
+        $color   = hexdec($color); // Convert to decimal
+        $color   = max(0,min(255,$color + $steps)); // Adjust color
+        $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
+    }
+
+    return $return;
 }

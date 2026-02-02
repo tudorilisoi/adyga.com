@@ -1,9 +1,12 @@
 <?php
-/* @var $this NewsletterSubscriptionAdmin */
-/* @var $controls NewsletterControls */
-/* @var $logger NewsletterLogger */
+/** @var NewsletterSubscriptionAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
+/** @var string $language */
 
 defined('ABSPATH') || exit;
+
+$email = null;
 
 if (!$controls->is_action()) {
 
@@ -81,6 +84,13 @@ if (!$controls->is_action()) {
 foreach (['confirmation_message', 'confirmation_text'] as $key) {
     if (!empty($controls->data[$key])) {
         $controls->data[$key . '_custom'] = '1';
+    }
+}
+
+if (!empty($controls->data['confirmation_email'])) {
+    if (strpos($controls->data['message'], '{subscription_confirm_url}') === false &&
+            strpos($controls->data['message'], '{confirmation_url}') === false) {
+        $controls->warnings = 'A button or link with the <code>{confirmation_url}</code> placeholder is missing.';
     }
 }
 ?>
@@ -168,7 +178,7 @@ foreach (['confirmation_message', 'confirmation_text'] as $key) {
                     <?php } ?>
 
                     <div id="tnp-composer-confirmation" style="display: none" data-tnpshow="confirmation_email=1">
-                        <?php $controls->composer_v3(true, false); ?>
+                        <?php $controls->composer_v3(true, false, 'confirmation'); ?>
                     </div>
 
                     <div id="tnp-standard-confirmation" style="display: none" data-tnpshow="confirmation_email=0">

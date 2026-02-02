@@ -9,7 +9,7 @@ Class AMPforWP_theme_mode{
 		
 		add_action(	'init', array("AMPforWP_theme_mode", 'removeUnusedAction'));
 		add_action(	'init', array("AMPforWP_theme_mode", 'removeUnusedMenuWidgets'), 11);
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 		if(!is_admin() && $GLOBALS['pagenow'] !== 'wp-login.php' && (!is_preview() && !isset($_GET['elementor-preview'])) ){
 			add_action(	'init', array($this, 'rm_wp_core'), 20 );
 			add_filter("ampforwp_is_amp_endpoint",  array($this, 'ampforwp_theme_mode_enable'));
@@ -109,20 +109,22 @@ Class AMPforWP_theme_mode{
 		global $redux_builder_amp;
 		  header("access-control-allow-credentials:true");
 		  header("access-control-allow-headers:Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token");
+		    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
 		  header("Access-Control-Allow-Origin:".esc_attr($_SERVER['HTTP_ORIGIN']) );
 		  $siteUrl = parse_url(  get_site_url() );
 		  header("AMP-Access-Control-Allow-Source-Origin:".esc_attr($siteUrl['scheme']) . '://' . esc_attr($siteUrl['host']) );
 		  header("access-control-expose-headers:AMP-Access-Control-Allow-Source-Origin");
 		  header("Content-Type:application/json;charset=utf-8");
-		  if(wp_verify_nonce($_POST['amp_comment_form_nonce'], 'commentform_submission')){
+		  /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
+		  if( ! wp_verify_nonce($_POST['amp_comment_form_nonce'], 'commentform_submission') ){
 			$comment_status = array('response' => 'Nonce not verified' );
-			echo json_encode($comment_status);
+			echo wp_json_encode($comment_status);
 			die;
 			}
 		  $comment = wp_handle_comment_submission( wp_unslash( $_POST ) );
 		  $text_data = 'Comment Successfully submitted';
 		  if ($redux_builder_amp['amp-comments-Successful-message']){
-		    $text_data = esc_html__( $redux_builder_amp['amp-comments-Successful-message'], 'accelerated-mobile-pages');
+		    $text_data = esc_html( $redux_builder_amp['amp-comments-Successful-message']);
 		  }
 		        
 		  if ( is_wp_error( $comment ) ) {
@@ -131,7 +133,7 @@ Class AMPforWP_theme_mode{
 		      $comment_html = $comment->get_error_message();
 		      $comment_html = str_replace("&#8217;","'",$comment_html);
 		      $comment_status = array('response' => $comment_html );
-		      echo json_encode($comment_status);
+		      echo wp_json_encode($comment_status);
 		      die;
 		    } else {
 		      wp_die( 'Unknown error' );
@@ -153,7 +155,7 @@ Class AMPforWP_theme_mode{
 		  $GLOBALS['comment_depth'] = $comment_depth;
 		  $comment_html = $text_data;
 		  $comment_status = array('response' => $comment_html );
-		  echo json_encode($comment_status);
+		  echo wp_json_encode($comment_status);
 		  die;
 	}
 	function comment_form_conversion($content){
@@ -495,6 +497,7 @@ Class AMPforWP_theme_mode{
 				$css .= $this->ampforwp_get_remote_content(AMPFORWP_PLUGIN_DIR_URI."/templates/template-mode/admin-bar.css");
 			}
 		}
+		/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
 		echo $this->css_sanitizer($css); // sanitized above
 		echo "</style>";
 	}
@@ -533,6 +536,7 @@ Class AMPforWP_theme_mode{
 	          return $contentData;
 	        }
 		}else{
+			/* phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents */
 			return $contentData = file_get_contents( $src );
 		}
 	    return '';
@@ -561,6 +565,7 @@ Class AMPforWP_theme_mode{
 				$data = str_replace(" action=", 'target="_top" action=', $data);
 			}
 			$data = $this->amp_form_sanitization($data);
+			/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
 			echo $this->ampforwp_template_mode_cnt_sanitizer($data);
 		}
 	}
@@ -586,8 +591,11 @@ Class AMPforWP_theme_mode{
 								$element->removeAttribute('action');
 							}else{
 								$scheme = is_ssl() ? 'https://' : 'http://';
-
-								$path = "{$scheme}{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+								/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated */
+								$host = sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) );
+								/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
+								$request_uri = sanitize_text_field( esc_url_raw( $_SERVER['REQUEST_URI'] ) );
+								$path = "{$scheme}{$host}{$request_uri}";
 								$path = str_replace("http:", "https:", $path);
 								$element->setAttribute('action-xhr', esc_url($path) );
 							}
@@ -627,6 +635,7 @@ Class AMPforWP_theme_mode{
 					'AMP_Gallery_Embed_Handler' => array(),
 					'AMP_Playlist_Embed_Handler'    => array(),
 					'AMP_Wistia_Embed_Handler' => array(),
+					'AMP_Tiktok_Embed_Handler'=>array(),
 				) ),
 				apply_filters( 'amp_content_sanitizers_template_mode', array(
 					 'AMP_Style_Sanitizer' => array(),
@@ -678,7 +687,11 @@ Class AMPforWP_theme_mode{
 }//Class Closed
 add_action('after_setup_theme', 'ampforwp_template_mode_is_activate', 999);
 function ampforwp_template_mode_is_activate(){
-	$url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH),'/' );
+	$url_path = parse_url(add_query_arg(array()), PHP_URL_PATH);
+	if($url_path=="" || $url_path==null){
+		$url_path = $url_path.'/';
+	}
+	$url_path = trim($url_path,'/' );
 	if((function_exists('td_wp_title') || class_exists('Bunyad_Theme_SmartMag') ) && function_exists('ampforwp_is_amp_inURL') && ampforwp_is_amp_inURL($url_path)){
 		add_theme_support( 'title-tag' );
 	}

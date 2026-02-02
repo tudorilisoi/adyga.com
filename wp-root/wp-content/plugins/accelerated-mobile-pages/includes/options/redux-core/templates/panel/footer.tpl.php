@@ -45,6 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                 echo esc_attr( $link['icon'] );
                             ?>"></i>
                         <?php else : ?>
+                            <?php /* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */ ?>
                             <img src="<?php echo esc_url( $link['img'] ); ?>"/>
                         <?php endif; ?>
 
@@ -69,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
         </div>
 
-        <div class="redux-ajax-loading" alt="<?php _e( 'Working...', 'accelerated-mobile-pages' ) ?>">&nbsp;</div>
+        <div class="redux-ajax-loading" alt="<?php esc_attr_e( 'Working...', 'accelerated-mobile-pages' ) ?>">&nbsp;</div>
         <div class="clear"></div>
 
     </div>

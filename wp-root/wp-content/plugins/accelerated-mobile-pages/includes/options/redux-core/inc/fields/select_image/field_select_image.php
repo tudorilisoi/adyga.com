@@ -17,6 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'ReduxFramework_select_image' ) ) {
     class ReduxFramework_select_image {
 
+        public $parent;
+        public $field;
+        public $value;
+        
         /**
          * Field Constructor.
          * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
@@ -60,16 +64,17 @@ if ( ! class_exists( 'ReduxFramework_select_image' ) ) {
                 }
 
                 // Process placeholder
-                $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : __( 'Select an item', 'accelerated-mobile-pages' );
+                $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : esc_attr__( 'Select an item', 'accelerated-mobile-pages' );
 
                 if ( isset( $this->field['select2'] ) ) { // if there are any let's pass them to js
-                    $select2_params = json_encode( $this->field['select2'] );
+                    $select2_params = wp_json_encode( $this->field['select2'] );
                     $select2_params = htmlspecialchars( $select2_params, ENT_QUOTES );
-
+/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo '<input type="hidden" class="select2_params" value="' . $select2_params . '">';
                 }                    
 
                 // Begin the <select> tag
+                /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
                 echo '<select data-id="' . $this->field['id'] . '" data-placeholder="' . $placeholder . '" name="' . $this->field['name'] . $this->field['name_suffix'] . '" class="redux-select-item redux-select-images ' . $this->field['class'] . '"' . $width . ' rows="6">';
                 echo '<option></option>';
 
@@ -95,6 +100,7 @@ if ( ! class_exists( 'ReduxFramework_select_image' ) ) {
                             $v['demo_link'] = '';
                         }
 						// Add the option tag, with values.
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
 						echo '<option value="' . $v['value'] . '" ' . $selected . ' data-image="'. $v['img'].'" data-alt="'. $v['alt'] .'" data-demolink="'. $v['demo_link'] .'">' . $v['title'] . '</option>';
 					}else{
 						// No array?  No problem!
@@ -125,6 +131,7 @@ if ( ! class_exists( 'ReduxFramework_select_image' ) ) {
 						}
 
 						// Add the option tag, with values.
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
 						echo '<option value="' . $v['img'] . '" ' . $selected . '>' . $v['alt'] . '</option>';
 					}
 					// Add a bean
@@ -151,14 +158,17 @@ if ( ! class_exists( 'ReduxFramework_select_image' ) ) {
                 // substract one from the saved array number.  We then pull the url
                 // out of the options array, and there we go.
                 if ( '' == $this->value ) {
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
                     echo '<img src="#" class="redux-preview-image" style="visibility:hidden;" id="image_' . $this->field['id'] . '">';
                 } else {
                     $demo="#";
                     if (isset($this->field['options'][ $arrNum - 1 ]['demo_link'])) {
                         $demo = $this->field['options'][ $arrNum - 1 ]['demo_link'];
                     }
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
                     echo '<img src=' . $this->field['options'][ $arrNum - 1 ]['img'] . ' class="redux-preview-image" id="image_' . $this->field['id'] . '"  onclick="return window.open(\''.$demo.'\')">'; 
                     if (isset($this->field['options'][ $arrNum - 1 ]['demo_link'])) {
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo '<a href="'. $demo .'" id="theme-selected-demo-link" target="_blank">  
                                 Demo 
                             </a>';
@@ -170,6 +180,7 @@ if ( ! class_exists( 'ReduxFramework_select_image' ) ) {
             } else {
 
                 // No options specified.  Really?
+                /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                 echo '<strong>' . __( 'No items of this type were found.', 'accelerated-mobile-pages' ) . '</strong>';
             }
         } //function

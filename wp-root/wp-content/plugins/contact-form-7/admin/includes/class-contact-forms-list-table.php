@@ -1,7 +1,7 @@
 <?php
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 class WPCF7_Contact_Form_List_Table extends WP_List_Table {
@@ -28,7 +28,7 @@ class WPCF7_Contact_Form_List_Table extends WP_List_Table {
 
 	public function prepare_items() {
 		$current_screen = get_current_screen();
-		$per_page = $this->get_items_per_page( 'cfseven_contact_forms_per_page' );
+		$per_page = $this->get_items_per_page( 'wpcf7_contact_forms_per_page' );
 
 		$args = array(
 			'posts_per_page' => $per_page,
@@ -37,26 +37,19 @@ class WPCF7_Contact_Form_List_Table extends WP_List_Table {
 			'offset' => ( $this->get_pagenum() - 1 ) * $per_page,
 		);
 
-		if ( ! empty( $_REQUEST['s'] ) ) {
-			$args['s'] = $_REQUEST['s'];
+		if ( $search_keyword = wpcf7_superglobal_request( 's' ) ) {
+			$args['s'] = $search_keyword;
 		}
 
-		if ( ! empty( $_REQUEST['orderby'] ) ) {
-			if ( 'title' == $_REQUEST['orderby'] ) {
-				$args['orderby'] = 'title';
-			} elseif ( 'author' == $_REQUEST['orderby'] ) {
-				$args['orderby'] = 'author';
-			} elseif ( 'date' == $_REQUEST['orderby'] ) {
-				$args['orderby'] = 'date';
-			}
+		if ( $order_by = wpcf7_superglobal_request( 'orderby' ) ) {
+			$args['orderby'] = $order_by;
 		}
 
-		if ( ! empty( $_REQUEST['order'] ) ) {
-			if ( 'asc' == strtolower( $_REQUEST['order'] ) ) {
-				$args['order'] = 'ASC';
-			} elseif ( 'desc' == strtolower( $_REQUEST['order'] ) ) {
-				$args['order'] = 'DESC';
-			}
+		if (
+			$order = wpcf7_superglobal_request( 'order' ) and
+			'desc' === strtolower( $order )
+		) {
+			$args['order'] = 'DESC';
 		}
 
 		$this->items = WPCF7_ContactForm::find( $args );
@@ -134,8 +127,8 @@ class WPCF7_Contact_Form_List_Table extends WP_List_Table {
 
 			if ( $count_errors = $config_validator->count_errors() ) {
 				$error_notice = sprintf(
+					/* translators: %s: number of errors detected */
 					_n(
-						/* translators: %s: number of errors detected */
 						'%s configuration error detected',
 						'%s configuration errors detected',
 						$count_errors, 'contact-form-7' ),
@@ -213,43 +206,36 @@ class WPCF7_Contact_Form_List_Table extends WP_List_Table {
 		$output = '';
 
 		foreach ( $shortcodes as $shortcode ) {
-			$output .= "\n" . '<span class="shortcode"><input type="text"'
-				. ' onfocus="this.select();" readonly="readonly"'
-				. ' value="' . esc_attr( $shortcode ) . '"'
-				. ' class="large-text code" /></span>';
+			$output .= "\n" . sprintf(
+				'<span class="shortcode"><input %s /></span>',
+				wpcf7_format_atts( array(
+					'type' => 'text',
+					'readonly' => true,
+					'value' => $shortcode,
+					'class' => 'large-text code selectable',
+				) )
+			);
 		}
 
 		return trim( $output );
 	}
 
 	public function column_date( $item ) {
-		$post = get_post( $item->id() );
+		$datetime = get_post_datetime( $item->id() );
 
-		if ( ! $post ) {
-			return;
+		if ( false === $datetime ) {
+			return '';
 		}
 
-		$t_time = mysql2date( __( 'Y/m/d g:i:s A', 'contact-form-7' ),
-			$post->post_date, true );
-		$m_time = $post->post_date;
-		$time = mysql2date( 'G', $post->post_date )
-			- get_option( 'gmt_offset' ) * 3600;
-
-		$time_diff = time() - $time;
-
-		if ( $time_diff > 0 and $time_diff < 24*60*60 ) {
-			$h_time = sprintf(
-				/* translators: %s: time since the creation of the contact form */
-				__( '%s ago', 'contact-form-7' ),
-				human_time_diff( $time )
-			);
-		} else {
-			$h_time = mysql2date( __( 'Y/m/d', 'contact-form-7' ), $m_time );
-		}
-
-		return sprintf( '<abbr title="%2$s">%1$s</abbr>',
-			esc_html( $h_time ),
-			esc_attr( $t_time )
+		$t_time = sprintf(
+			/* translators: 1: date, 2: time */
+			__( '%1$s at %2$s', 'contact-form-7' ),
+			/* translators: date format, see https://www.php.net/date */
+			$datetime->format( __( 'Y/m/d', 'contact-form-7' ) ),
+			/* translators: time format, see https://www.php.net/date */
+			$datetime->format( __( 'g:i a', 'contact-form-7' ) )
 		);
+
+		return $t_time;
 	}
 }

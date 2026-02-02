@@ -23,7 +23,7 @@ get_header();
 							 					$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), array(600,600) ); 
 												echo '<div class="blog-post-image">
 															<a href="'.esc_url( get_permalink() ).'" style="background-image: url('. esc_url( $thumbnail[0] ).')"></a>
-														S</div>';
+														</div>';
 											endif;
 												
 										?>

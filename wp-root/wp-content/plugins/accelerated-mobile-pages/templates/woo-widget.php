@@ -40,10 +40,11 @@ class AMPFORWP_Woo_Widget extends WP_Widget {
     $ampforwp_show_price          = $instance[ 'show_price' ];
 
     $exclude_ids = ampforwp_exclude_posts();
-
+    
      $q = new WP_Query( array(
       'post_type'           => 'product',
       'orderby'             => 'date',
+      /* phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in */
       'post__not_in' 		    => $exclude_ids,
       'has_password'        => false,
       'no_found_rows'          => true,
@@ -78,7 +79,7 @@ class AMPFORWP_Woo_Widget extends WP_Widget {
              <span class="onsale"> <?php echo esc_html__('Sale!','accelerated-mobile-pages') ?> </span> <?php
            } ?>
 
-            <div class="ampforwp-wc-title"> <?php echo get_the_title() ?> </div> <?php
+            <div class="ampforwp-wc-title"> <?php /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ echo get_the_title() ?> </div> <?php
            if (  class_exists( 'WooCommerce' )  ) {
              $amp_product_price	=  $woocommerce->product_factory->get_product()->get_price_html();
              $context           = '';
@@ -194,12 +195,12 @@ class AMPFORWP_Woo_Widget extends WP_Widget {
   // Apply settings to the widget instance.
   public function update( $new_instance, $old_instance ) {
     $instance = $old_instance;
-    $instance[ 'title' ] = strip_tags( $new_instance[ 'title' ] );
-    $instance[ 'num_of_products' ] = strip_tags( $new_instance[ 'num_of_products' ] );
-    $instance['link'] = strip_tags($new_instance['link']);
-    $instance['show_price'] = strip_tags($new_instance['show_price']);
-    $instance['on_sale'] = strip_tags($new_instance['on_sale']);
-    $instance['ratings'] = strip_tags($new_instance['ratings']);
+    $instance[ 'title' ] = wp_strip_all_tags( $new_instance[ 'title' ] );
+    $instance[ 'num_of_products' ] = wp_strip_all_tags( $new_instance[ 'num_of_products' ] );
+    $instance['link'] = wp_strip_all_tags($new_instance['link']);
+    $instance['show_price'] = wp_strip_all_tags($new_instance['show_price']);
+    $instance['on_sale'] = wp_strip_all_tags($new_instance['on_sale']);
+    $instance['ratings'] = wp_strip_all_tags($new_instance['ratings']);
 
     return $instance;
   }

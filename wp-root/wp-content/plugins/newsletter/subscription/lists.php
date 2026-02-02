@@ -1,7 +1,9 @@
 <?php
-/* @var $this NewsletterSubscriptionAdmin */
-/* @var $controls NewsletterControls */
-/* @var $logger NewsletterLogger */
+/** @var NewsletterSubscriptionAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
+/** @var string $language */
+/** @var bool $is_multilanguage */
 
 defined('ABSPATH') || exit;
 
@@ -174,10 +176,10 @@ $panels = (int) (NEWSLETTER_LIST_MAX / 10) + (NEWSLETTER_LIST_MAX % 10 > 0 ? 1 :
 
                                     <td style="white-space: nowrap">
                                         <?php if (!$language) { ?>
-                                            <?php $controls->button_confirm_secondary('unlink', __('Unlink everyone', 'newsletter'), '', $i); ?>
-                                            <?php $controls->button_confirm_secondary('link', __('Add everyone', 'newsletter'), '', $i); ?>
-                                            <?php $controls->button_confirm_secondary('unconfirm', __('Unconfirm all', 'newsletter'), '', $i); ?>
-                                            <?php $controls->button_confirm_secondary('confirm', __('Confirm all', 'newsletter'), '', $i); ?>
+                                            <?php $controls->button_confirm_secondary('unlink', __('Unlink everyone', 'newsletter'), true, $i); ?>
+                                            <?php $controls->button_confirm_secondary('link', __('Add everyone', 'newsletter'), true, $i); ?>
+                                            <?php $controls->button_confirm_secondary('unconfirm', __('Unconfirm all', 'newsletter'), true, $i); ?>
+                                            <?php $controls->button_confirm_secondary('confirm', __('Confirm all', 'newsletter'), true, $i); ?>
                                         <?php } ?>
                                     </td>
                                 </tr>

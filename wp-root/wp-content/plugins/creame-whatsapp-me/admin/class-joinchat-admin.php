@@ -1,57 +1,140 @@
 <?php
+/**
+ * The admin common functionality of the plugin.
+ *
+ * @package    Joinchat
+ */
 
 /**
- * The admin-specific functionality of the plugin.
+ * The admin common functionality of the plugin.
  *
  * @since      1.0.0
  * @since      2.0.0      Added visibility settings
  * @since      3.0.0      More extendable admin via hooks
- * @package    JoinChat
- * @subpackage JoinChat/admin
+ * @package    Joinchat
+ * @subpackage Joinchat/admin
  * @author     Creame <hola@crea.me>
  */
-class JoinChatAdmin {
+class Joinchat_Admin {
+
+	const KSES_LINK = array(
+		'a' => array(
+			'href'   => true,
+			'target' => array( 'values' => array( '_blank' ) ),
+		),
+	);
 
 	/**
-	 * The ID of this plugin.
+	 * Initialize the settings for WordPress admin
 	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @since    5.0.0 (before on JoinchatAdminPage->settings_init())
+	 * @access   public
+	 * @return   void
 	 */
-	private $plugin_name;
+	public function register_setting() {
+
+		// Register WordPress 'joinchat' setting.
+		$args = array(
+			'type'              => 'array',
+			'label'             => esc_html__( 'Joinchat', 'creame-whatsapp-me' ),
+			'description'       => esc_html__( 'Joinchat settings', 'creame-whatsapp-me' ),
+			'default'           => jc_common()->defaults(),
+			'sanitize_callback' => array( $this, 'setting_validate' ),
+		);
+
+		register_setting( JOINCHAT_SLUG, JOINCHAT_SLUG, $args );
+
+	}
+
 
 	/**
-	 * The version of this plugin.
+	 * Validate settings, clean and set defaults before save
 	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @since    5.0.0 (before on JoinchatAdminPage->settings_validate())
+	 * @param    array $value  contain keys 'id', 'title' and 'callback'.
+	 * @return   array
 	 */
-	private $version;
+	public function setting_validate( $value ) {
 
-	/**
-	 * Common class for admin and front methods.
-	 *
-	 * @since    4.2.0
-	 * @access   private
-	 * @var      JoinChatCommon    $common    instance.
-	 */
-	private $common;
+		// Prevent bad behavior when validate twice on first save
+		// bug (view https://core.trac.wordpress.org/ticket/21989).
+		if ( count( wp_list_filter( get_settings_errors( JOINCHAT_SLUG ), array( 'code' => 'settings_updated' ) ) ) ) {
+			return $value;
+		}
 
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @since    3.0.0     Added $tabs initilization and removed get_settings()
-	 * @param    string $plugin_name       The name of this plugin.
-	 * @param    string $version           The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version ) {
+		$util = new Joinchat_Util(); // Shortcut.
 
-		$this->plugin_name = $plugin_name;
-		$this->version     = $version;
-		$this->common      = JoinChatCommon::instance();
+		$util::maybe_encode_emoji();
+
+		if ( is_array( $value['color'] ) ) {
+			$bg   = preg_match( '/^#[a-f0-9]{6}$/i', $value['color']['bg'] ) ? $value['color']['bg'] : '#25d366';
+			$text = '0' === $value['color']['text'] ? '0' : '100'; // '0' => black, '100' => white.
+		} elseif ( preg_match( '/^(?<bg>#[a-f0-9]{6})(?:\/(?<text>0|100))?$/i', $value['color'], $color ) ) {
+			$bg   = $color['bg'];
+			$text = isset( $color['text'] ) ? $color['text'] : '100';
+		} else {
+			$bg   = '#25d366';
+			$text = '100';
+		}
+
+		$optin_tags = array(
+			'em'     => array(),
+			'strong' => array(),
+			'a'      => array( 'href' => true ),
+		);
+
+		$value['telephone']     = $util::clean_input( $value['telephone'] );
+		$value['mobile_only']   = $util::yes_no( $value, 'mobile_only' );
+		$value['button_ico']    = jc_common()->get_icons( $value['button_ico'] ) ? $value['button_ico'] : 'app';
+		$value['button_image']  = (int) $value['button_image'] * ( $util::yes_no( $value, 'button_image_fixed' ) === 'yes' ? -1 : 1 );
+		$value['button_tip']    = $util::substr( $util::clean_input( $value['button_tip'] ), 0, 40 );
+		$value['button_delay']  = (int) $value['button_delay'];
+		$value['whatsapp_web']  = $util::yes_no( $value, 'whatsapp_web' );
+		$value['qr']            = $util::yes_no( $value, 'qr' );
+		$value['message_text']  = $util::clean_input( $value['message_text'] );
+		$value['message_badge'] = $util::yes_no( $value, 'message_badge' );
+		$value['message_send']  = $util::clean_input( $value['message_send'] );
+		$value['message_start'] = $util::substr( $util::clean_input( $value['message_start'] ), 0, 40 );
+		$value['message_delay'] = (int) $value['message_delay'] * ( $util::yes_no( $value, 'message_delay_on' ) === 'yes' ? 1 : -1 );
+		$value['message_views'] = (int) $value['message_views'] ? (int) $value['message_views'] : 1;
+		$value['position']      = 'left' !== $value['position'] ? 'right' : 'left';
+		$value['color']         = "$bg/$text";
+		$value['dark_mode']     = in_array( $value['dark_mode'], array( 'no', 'yes', 'auto' ), true ) ? $value['dark_mode'] : 'no';
+		$value['header']        = in_array( $value['header'], array( '__jc__', '__wa__' ), true ) ? $value['header'] : $util::substr( $util::clean_input( $value['header_custom'] ), 0, 40 );
+		$value['optin_check']   = $util::yes_no( $value, 'optin_check' );
+		$value['optin_text']    = wp_kses( $value['optin_text'], $optin_tags );
+		$value['gads']          = is_array( $value['gads'] ) ? sprintf( 'AW-%s/%s', $util::substr( $util::clean_input( $value['gads'][0] ), 0, 11 ), $util::substr( $util::clean_input( $value['gads'][1] ), 0, 20 ) ) : '';
+		$value['gads']          = 'AW-/' !== $value['gads'] ? $value['gads'] : '';
+		$value['custom_css']    = trim( $util::clean_nl( $value['custom_css'] ) );
+		$value['clear']         = $util::yes_no( $value, 'clear' );
+
+		if ( isset( $value['view'] ) ) {
+			$value['visibility'] = array_filter(
+				$value['view'],
+				function( $v ) {
+					return 'yes' === $v || 'no' === $v;
+				}
+			);
+		}
+
+		// Clean input items that are not in settings.
+		$value = array_intersect_key( $value, jc_common()->settings );
+
+		// Filter for other validations or extra settings.
+		$value = apply_filters( 'joinchat_settings_validate', $value, jc_common()->settings );
+
+		add_settings_error( JOINCHAT_SLUG, 'settings_updated', esc_html__( 'Settings saved', 'creame-whatsapp-me' ), 'updated' );
+
+		// Delete notice option.
+		if ( $value['telephone'] ) {
+			delete_option( 'joinchat_notice_dismiss' );
+		}
+
+		// Extra actions on save.
+		// @since 5.1.6 add third param $option_name.
+		do_action( 'joinchat_settings_validation', $value, jc_common()->settings, JOINCHAT_SLUG );
+
+		return $value;
 
 	}
 
@@ -65,13 +148,16 @@ class JoinChatAdmin {
 	 */
 	public function register_styles( $hook ) {
 
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$min  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$deps = array();
 
-		wp_register_style( 'joinchat-admin', plugins_url( "css/joinchat{$min}.css", __FILE__ ), array( 'wp-color-picker' ), $this->version, 'all' );
-
-		if ( $this->common->intltel ) {
-			wp_register_style( 'intl-tel-input', plugins_url( "css/intlTelInput{$min}.css", __FILE__ ), array(), $this->common->intltel, 'all' );
+		$intltel = jc_common()->get_intltel();
+		if ( $intltel ) {
+			$deps[] = 'intl-tel-input';
+			wp_register_style( 'intl-tel-input', plugins_url( "css/intlTelInput{$min}.css", __FILE__ ), array(), $intltel, 'all' );
 		}
+
+		wp_register_style( JOINCHAT_SLUG, plugins_url( "css/joinchat{$min}.css", __FILE__ ), $deps, JOINCHAT_VERSION, 'all' );
 
 	}
 
@@ -86,22 +172,60 @@ class JoinChatAdmin {
 	public function register_scripts( $hook ) {
 
 		$min  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$deps = array( 'jquery', 'wp-color-picker' );
+		$deps = array( 'jquery' );
 
-		if ( $this->common->intltel ) {
-			$deps[]   = 'intl-tel-input';
-			$localize = array(
-				'placeholder' => __( 'e.g.', 'creame-whatsapp-me' ),
-				'version'     => $this->common->intltel,
-				'utils_js'    => plugins_url( 'js/utils.js', __FILE__ ),
-			);
+		$intltel = jc_common()->get_intltel();
+		if ( $intltel ) {
+			$deps[] = 'intl-tel-input';
 
-			wp_register_script( 'intl-tel-input', plugins_url( "js/intlTelInput{$min}.js", __FILE__ ), array(), $this->common->intltel, true );
-			wp_localize_script( 'intl-tel-input', 'intlTelConf', $localize );
+			wp_register_script( 'intl-tel-input', plugins_url( "js/intlTelInputWithUtils{$min}.js", __FILE__ ), array(), $intltel, true );
+			wp_add_inline_script( 'intl-tel-input', $this->load_intltel_lang() );
 		}
 
-		wp_register_script( 'joinchat-admin', plugins_url( "js/joinchat{$min}.js", __FILE__ ), $deps, $this->version, true );
-		wp_localize_script( 'joinchat-admin', 'joinchat_admin', array( 'example' => __( 'is an example, double click to use it', 'creame-whatsapp-me' ) ) );
+		wp_register_script( JOINCHAT_SLUG, plugins_url( "js/joinchat{$min}.js", __FILE__ ), $deps, JOINCHAT_VERSION, true );
+
+	}
+
+	/**
+	 * Load intlTelInput language files
+	 *
+	 * @since 6.0.0
+	 * @return array
+	 */
+	private function load_intltel_lang() {
+
+		$lang = strtolower( substr( get_user_locale(), 0, 2 ) );
+
+		$placeholder = 'placeholder:"' . esc_attr__( 'e.g.', 'creame-whatsapp-me' ) . '"';
+
+		if ( 'en' === $lang ) {
+			return 'var intl_tel_l10n = { ' . $placeholder . ' };';
+		}
+
+		$i18n = get_transient( "joinchat_intltel_lang_{$lang}" );
+
+		if ( ! is_string( $i18n ) ) {
+			$i18n = '';
+
+			// Get javascript lang files.
+			foreach ( array( 'interface', 'countries' ) as $file ) {
+				if ( file_exists( JOINCHAT_DIR . "admin/js/i18n/$lang/$file.js" ) ) {
+					$str   = file_get_contents( JOINCHAT_DIR . "admin/js/i18n/$lang/$file.js" ); // Load javascript.
+					$str   = substr( $str, 0, strrpos( $str, '};' ) + 2 );                       // To };.
+					$i18n .= $str . "\n";
+				}
+			}
+
+			if ( empty( $i18n ) ) {
+				$i18n = 'var intl_tel_l10n = { ' . $placeholder . ' };';
+			} else {
+				$i18n = '(() => { ' . $i18n . 'window.intl_tel_l10n = { ' . $placeholder . ', ...interfaceTranslations, ...countryTranslations }; })();';
+			}
+
+			set_transient( "joinchat_intltel_lang_{$lang}", $i18n, DAY_IN_SECONDS );
+		}
+
+		return $i18n;
 
 	}
 
@@ -118,19 +242,17 @@ class JoinChatAdmin {
 			return;
 		}
 
-		$current_screen = get_current_screen();
-
 		// If no phone number defined.
-		if ( empty( $this->common->settings['telephone'] )
-			&& current_user_can( JoinChatUtil::capability() )
-			&& ( $current_screen && false === strpos( $current_screen->id, '_joinchat' ) )
+		if ( empty( jc_common()->settings['telephone'] )
+			&& current_user_can( Joinchat_Util::capability() )
+			&& ! Joinchat_Util::is_admin_screen( true )
 			&& time() >= (int) get_option( 'joinchat_notice_dismiss' )
 		) {
 
 			printf(
 				'<div class="notice notice-info is-dismissible" id="joinchat-empty-phone"><p><strong>Joinchat</strong>&nbsp;&nbsp;%s %s</p></div>',
 				esc_html__( 'You only need to add your WhatsApp number to contact with your users.', 'creame-whatsapp-me' ),
-				sprintf( '<a href="%s"><strong>%s</strong></a>', esc_url( JoinChatUtil::admin_url() ), esc_html__( 'Go to settings', 'creame-whatsapp-me' ) )
+				sprintf( '<a href="%s"><strong>%s</strong></a>', esc_url( Joinchat_Util::admin_url() ), esc_html__( 'Go to settings', 'creame-whatsapp-me' ) )
 			);
 
 			printf(
@@ -168,18 +290,9 @@ class JoinChatAdmin {
 	 */
 	public function settings_link( $links ) {
 
-		$settings_link = sprintf( '<a href="%s">%s</a>', JoinChatUtil::admin_url(), __( 'Settings', 'creame-whatsapp-me' ) );
+		$settings_link = sprintf( '<a href="%s">%s</a>', Joinchat_Util::admin_url(), esc_html__( 'Settings', 'creame-whatsapp-me' ) );
 
 		array_unshift( $links, $settings_link );
-
-		$utm  = '?utm_source=action&utm_medium=wpadmin&utm_campaign=v' . str_replace( '.', '_', $this->version );
-		$lang = false !== strpos( strtolower( get_locale() ), 'es' ) ? 'es' : 'en';
-
-		$links['premium'] = sprintf(
-			'<a href="%1$s" target="_blank" style="font-weight:bold;color:#f9603a;">%2$s</a>',
-			esc_url( "https://join.chat/$lang/premium/$utm" ),
-			esc_html__( 'Premium', 'creame-whatsapp-me' )
-		);
 
 		return $links;
 
@@ -196,12 +309,9 @@ class JoinChatAdmin {
 	 */
 	public function plugin_links( $plugin_meta, $plugin_file ) {
 
-		if ( 'creame-whatsapp-me/joinchat.php' === $plugin_file ) {
-			$utm  = '?utm_source=plugins&utm_medium=wpadmin&utm_campaign=v' . str_replace( '.', '_', $this->version );
-			$lang = false !== strpos( strtolower( get_locale() ), 'es' ) ? 'es' : 'en';
-
-			$plugin_meta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url( "https://join.chat/$lang/docs/$utm" ), __( 'Documentation', 'creame-whatsapp-me' ) );
-			$plugin_meta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url( "https://join.chat/$lang/support/$utm" ), __( 'Support', 'creame-whatsapp-me' ) );
+		if ( JOINCHAT_BASENAME === $plugin_file ) {
+			$plugin_meta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url( Joinchat_Util::link( 'docs', 'plugins' ) ), esc_html__( 'Documentation', 'creame-whatsapp-me' ) );
+			$plugin_meta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url( Joinchat_Util::link( 'support', 'plugins' ) ), esc_html__( 'Support', 'creame-whatsapp-me' ) );
 		}
 
 		return $plugin_meta;
@@ -218,12 +328,12 @@ class JoinChatAdmin {
 	 */
 	public function add_meta_boxes() {
 
-		$post_types  = $this->common->get_public_post_types();
-		$back_compat = apply_filters( 'joinchat_gutenberg_sidebar', JoinChatUtil::can_gutenberg() );
+		$post_types  = jc_common()->get_public_post_types();
+		$back_compat = apply_filters( 'joinchat_gutenberg_sidebar', Joinchat_Util::can_gutenberg() );
 
 		foreach ( $post_types as $post_type ) {
 			add_meta_box(
-				$this->plugin_name,
+				JOINCHAT_SLUG,
 				__( 'Joinchat', 'creame-whatsapp-me' ),
 				array( $this, 'meta_box' ),
 				$post_type,
@@ -249,12 +359,8 @@ class JoinChatAdmin {
 	public function meta_box( $post ) {
 
 		// Enqueue assets.
-		wp_enqueue_script( 'joinchat-admin' );
-		wp_enqueue_style( 'joinchat-admin' );
-
-		if ( $this->common->intltel ) {
-			wp_enqueue_style( 'intl-tel-input' );
-		}
+		wp_enqueue_script( JOINCHAT_SLUG );
+		wp_enqueue_style( JOINCHAT_SLUG );
 
 		$metadata = get_post_meta( $post->ID, '_joinchat', true ) ?: array(); //phpcs:ignore WordPress.PHP.DisallowShortTernary
 		$metadata = array_merge(
@@ -267,11 +373,11 @@ class JoinChatAdmin {
 			$metadata
 		);
 
-		$placeholders = $this->common->get_obj_placeholders( $post );
-		$metabox_vars = $this->common->get_obj_vars( $post );
+		$placeholders = jc_common()->get_obj_placeholders( $post );
+		$metabox_vars = jc_common()->get_obj_vars( $post );
 
 		ob_start();
-		include __DIR__ . '/partials/post_meta_box.php';
+		include __DIR__ . '/partials/post-meta-box.php';
 		$metabox_output = ob_get_clean();
 
 		echo apply_filters( 'joinchat_metabox_output', $metabox_output, $post, $metadata ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -288,7 +394,7 @@ class JoinChatAdmin {
 	 */
 	public function save_meta( $id, $arg ) {
 
-		if ( ! isset( $_POST['joinchat_nonce'] ) || ! wp_verify_nonce( $_POST['joinchat_nonce'], 'joinchat_data' ) ) {
+		if ( ! isset( $_POST['joinchat_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['joinchat_nonce'] ), 'joinchat_data' ) ) {
 			return;
 		}
 
@@ -298,19 +404,19 @@ class JoinChatAdmin {
 			return;
 		}
 
-		JoinChatUtil::maybe_encode_emoji();
+		Joinchat_Util::maybe_encode_emoji();
+
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$metadata = array(
+			'telephone'    => isset( $_POST['joinchat_telephone'] ) ? $_POST['joinchat_telephone'] : '',
+			'message_text' => isset( $_POST['joinchat_message'] ) ? $_POST['joinchat_message'] : '',
+			'message_send' => isset( $_POST['joinchat_message_send'] ) ? $_POST['joinchat_message_send'] : '',
+			'view'         => isset( $_POST['joinchat_view'] ) ? $_POST['joinchat_view'] : '',
+		);
+		// phpcs:enable
 
 		// Clean and delete empty/false fields.
-		$metadata = array_filter(
-			JoinChatUtil::clean_input(
-				array(
-					'telephone'    => $_POST['joinchat_telephone'],
-					'message_text' => $_POST['joinchat_message'],
-					'message_send' => $_POST['joinchat_message_send'],
-					'view'         => $_POST['joinchat_view'],
-				)
-			)
-		);
+		$metadata = array_filter( Joinchat_Util::clean_input( $metadata ) );
 
 		$metadata = apply_filters( 'joinchat_metabox_save', $metadata, $id, $type );
 
@@ -330,13 +436,27 @@ class JoinChatAdmin {
 	 */
 	public function add_term_meta_boxes() {
 
-		$taxonomies = apply_filters( 'joinchat_taxonomies_meta_box', array( 'category', 'post_tag' ) );
+		$taxonomies = jc_common()->get_taxonomies_meta_box();
 
-		foreach ( $taxonomies as $tax ) {
-			add_action( "{$tax}_edit_form_fields", array( $this, 'term_meta_box' ), 10, 2 );
-			add_action( "edited_{$tax}", array( $this, 'save_meta' ), 10, 2 );
+		foreach ( $taxonomies as $taxonomy ) {
+			add_action( "{$taxonomy}_edit_form_fields", array( $this, 'term_meta_box' ), 10, 2 );
 		}
+	}
 
+	/**
+	 * Add term save meta fields
+	 *
+	 * @since    5.0.9
+	 * @access   public
+	 * @return void
+	 */
+	public function add_term_save_meta() {
+
+		$taxonomies = jc_common()->get_taxonomies_meta_box();
+
+		foreach ( $taxonomies as $taxonomy ) {
+			add_action( "edited_{$taxonomy}", array( $this, 'save_meta' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -351,12 +471,8 @@ class JoinChatAdmin {
 	public function term_meta_box( $term, $taxonomy ) {
 
 		// Enqueue assets.
-		wp_enqueue_script( 'joinchat-admin' );
-		wp_enqueue_style( 'joinchat-admin' );
-
-		if ( $this->common->intltel ) {
-			wp_enqueue_style( 'intl-tel-input' );
-		}
+		wp_enqueue_script( JOINCHAT_SLUG );
+		wp_enqueue_style( JOINCHAT_SLUG );
 
 		$metadata = get_term_meta( $term->term_id, '_joinchat', true ) ?: array(); //phpcs:ignore WordPress.PHP.DisallowShortTernary
 		$metadata = array_merge(
@@ -369,11 +485,11 @@ class JoinChatAdmin {
 			$metadata
 		);
 
-		$placeholders = $this->common->get_obj_placeholders( $term );
-		$metabox_vars = $this->common->get_obj_vars( $term );
+		$placeholders = jc_common()->get_obj_placeholders( $term );
+		$metabox_vars = jc_common()->get_obj_vars( $term );
 
 		ob_start();
-		include __DIR__ . '/partials/term_meta_box.php';
+		include __DIR__ . '/partials/term-meta-box.php';
 		$metabox_output = ob_get_clean();
 
 		echo apply_filters( 'joinchat_term_metabox_output', $metabox_output, $term, $metadata, $taxonomy ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -399,7 +515,7 @@ class JoinChatAdmin {
 			'joinchat_cache_plugins',
 			array(
 				'autoptimizeCache::clearall_actionless', // Autoptimize https://wordpress.org/plugins/autoptimize/.
-				'ce_clear_cache',                        // Cache Enabler https://wordpress.org/plugins/cache-enabler/.
+				'cache_enabler_clear_complete_cache',    // Cache Enabler https://wordpress.org/plugins/cache-enabler/.
 				'cachify_flush_cache',                   // Cachify https://wordpress.org/plugins/cachify/.
 				'LiteSpeed_Cache_API::purge_all',        // LiteSpeed Cache https://wordpress.org/plugins/litespeed-cache/.
 				'sg_cachepress_purge_cache',             // SG Optimizer https://es.wordpress.org/plugins/sg-cachepress/.
@@ -420,6 +536,33 @@ class JoinChatAdmin {
 				call_user_func_array( 'do_action', $callable );
 			}
 		}
+
+	}
+
+	/**
+	 * Adds the privacy message.
+	 *
+	 * @since    5.1.0
+	 * @return void
+	 */
+	public function add_privacy_message() {
+
+		if ( jc_common()->settings['message_delay'] < 0 ) {
+
+			$message = '<p class="privacy-policy-tutorial">' . esc_html__( "With the current Joinchat's settings, no user data is collected and no cookies are used.", 'creame-whatsapp-me' ) . '</p>';
+
+		} else {
+			$message = '' .
+				'<h2>' . esc_html__( 'Cookies' ) . '</h2>' . // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+				'<p class="privacy-policy-tutorial">' . esc_html__( 'Joinchat uses cookies to control when the chat window should be automatically displayed.', 'creame-whatsapp-me' ) . '</p>' .
+				'<p><strong class="privacy-policy-tutorial">' . esc_html__( 'Suggested text:' ) . '</strong> ' . // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+					esc_html__( 'Cookies can be used to control when the WhatsApp floating button chat window should be automatically displayed.', 'creame-whatsapp-me' ) . ' ' .
+					/* translators: %s: cookies names. */
+					sprintf( esc_html__( 'These cookies (%s) do not contain personal data, are of type HTML LocalStorage and do not expire.', 'creame-whatsapp-me' ), '"joinchat_views", "joinchat_hashes"' ) .
+				'</p>';
+		}
+
+		wp_add_privacy_policy_content( 'Joinchat', apply_filters( 'joinchat_privacy_message', $message ) );
 
 	}
 }

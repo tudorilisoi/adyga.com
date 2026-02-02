@@ -2,8 +2,8 @@
 Contributors: iqcomputing
 Tags: contact-form-7, contact-form-7-recaptcha, recaptcha, spam
 Requires at least: 4.9
-Tested up to: 5.8
-Stable tag: 1.3.9
+Tested up to: 6.7
+Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,12 +60,17 @@ Should the above be correct, at this point it's time to open a support thread fo
 
 == Changelog ==
 
-= 1.3.9 (2022-04-13) =
-* Using `wp_is_block_theme()` to conditionally test if Google ReCaptcha script should be enqueued globally or inline.
+= 1.4.9 (2025-04-15) =
+* Updated the "Tested up to" value to support 6.8+
+* Fixes to the [recaptcha] tag generator
 
-= 1.3.8 (2022-03-07) =
-* New global reCaptcha Locale filter hook `wpcf7_recaptcha_locale`.
+= 1.4.8 (2024-11-13) =
+* Updated the "Tested up to" value to support 6.7+
+* Updates Contact Form 7 Tag Generator to v2
 
-= 1.3.7 (2022-01-03) =
-* Happy New Year!
-* Fixed issue with reCpatcha not appearing in the new WordPress Full Site Editing feature of TwentyTwentyTwo theme. Thanks @gerhardfasol !
+= 1.4.7 (2024-05-22) =
+* Updated the "Tested up to" value to support 6.5+
+
+= 1.4.6 (2024-04-10) =
+* Improved desription text ( Thanks @rickcurran )
+* Tested and updated to support WordPress 6.5 Regina

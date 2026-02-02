@@ -34,6 +34,10 @@ if ( ! class_exists( 'ReduxFramework_image_select' ) ) {
      */
     class ReduxFramework_image_select {
 
+        public $parent;
+        public $field;
+        public $value;
+    
         /**
          * Field Constructor.
          * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
@@ -162,7 +166,7 @@ if ( ! class_exists( 'ReduxFramework_image_select' ) ) {
 
                         $v['presets']['redux-backup'] = 1;
 
-                        $presets   = ' data-presets="' . htmlspecialchars( json_encode( $v['presets'] ), ENT_QUOTES, 'UTF-8' ) . '"';
+                        $presets   = ' data-presets="' . htmlspecialchars( wp_json_encode( $v['presets'] ), ENT_QUOTES, 'UTF-8' ) . '"';
                         $is_preset = true;
 
                         $this->field['class'] = trim( $this->field['class'] ) . ' redux-presets';
@@ -177,16 +181,21 @@ if ( ! class_exists( 'ReduxFramework_image_select' ) ) {
                     }
 
                     echo '<li class="redux-image-select">';
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo '<label class="' . $selected . ' redux-image-select' . $is_preset_class . $this->field['id'] . '_' . $x . '" for="' . $this->field['id'] . '_' . ( array_search( $k, array_keys( $this->field['options'] ) ) + 1 ) . '">';
 
+                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo '<input type="radio" class="' . $this->field['class'] . '" id="' . $this->field['id'] . '_' . ( array_search( $k, array_keys( $this->field['options'] ) ) + 1 ) . '" name="' . $this->field['name'] . $this->field['name_suffix'] . '" value="' . $theValue . '" ' . checked( $this->value, $theValue, false ) . $presets . $merge . '/>';
                     if ( ! empty( $this->field['tiles'] ) && $this->field['tiles'] == true ) {
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo '<span class="tiles ' . $v['class'] . '" style="background-image: url(' . $v['img'] . ');" rel="' . $v['img'] . '"">&nbsp;</span>';
                     } else {
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */
                         echo '<img src="' . $v['img'] . '" alt="' . $v['alt'] . '" class="' . $v['class'] . '" style="' . $style . '"' . $presets . $merge . ' />';
                     }
 
                     if ( $v['title'] != '' ) {
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo '<br /><span>' . $v['title'] . '</span>';
                     }
 

@@ -17,7 +17,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
     $breadcrums_class   = 'breadcrumbs';
     $home_title         = ampforwp_translation($redux_builder_amp['amp-translator-breadcrumbs-homepage-text'] , 'Homepage' );
     if (function_exists('pll__')) {
-        $home_title = pll__(esc_html__( ampforwp_get_setting('amp-translator-breadcrumbs-homepage-text'), 'accelerated-mobile-pages'));
+        $home_title = pll__(esc_html( ampforwp_get_setting('amp-translator-breadcrumbs-homepage-text')));
     }
     // If you have any custom post types with custom taxonomies, put the taxonomy name below (e.g. product_cat)
     $custom_taxonomy    = 'product_cat';
@@ -32,6 +32,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
         echo '<ul id="' . esc_attr($breadcrums_id) . '" class="' . esc_attr($breadcrums_class) . '">';
            
         // Home page 
+        //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo '<li class="item-home"><a class="bread-link bread-home" href="' . ampforwp_url_controller( get_home_url('', '/'), $home_non_amp ) . '" title="' . esc_attr($home_title) . '">' . esc_html($home_title) . '</a></li>';
 
         if ( is_archive() && !is_tax() && !is_category() && !is_tag() && !is_author() ) {
@@ -45,6 +46,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                 $author_url= get_author_posts_url($userdata->ID);
                 $author_url = trailingslashit($author_url);
                 // Display author name
+                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo '<li class="item-current item-current-' . esc_attr($userdata->user_nicename) . '"><a class="bread-current bread-current-' . esc_attr($userdata->user_nicename) . '" title="' . esc_attr($userdata->display_name) . '" href="'. ampforwp_url_controller( $author_url, $archive_non_amp ). '">' . 'Author: ' . esc_html($userdata->display_name) . '</a></li>';
 
         } else if ( is_archive() && is_tax() && !is_category() && !is_tag() ) {
@@ -58,6 +60,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                 $post_type_object = get_post_type_object($post_type);
                 $post_type_archive = get_post_type_archive_link($post_type);
                 if ( false != $post_type_archive){
+                    //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo '<li class="item-cat item-custom-post-type-' . esc_attr($post_type) . '"><a class="bread-cat bread-custom-post-type-' . esc_attr($post_type) . '" href="' .ampforwp_url_controller( $post_type_archive, $archive_non_amp ) . '" title="' . esc_attr($post_type_object->labels->name) . '">' . esc_html($post_type_object->labels->name) . '</a></li>'; 
                 }
                 else {
@@ -78,6 +81,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                 $post_type_object = get_post_type_object($post_type);
                 $post_type_archive = get_post_type_archive_link($post_type);
                 if ( false != $post_type_archive){
+                    //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo '<li class="item-cat item-custom-post-type-' . esc_attr($post_type) . '"><a class="bread-cat bread-custom-post-type-' .esc_attr($post_type) . '" href="' .ampforwp_url_controller( $post_type_archive, $archive_non_amp ) . '" title="' . esc_attr($post_type_object->labels->name) . '">' . esc_html($post_type_object->labels->name) . '</a></li>'; 
                 }
                 else {
@@ -107,6 +111,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                         }
                             $tags_breadcrumbs .='<li class="item-post item-post-' . esc_attr(ampforwp_get_the_ID()) . '"><span class="bread-post">'.wp_kses_data( $bc_title ). '</span></li>';
                     } 
+                    //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo $tags_breadcrumbs; // escaped above
                 }
             }
@@ -123,11 +128,14 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                     $get_cat_parents = rtrim(get_category_parents($last_category->term_id, false, '>'),'>');
                     if(class_exists( 'WPSEO_Options' )){
                         $primary_cateogory = get_post_meta(ampforwp_get_the_ID(), '_yoast_wpseo_primary_category', true);
-                    if(isset($primary_cateogory) && $primary_cateogory!=""){
-                        $pcname = get_the_category_by_ID($primary_cateogory);
-                        $category_name = $pcname;
-                        $get_cat_parents = rtrim(get_category_parents($primary_cateogory, false, '>'),'>');
-                       }
+                        if(isset($primary_cateogory) && $primary_cateogory!=""){
+                            $pcname = get_the_category_by_ID($primary_cateogory);
+                            $category_name = $pcname;
+                            $parent_cat = get_category_parents($primary_cateogory, false, '>');
+                            if ( ! is_wp_error( $parent_cat ) ) {
+                                $get_cat_parents = rtrim($parent_cat,'>');
+                            }
+                        }
                    }
                         // Get parent any categories and create array 
                         $cat_parents = explode('>',$get_cat_parents);
@@ -170,12 +178,13 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
               
             // Check if the post is in a category
             if(!empty($last_category)) {
+                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo $cat_display; // escaped above
     
             // Else if post is in a custom taxonomy
             } else if(!empty($cat_id)) {
                   
-                echo '<li class="item-cat item-cat-' . esc_attr($cat_id) . ' item-cat-' . esc_attr($cat_nicename) . '"><a class="bread-cat bread-cat-' . esc_attr($cat_id) . ' bread-cat-' . esc_attr($cat_nicename) . '" href="' . ampforwp_url_controller( $cat_link, $archive_non_amp ) . '" title="' . esc_attr($cat_name) . '">' . esc_attr($cat_name) . '</a></li>';                
+                echo '<li class="item-cat item-cat-' . esc_attr($cat_id) . ' item-cat-' . esc_attr($cat_nicename) . '"><a class="bread-cat bread-cat-' . esc_attr($cat_id) . ' bread-cat-' . esc_attr($cat_nicename) . '" href="' . /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ampforwp_url_controller( $cat_link, $archive_non_amp ) . '" title="' . esc_attr($cat_name) . '">' . esc_attr($cat_name) . '</a></li>';                
             }  
               
         } else if ( is_category() ) {
@@ -200,6 +209,7 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                 }
                    
                 // Display parent pages
+                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo $parents; // escaped above
                    
                 // Current page
@@ -212,9 +222,8 @@ if ( ( (is_single() && 1 == ampforwp_get_setting('ampforwp-bread-crumb')) || (is
                
             // Get tag information
             $term_id        = get_query_var('tag_id');
-            $taxonomy       = 'post_tag';
-            $args           = 'include=' . intval($term_id);
-            $terms          = get_terms( $taxonomy, $args );
+            $args = array('taxonomy' => 'post_tag', 'include' => intval($term_id));
+            $terms          = get_terms( $args );
             $get_term_id    = $terms[0]->term_id;
             $get_term_slug  = $terms[0]->slug;
             $get_term_name  = $terms[0]->name;

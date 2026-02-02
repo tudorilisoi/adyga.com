@@ -113,12 +113,14 @@ global $savedlayoutTemplate;
                                                     <?php
                                                      if(strpos($layoutName, '-upcomming')!==False){
                                                             ?>
+                                                            <?php /* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */?>
                                                     <a href="<?php echo esc_url($lay[$firstLayout]["preview_demo"]); ?>" target="_blank"><img src="<?php echo esc_url($lay[$firstLayout]['preview_img']); ?>"></a>
                                                     <?php
                                                         }else{
                                                     ?>
+                                                    <?php /* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */?>
                                                     <img src="<?php echo esc_url($lay[$firstLayout]['preview_img']); ?>" @click="viewSpacialLayouts($event);"
-                                                    data-info='<?php echo json_encode($lay); ?>'
+                                                    data-info='<?php echo wp_json_encode($lay); ?>'
                                                     data-heading="<?php echo esc_attr( ucfirst($layoutName) ); ?>">
                                                     <?php } ?>
                                                 </div>
@@ -131,7 +133,7 @@ global $savedlayoutTemplate;
                                                             <?php
                                                         }else{
                                                         ?>
-                                                        <button type="button" class="button button-lg"@click="viewSpacialLayouts($event);" data-info='<?php echo json_encode($lay); ?>'
+                                                        <button type="button" class="button button-lg"@click="viewSpacialLayouts($event);" data-info='<?php echo wp_json_encode($lay); ?>'
                                                         data-heading="<?php echo esc_attr(ucfirst($layoutName)); ?>">View Layout</button>
                                                         <?php } ?>
                                                     </div>
@@ -146,6 +148,7 @@ global $savedlayoutTemplate;
                                         <div class="amppb-layout-wrapper">
                                                 <h4 class="amppb-layout-title">{{layout.name}}</h4>
                                             <div class="amppb-layout-screenshot">
+                                            <?php /* phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage */?>
                                                 <img src="" :src="layout.preview_img" v-on:click="window.open(layout.preview_demo)">
                                             </div>
                                             <div class="amppb-layout-bottom">

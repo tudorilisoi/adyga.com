@@ -59,6 +59,7 @@ function ampforwp_pagebuilder_header_html_output(){
 		            $previousData['settingdata']['scripts_data'] = str_replace($unwanted[0], '', $previousData['settingdata']['scripts_data']);
 		        }
 		    }
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $previousData['settingdata']['scripts_data']; // nothing to escaped
 		}
 	}
@@ -77,7 +78,7 @@ function amp_pagebuilder_script_loader($scriptData){
 	$ampforwp_pagebuilder_enable = get_post_meta($postId,'ampforwp_page_builder_enable', true);
 	if($previousData!="" && $ampforwp_pagebuilder_enable=='yes'){
 		$previousData = json_decode($previousData,true);
-		if(count($previousData['rows'])>0){
+		if(isset($previousData['rows']) && count($previousData['rows'])>0){
 			foreach ($previousData['rows'] as $key => $rowsData) {
 				$container = $rowsData['cell_data'];
 				if(count($container)>0){
@@ -172,7 +173,7 @@ function amp_pagebuilder_content_styles(){
 
 		add_filter('ampforwp_body_class', 'bodyClassForAMPPagebuilder',10,2);
 		$previousData = json_decode($previousData,true);
-		if(count($previousData['rows'])>0){
+		if(isset($previousData['rows']) && count($previousData['rows'])>0){
 
 			foreach ($previousData['rows'] as $key => $rowsData) {
 				$container = $rowsData['cell_data'];
@@ -501,6 +502,7 @@ function amp_pagebuilder_content_styles(){
 			$completeCssOfPB .= $previousData['settingdata']['style_data'];
 		}
 	}//If Closed  $previousData!="" && $ampforwp_pagebuilder_enable=='yes'
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo amppb_validateCss($completeCssOfPB);
 } 
 function amppb_validateCss($css){
@@ -627,7 +629,7 @@ function amppb_post_content($content){
 								$replace .= 'ap-fi';
 							}else{
 								$allowed_tags = '<p><a><b><strong><i><u><ul><ol><li><h1><h2><h3><h4><h5><h6><table><tr><th><td><em><span><div>';
-								$replace .= strip_tags($rowsData['data'][$field['name']],$allowed_tags);
+								$replace .= wp_strip_all_tags($rowsData['data'][$field['name']],$allowed_tags);
 							}
 						}else{
 							$replace .= '';
@@ -886,6 +888,7 @@ function ampforwp_rowData($container,$col,$moduleTemplate){
 							array_push($args, "no_found_rows", true);
 						}
 						if ( (isset($fieldValues['taxonomy_selection']) && 'recent_option' !== $fieldValues['taxonomy_selection']) &&  (isset($fieldValues['category_selection']) && 'recent_option' !== $fieldValues['category_selection'])) {
+							/* phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query */
 							$args['tax_query'] = array(
 									array(
 										'taxonomy'=>$fieldValues['taxonomy_selection'],
@@ -1098,6 +1101,7 @@ function ampforwp_rowData($container,$col,$moduleTemplate){
 function ampforwp_pagebuilder_module_style(){
 	$custom_css = ampforwp_get_setting('css_editor'); 
 	$sanitized_css = ampforwp_sanitize_i_amphtml($custom_css);
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo $sanitized_css; //sanitize above
 }
 function sortByIndex($contentArray){
@@ -1127,11 +1131,13 @@ function ampforwp_get_attachment_id( $url , $imagetype='full') {
 			// Is URL in uploads directory?
 		if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) {
 			$file = basename( $url );
+			
 			$query_args = array(
 				'post_type'   => 'attachment',
 				'post_status' => 'inherit',
 				'fields'      => 'ids',
 				'no_found_rows' => true,
+				/* phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query */
 				'meta_query'  => array(
 					array(
 						'value'   => $file,

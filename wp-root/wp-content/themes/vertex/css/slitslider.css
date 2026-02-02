@@ -301,9 +301,9 @@
 	width: 40px;
 	height: 40px;
 	border: 8px solid #ddd;
-	border: 8px solid rgba(150,150,150,0.7);
+	border: 8px solid rgba(150,150,150,0.4);
 	text-indent: -90000px;
-	margin-top: -20px;
+	margin-top: -40px;
 	cursor: pointer;
 	
 	-webkit-transform: rotate(45deg);

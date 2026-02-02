@@ -75,10 +75,12 @@
 
                                     // Get the current page.  To avoid errors, we'll set
                                     // the redux page slug if the GET is empty.
-                                    $pageName = empty( $_GET['page'] ) ? '&amp;page=' . self::$_parent->args['page_slug'] : '&amp;page=' . esc_attr( $_GET['page'] );
+                                    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+                                    $pageName = empty( $_GET['page'] ) ? '&amp;page=' . self::$_parent->args['page_slug'] : '&amp;page=' . esc_attr( sanitize_text_field( wp_unslash( $_GET['page'] ) ) );
 
                                     // Ditto for the current tab.
-                                    $curTab = empty( $_GET['tab'] ) ? '&amp;tab=0' : '&amp;tab=' . esc_attr( $_GET['tab'] );
+                                    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+                                    $curTab = empty( $_GET['tab'] ) ? '&amp;tab=0' : '&amp;tab=' . esc_attr( sanitize_text_field( wp_unslash( $_GET['tab'] ) ) );
                                 }
 
                                 global $wp_version;
@@ -92,13 +94,16 @@
                                     $output .= "<input type='hidden' class='dismiss_data' id='" . esc_attr( $notice['id'] ) . $pageName . $curTab . "' value='{$nonce}'> \n";
                                     $output .= '<p>' . wp_kses_post( $notice['msg'] ) . '</p>';
                                     $output .= "</div> \n";
+                                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                                     echo $output;
                                 } else {
-                                    echo '<div ' . $add_style . ' class="' . esc_attr( $notice['type'] ) . ' notice is-dismissable"><p>' . wp_kses_post( $notice['msg'] ) . '&nbsp;&nbsp;<a href="?dismiss=true&amp;id=' . esc_attr( $notice['id'] ) . $pageName . $curTab . '">' . esc_html__( 'Dismiss', 'redux-framework' ) . '</a>.</p></div>';
+                                    /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
+                                    echo '<div ' . $add_style . ' class="' . esc_attr( $notice['type'] ) . ' notice is-dismissable"><p>' . wp_kses_post( $notice['msg'] ) . '&nbsp;&nbsp;<a href="?dismiss=true&amp;id=' . esc_attr( $notice['id'] ) . $pageName . $curTab . '">' . esc_html__( 'Dismiss', 'accelerated-mobile-pages' ) . '</a>.</p></div>';
                                 }
                             }
                         } else {
                             // Standard notice
+                            /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                             echo '<div ' . $add_style . ' class="' . esc_attr( $notice['type'] ) . ' notice"><p>' . wp_kses_post( $notice['msg'] ) . '</a>.</p></div>';
                         }
                         ?>
@@ -150,10 +155,12 @@
                         // Get the user id
                         $userid = $current_user->ID;
 
-                        // Get the notice id
-                        $id  = esc_attr( $_GET['id'] );
-                        $val = esc_attr( $_GET['dismiss'] );
-                        if ( ! wp_verify_nonce( $_POST['nonce'], $id . $userid . 'nonce' ) ) {
+                        // Get the notice 
+                        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+                        $id  = esc_attr( sanitize_text_field( wp_unslash( $_GET['id'] ) ) );
+                        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+                        $val = esc_attr( sanitize_text_field( wp_unslash( $_GET['dismiss'] ) ) );
+                        if ( isset( $_POST['nonce'] ) &&  ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), $id . $userid . 'nonce' ) ) {
                             die( 0 );
                         } else {
                         // Add the dismiss request to the user meta.
@@ -174,12 +181,14 @@
                 global $current_user;
 
                 // Get the notice id
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reason: verify nonce in line 187.
+                /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.NonceVerification.Missing */
                 $id = explode( '&', intval($_POST['id']) );
                 $id = $id[0];
                 // Get the user id
                 $userid = $current_user->ID;
-
-                if ( ! wp_verify_nonce( $_POST['nonce'], $id . $userid . 'nonce' ) ) {
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated */
+                if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), $id . $userid . 'nonce' ) ) {
                     die( 0 );
                 } else {
                     // Add the dismiss request to the user meta.

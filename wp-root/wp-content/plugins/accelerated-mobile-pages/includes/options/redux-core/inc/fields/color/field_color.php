@@ -34,6 +34,11 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_color' ) ) {
      */
     class ReduxFramework_color {
 
+        private $time = '';
+        private $parent;
+        private $value;
+        private $field;
+        
         /**
          * Field Constructor.
          * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
@@ -41,8 +46,7 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_color' ) ) {
          * @since         1.0.0
          * @access        public
          * @return        void
-         */
-        private $time = '';
+         */        
         function __construct( $field = array(), $value = '', $parent = ' ' ) {
 
             $this->parent = $parent;
@@ -64,8 +68,8 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_color' ) ) {
          */
         public function render() {
 
-            echo '<input data-id="' . $this->field['id'] . '" name="' . $this->field['name'] . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '-color" class="redux-color redux-color-init ' . $this->field['class'] . '"  type="text" value="' . $this->value . '" data-oldcolor=""  data-default-color="' . ( isset( $this->field['default'] ) ? $this->field['default'] : "" ) . '" />';
-            echo '<input type="hidden" class="redux-saved-color" id="' . $this->field['id'] . '-saved-color' . '" value="">';
+            echo '<input data-id="' . esc_attr( $this->field['id'] ). '" name="' . esc_attr( $this->field['name']) . esc_attr( $this->field['name_suffix'] ). '" id="' .esc_attr(  $this->field['id'] ). '-color" class="redux-color redux-color-init ' . esc_attr( $this->field['class'] ). '"  type="text" value="' . esc_attr( $this->value ). '" data-oldcolor=""  data-default-color="' . ( isset( $this->field['default'] ) ? esc_attr( $this->field['default'] ): "" ) . '" />';
+            echo '<input type="hidden" class="redux-saved-color" id="' . esc_attr( $this->field['id'] ). '-saved-color' . '" value="">';
 
             if ( ! isset( $this->field['transparent'] ) || $this->field['transparent'] !== false ) {
 
@@ -75,7 +79,7 @@ if ( ! class_exists( 'ReduxCore\\ReduxFramework\\ReduxFramework_color' ) ) {
                     $tChecked = ' checked="checked"';
                 }
 
-                echo '<label for="' . $this->field['id'] . '-transparency" class="color-transparency-check"><input type="checkbox" class="checkbox color-transparency ' . $this->field['class'] . '" id="' . $this->field['id'] . '-transparency" data-id="' . $this->field['id'] . '-color" value="1"' . $tChecked . '> ' . __( 'Transparent', 'accelerated-mobile-pages' ) . '</label>';
+                echo '<label for="' . esc_attr( $this->field['id'] ). '-transparency" class="color-transparency-check"><input type="checkbox" class="checkbox color-transparency ' . esc_attr( $this->field['class'] ) . '" id="' . esc_attr( $this->field['id']) . '-transparency" data-id="' . esc_attr( $this->field['id'] ). '-color" value="1"' . esc_attr( $tChecked ). '> ' .esc_html__( 'Transparent', 'accelerated-mobile-pages' ) . '</label>';
             }
         }
 

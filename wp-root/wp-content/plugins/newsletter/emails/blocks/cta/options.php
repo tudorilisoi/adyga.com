@@ -1,6 +1,8 @@
 <?php
-/* @var $fields NewsletterFields */
-
+/** @var array $options */
+/** @var array $context */
+/** @var NewsletterControls $controls  */
+/** @var NewsletterFields $fields */
 ?>
 
 <?php $fields->block_style('', ['default' => 'Default', 'wire' => 'Wire', 'inverted' => 'Inverted']) ?>
@@ -8,6 +10,10 @@
 <div class="tnp-accordion">
     <h3><?php esc_html_e('Appearance', 'newsletter'); ?></h3>
     <div>
+        <?php if ($context['type'] === 'confirmation') { ?>
+            <p>Use {confirmation_url} as URL for the button</p>
+        <?php } ?>
+
         <?php
         $fields->button('button', 'Button layout', [
             'family_default' => true,
@@ -25,8 +31,10 @@
             <div class="tnp-field-col-2">
                 <?php $fields->select('button_align', __('Alignment', 'newsletter'), ['center' => __('Center'), 'left' => __('Left'), 'right' => __('Right')]) ?>
             </div>
+            <div style="clear: both"></div>
 
         </div>
+
     </div>
 
     <h3><?php esc_html_e('Lists', 'newsletter'); ?></h3>
@@ -44,7 +52,7 @@
             </div>
             <div style="clear: both"></div>
             <?php if (!method_exists('NewsletterReports', 'build_lists_change_url')) { ?>
-                <label class="tnp-row-label">Requires the Reports Addon last version</label>
+                <label class="tnpf-row-label">Requires the Reports Addon last version</label>
             <?php } ?>
         </div>
     </div>

@@ -22,10 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; ?>
 				$moduleJson = array('type'=> 'module','moduleDraggable'=>false ,'modulename'=>strtolower($module['name']),'moduleJson'=>$module);
     			echo '
     				<div 
-    					'.$conditioner.'="cell.type==\''.strtolower($module['name']).'\'
+    					'.esc_attr($conditioner).'="cell.type==\''.esc_attr(strtolower($module['name'])).'\'
     					 &&
     					  cellcontainer==cell.cell_container"
-    					 class="amp_mod amppb-module amppb-module-'.strtolower($module['name']).'"
+    					 class="amp_mod amppb-module amppb-module-'.esc_attr(strtolower($module['name'])).'"
                           :data-module_id="cell.cell_id"
 					>
 
@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; ?>
                             >
                                 <span class=" dashicons dashicons-admin-page"></span>
                             </label>
-			        		<label  @click="showModulePopUp($event)" class="link" title="'.esc_attr($module['label']).'" data-popupContent=\''.json_encode($module).'\'
+			        		<label  @click="showModulePopUp($event)" class="link" title="'.esc_attr($module['label']).'" data-popupContent=\''.wp_json_encode($module).'\'
                                 :data-module_id="cell.cell_id"
                                 :data-container_id="cell.container_id"
                                 :data-cell_identity_name = cell.cell_identity_name

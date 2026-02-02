@@ -47,7 +47,7 @@ function tnp_post_thumbnail_src($post, $size = 'thumbnail', $alternative = '') {
 $tnp_excerpt_length = 0;
 
 function tnp_excerpt_length($length) {
-    
+
     global $tnp_excerpt_length;
     return $tnp_excerpt_length;
 }
@@ -74,7 +74,7 @@ function tnp_post_excerpt($post, $length = 30, $characters = false) {
 
     $excerpt = tnp_delete_all_shordcodes_tags($excerpt);
     $excerpt = trim($excerpt);
-    $excerpt = str_replace('&nbsp;', '', $excerpt);
+    $excerpt = str_replace('&nbsp;', ' ', $excerpt);
 
     if ($characters) {
         if (mb_strlen($excerpt) > $length) {
@@ -237,6 +237,16 @@ function _tnp_get_default_media($media_id, $size) {
     return $media;
 }
 
+/**
+ * Returns a TNP_Media object with the media found by WP using the media ID and the specified size.
+ *
+ * WP makes a number of calculus when a size is specified as an array (width and height) selecting the image
+ * version that best fit.
+ *
+ * @param type $media_id
+ * @param string|array $size
+ * @return null|\TNP_Media
+ */
 function tnp_get_media($media_id, $size) {
     if (!$media_id) {
         return null;
@@ -265,7 +275,14 @@ function tnp_resize($media_id, $size) {
         return null;
     }
 
-    Newsletter::instance()->logger->error($size);
+    if (defined('NEWSLETTER_MEDIA_RESIZE') && !NEWSLETTER_MEDIA_RESIZE) {
+        if (defined('NEWSLETTER_MEDIA_USE_FULL_SIZE') && NEWSLETTER_MEDIA_USE_FULL_SIZE) {
+            return tnp_get_media($media_id, 'full');
+        }
+        return tnp_get_media($media_id, $size);
+    }
+
+    //Newsletter::instance()->logger->error($size);
 
     // Try to use wp_get_attachment_metadata()
     // https://developer.wordpress.org/reference/functions/wp_get_attachment_metadata/
@@ -403,8 +420,9 @@ function tnp_resize_2x($media_id, $size) {
     $size[0] = $size[0] * 2;
     $size[1] = $size[1] * 2;
     $media = tnp_resize($media_id, $size);
-    if (!$media)
+    if (!$media) {
         return $media;
+    }
     $media->set_width($size[0] / 2);
     return $media;
 }
@@ -458,8 +476,8 @@ function tnp_composer_block_posts_get_media($post, $size, $default_image_url = n
         Newsletter::instance()->logger->error('Thumbnail id not found');
         $media = new TNP_Media();
         $media->url = $default_image_url;
-        $media->width = $size['width'];
-        $media->height = $size['height'];
+        $media->width = $size['width'] ?? 600;
+        $media->height = $size['height'] ?? 0;
     }
     return $media;
 }

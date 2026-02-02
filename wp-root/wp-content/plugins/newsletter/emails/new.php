@@ -1,26 +1,9 @@
 <?php
-/* @var $this NewsletterEmailsAdmin */
-/* @var $controls NewsletterControls */
-/* @var $logger NewsletterLogger */
+/** @var NewsletterEmailsAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
 
 $theme_id = $_GET['id'];
-
-if ($theme_id === 'rawhtml' && check_admin_referer('newsletter-new')) {
-    $email = array();
-    $email['status'] = 'new';
-    $email['subject'] = __('Here the email subject', 'newsletter');
-    $email['track'] = Newsletter::instance()->get_option('track');
-    $email['token'] = $this->get_token();
-    $email['type'] = 'message';
-    $email['send_on'] = time();
-    $email['editor'] = NewsletterEmails::EDITOR_HTML;
-    $email['message'] = "<!DOCTYPE html>\n<html>\n<head>\n<title>Your email title</title>\n</head>\n<body>\n</body>\n</html>";
-    $email = Newsletter::instance()->save_email($email);
-
-    $controls->js_redirect($this->get_editor_url($email->id, $email->editor));
-    return;
-}
-
 
 $theme = $this->themes->get_theme($theme_id);
 
@@ -48,7 +31,7 @@ if (!file_exists($theme['dir'] . '/theme-options.php') && check_admin_referer('n
     include $theme['dir'] . '/theme.php';
     $email['message'] = ob_get_clean();
 
-    if (!empty($theme_subject)) {
+    if ($theme_subject) {
         $email['subject'] = $theme_subject;
     }
 
@@ -91,7 +74,7 @@ if ($controls->is_action('create')) {
     include $theme['dir'] . '/theme.php';
     $email['message'] = ob_get_clean();
 
-    if (!empty($theme_subject)) {
+    if ($theme_subject) {
         $email['subject'] = $theme_subject;
     }
 
@@ -134,12 +117,12 @@ if ($controls->is_action('create')) {
         <h2><?php _e('Create a newsletter', 'newsletter') ?>
             <a class="tnp-btn-h1" href="?page=newsletter_emails_theme"><?php _e('Back', 'newsletter') ?></a>
         </h2>
-        
+
 
     </div>
 
-    <div id="tnp-body" class="tnp-body-lite"> 
-        
+    <div id="tnp-body" class="tnp-body-lite">
+
         <?php $controls->show(); ?>
 
         <form method="post" action="">

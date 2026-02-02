@@ -166,7 +166,7 @@
 
 		// time between transitions
 
-		interval : 3000,
+		interval : 8000,
 
 		// callbacks
 

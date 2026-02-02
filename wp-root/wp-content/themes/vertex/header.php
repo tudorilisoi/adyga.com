@@ -8,7 +8,7 @@
 	
 </head>
 <body <?php body_class(); ?>>
-	
+	<?php wp_body_open(); ?>
 	<header id="head">
 		<div class="container">
 			<div class="float-header">
@@ -38,11 +38,9 @@
 					<?php wp_nav_menu(array('theme_location' => 'header-menu')); ?>
 				</div><!-- head-nav -->
 				<div class="head-copyright">
-			<!--		<?php 
+					<?php
 						echo ( vertex_setting('vertex_copyright') !='' ?  sanitize_text_field( vertex_setting('vertex_copyright') ) : vertex_footer_copyright() );
-					?> 
-					<br /><br /><br />
-					-->
+					?>
 				</div><!-- head-copyright -->
 			</div><!-- float-header -->
 		</div><!-- container -->

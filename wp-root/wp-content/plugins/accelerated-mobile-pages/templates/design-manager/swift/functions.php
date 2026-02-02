@@ -90,7 +90,7 @@ function ampforwp_swift_social_icons(){
 
 							<?php }
 							else { ?>
-								<amp-facebook-like width=90 height=28
+								<amp-facebook-like width=96 height=28
 				 					layout="fixed"
 				 					data-size="large"
 				    				data-layout="button_count"
@@ -108,7 +108,10 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_fb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://www.facebook.com/sharer.php?u=<?php echo esc_url($amp_permalink); ?>" aria-label="facebook share"><?php echo $facebook_icon; ?></a>
+								<a class="s_fb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://www.facebook.com/sharer.php?u=<?php echo esc_url($amp_permalink); ?>" aria-label="facebook share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $facebook_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-facebook-share-messenger')){
@@ -118,7 +121,10 @@ function ampforwp_swift_social_icons(){
                                 }
 								?>
 							<li>
-								<a title="facebook share messenger" class="s_fb_ms" target="_blank" href="fb-messenger://share/?link=<?php echo esc_url($amp_permalink_fb_messenger); ?>" aria-label="facebook share messenger"><?php echo $facebookm_icon; ?></a>
+								<a title="facebook share messenger" class="s_fb_ms" target="_blank" href="fb-messenger://share/?link=<?php echo esc_url($amp_permalink_fb_messenger); ?>" aria-label="facebook share messenger">
+									<?php 
+									//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo $facebookm_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php 
@@ -128,11 +134,14 @@ function ampforwp_swift_social_icons(){
 								$data_param_data = str_replace('@', '', $data_param_data);
 								$data_param = ( '' == $data_param_data ) ? '' : '&via='.$data_param_data.'';
 								$twitter_icon = '';
-								if('css-icons' == ampforwp_get_setting('ampforwp_font_icon')){
-								$twitter_icon = '<amp-img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNjQwLjAxNzEgNjAxLjA4NjkiIGZpbGw9IiNmZmZmZmYiID48cGF0aCBkPSJNMCA1MzAuMTU1YzEwLjQyIDEuMDE1IDIwLjgyNiAxLjU0OCAzMS4yMiAxLjU0OCA2MS4wNSAwIDExNS41MjgtMTguNzMgMTYzLjM4Ny01Ni4xNy0yOC40MjQtLjM1Mi01My45MzMtOS4wNC03Ni40NzctMjYuMDQzLTIyLjU3LTE2Ljk5LTM3Ljk4NC0zOC42NzUtNDYuMzIzLTY1LjA1NiA2LjkzMyAxLjQxOCAxNS4xMDIgMi4wOTUgMjQuNDU2IDIuMDk1IDEyLjE1IDAgMjMuNzY3LTEuNTc1IDM0Ljg2Mi00LjY4NC0zMC41MTctNS44NjctNTUuNzY2LTIwLjg5Mi03NS43MS00NC45OTctMTkuOTU0LTI0LjEzMi0yOS45Mi01MS45Ny0yOS45Mi04My41Mjh2LTEuNTc0YzE4LjM5NiAxMC40MiAzOC4zMTIgMTUuODA2IDU5LjgyOCAxNi4xMy0xOC4wMTctMTEuNzk4LTMyLjM0LTI3LjMwNC00Mi45MTUtNDYuNTctMTAuNTc2LTE5LjI0LTE1Ljg3LTQwLjEzLTE1Ljg3LTYyLjY3NCAwLTIzLjU5OCA2LjA4Ny00NS42MDggMTguMjEtNjYuMDk2IDMyLjYgNDAuNTg2IDcyLjQyIDcyLjkzOCAxMTkuNDMyIDk3LjA1NiA0NyAyNC4wOSA5Ny4zNyAzNy41MyAxNTEuMTU4IDQwLjMyNi0yLjQzMi0xMS40NDctMy42NTUtMjEuNTE2LTMuNjU1LTMwLjE4IDAtMzYuMDg1IDEyLjg0LTY2Ljk1NCAzOC41MDUtOTIuNjIgMjUuNjgtMjUuNjY2IDU2LjcwNC0zOC41MDUgOTMuMTUzLTM4LjUwNSAzNy43OSAwIDY5LjcwMiAxMy44OCA5NS43MyA0MS42NCAzMC4xNjgtNi4yNTcgNTcuOTI4LTE3LjAxNSA4My4yNTYtMzIuMjYtOS43MTggMzEuNTU4LTI4LjgxNSA1NS44NDUtNTcuMjM4IDcyLjg0NyAyNS4zMjgtMy4xMSA1MC4zMDQtMTAuMDU2IDc0LjkzLTIwLjgxNC0xNi42NTIgMjYuMDE3LTM4LjMzNyA0OC43NDItNjUuMDU3IDY4LjE1MnYxNy4xOTdjMCAzNC45OTItNS4xMjQgNzAuMTI4LTE1LjM0OCAxMDUuMzU1LTEwLjIxMiAzNS4yMTQtMjUuODUgNjguODUzLTQ2LjgzIDEwMC45NzItMjAuOTk2IDMyLjA2NS00Ni4wNSA2MC42Mi03NS4xOSA4NS41Ny0yOS4xMjYgMjQuOTc2LTY0LjA4IDQ0Ljg1My0xMDQuODUgNTkuNTktNDAuNzU0IDE0Ljc1My04NC41NTMgMjIuMDktMTMxLjM5NyAyMi4wOUMxMjguODYyIDU4OC45NCA2MS43NCA1NjkuMzUgMCA1MzAuMTU0eiI+PC9wYXRoPjwvc3ZnPg==" width="16" height="16"></amp-img>';}
+								if( 'css-icons' == ampforwp_get_setting('ampforwp_font_icon') ){
+								$twitter_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg>';}
 								 ?>
 							<li>
-								<a class="s_tw" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://twitter.com/intent/tweet?url=<?php echo esc_url($twitter_amp_permalink); ?>&text=<?php echo esc_attr(ampforwp_sanitize_twitter_title(get_the_title())); ?><?php echo esc_attr($data_param); ?>" aria-label="twitter share"><?php echo $twitter_icon; ?>
+								<a class="s_tw" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://twitter.com/intent/tweet?url=<?php echo esc_url($twitter_amp_permalink); ?>&text=<?php echo esc_attr(ampforwp_sanitize_twitter_title(get_the_title())); ?><?php echo esc_attr($data_param); ?>" aria-label="twitter share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $twitter_icon; ?>
 								</a>
 							</li>
 							<?php } ?>
@@ -144,7 +153,10 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_em" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="mailto:?subject=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>&body=<?php echo esc_url($amp_permalink); ?>" aria-label="email share"><?php echo $email_icon; ?></a>
+								<a class="s_em" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="mailto:?subject=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>&body=<?php echo esc_url($amp_permalink); ?>" aria-label="email share">
+								<?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $email_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-pinterest-share')){
@@ -159,7 +171,9 @@ function ampforwp_swift_social_icons(){
 
 	 							?>
 							<li>
-								<a class="s_pt" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://pinterest.com/pin/create/button/?media=<?php echo esc_url($image); ?>&url=<?php esc_url(the_permalink()); ?>&description=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="pinterest share"><?php echo $pinterest_icon; ?></a>
+								<a class="s_pt" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://pinterest.com/pin/create/button/?media=<?php echo esc_url($image); ?>&url=<?php the_permalink(); ?>&description=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="pinterest share"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $pinterest_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-linkedin-share')){
@@ -169,7 +183,9 @@ function ampforwp_swift_social_icons(){
 								}
 								?>
 							<li>
-								<a class="s_lk" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://www.linkedin.com/shareArticle?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="linkedin share"><?php echo $linkedin_icon; ?></a>
+								<a class="s_lk" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://www.linkedin.com/shareArticle?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="linkedin share"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $linkedin_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-whatsapp-share')){
@@ -181,7 +197,23 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_wp" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://api.whatsapp.com/send?text=<?php echo esc_attr(htmlspecialchars(get_the_title()))."&nbsp;".esc_url($amp_permalink); ?>" data-action="share/whatsapp/share" aria-label="whatsapp share"><?php echo $whatsapp_icon; ?></a>
+								<a class="s_wp" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://api.whatsapp.com/send?text=<?php echo esc_attr(htmlspecialchars(get_the_title()))."&nbsp;".esc_url($amp_permalink); ?>" data-action="share/whatsapp/share" aria-label="whatsapp share"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $whatsapp_icon; ?></a>
+							</li>
+							<?php } ?>
+							<?php if(ampforwp_get_setting('enable-single-whatsapp-group-share')){
+								$whatsapp_icon = '';
+								if('css-icons' == ampforwp_get_setting('ampforwp_font_icon')){
+									$whatsapp_icon = '<amp-img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgOTAgOTAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDkwIDkwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggaWQ9IldoYXRzQXBwIiBkPSJNOTAsNDMuODQxYzAsMjQuMjEzLTE5Ljc3OSw0My44NDEtNDQuMTgyLDQzLjg0MWMtNy43NDcsMC0xNS4wMjUtMS45OC0yMS4zNTctNS40NTVMMCw5MGw3Ljk3NS0yMy41MjIgICBjLTQuMDIzLTYuNjA2LTYuMzQtMTQuMzU0LTYuMzQtMjIuNjM3QzEuNjM1LDE5LjYyOCwyMS40MTYsMCw0NS44MTgsMEM3MC4yMjMsMCw5MCwxOS42MjgsOTAsNDMuODQxeiBNNDUuODE4LDYuOTgyICAgYy0yMC40ODQsMC0zNy4xNDYsMTYuNTM1LTM3LjE0NiwzNi44NTljMCw4LjA2NSwyLjYyOSwxNS41MzQsNy4wNzYsMjEuNjFMMTEuMTA3LDc5LjE0bDE0LjI3NS00LjUzNyAgIGM1Ljg2NSwzLjg1MSwxMi44OTEsNi4wOTcsMjAuNDM3LDYuMDk3YzIwLjQ4MSwwLDM3LjE0Ni0xNi41MzMsMzcuMTQ2LTM2Ljg1N1M2Ni4zMDEsNi45ODIsNDUuODE4LDYuOTgyeiBNNjguMTI5LDUzLjkzOCAgIGMtMC4yNzMtMC40NDctMC45OTQtMC43MTctMi4wNzYtMS4yNTRjLTEuMDg0LTAuNTM3LTYuNDEtMy4xMzgtNy40LTMuNDk1Yy0wLjk5My0wLjM1OC0xLjcxNy0wLjUzOC0yLjQzOCwwLjUzNyAgIGMtMC43MjEsMS4wNzYtMi43OTcsMy40OTUtMy40Myw0LjIxMmMtMC42MzIsMC43MTktMS4yNjMsMC44MDktMi4zNDcsMC4yNzFjLTEuMDgyLTAuNTM3LTQuNTcxLTEuNjczLTguNzA4LTUuMzMzICAgYy0zLjIxOS0yLjg0OC01LjM5My02LjM2NC02LjAyNS03LjQ0MWMtMC42MzEtMS4wNzUtMC4wNjYtMS42NTYsMC40NzUtMi4xOTFjMC40ODgtMC40ODIsMS4wODQtMS4yNTUsMS42MjUtMS44ODIgICBjMC41NDMtMC42MjgsMC43MjMtMS4wNzUsMS4wODItMS43OTNjMC4zNjMtMC43MTcsMC4xODItMS4zNDQtMC4wOS0xLjg4M2MtMC4yNy0wLjUzNy0yLjQzOC01LjgyNS0zLjM0LTcuOTc3ICAgYy0wLjkwMi0yLjE1LTEuODAzLTEuNzkyLTIuNDM2LTEuNzkyYy0wLjYzMSwwLTEuMzU0LTAuMDktMi4wNzYtMC4wOWMtMC43MjIsMC0xLjg5NiwwLjI2OS0yLjg4OSwxLjM0NCAgIGMtMC45OTIsMS4wNzYtMy43ODksMy42NzYtMy43ODksOC45NjNjMCw1LjI4OCwzLjg3OSwxMC4zOTcsNC40MjIsMTEuMTEzYzAuNTQxLDAuNzE2LDcuNDksMTEuOTIsMTguNSwxNi4yMjMgICBDNTguMiw2NS43NzEsNTguMiw2NC4zMzYsNjAuMTg2LDY0LjE1NmMxLjk4NC0wLjE3OSw2LjQwNi0yLjU5OSw3LjMxMi01LjEwN0M2OC4zOTgsNTYuNTM3LDY4LjM5OCw1NC4zODYsNjguMTI5LDUzLjkzOHoiIGZpbGw9IiNGRkZGRkYiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K" width="16" height="16" ></amp-img>';
+
+								}
+
+								?>
+							<li>
+								<a class="s_wp" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="<?php echo esc_url($redux_builder_amp['whatsapp-group-link'])?>" data-action="share/whatsapp/share" aria-label="whatsapp group"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $whatsapp_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-line-share') == true)  { 
@@ -203,7 +235,9 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_vk" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://vk.com/share.php?url=<?php echo esc_url($amp_permalink); ?>" aria-label="vk share"><?php echo $vk_icon; ?></a>
+								<a class="s_vk" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://vk.com/share.php?url=<?php echo esc_url($amp_permalink); ?>" aria-label="vk share"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $vk_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-odnoklassniki-share')){
@@ -219,7 +253,10 @@ function ampforwp_swift_social_icons(){
 								   $feature_img = ampforwp_get_post_thumbnail( 'url', 'medium' );
 								}
 							   ?>
-								<a class="s_od" target="_blank" <?php esc_html(ampforwp_rel_attributes_social_links()); ?> href="https://connect.ok.ru/offer?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>&imageUrl=<?php echo esc_url($feature_img); ?>" aria-label="odnoklassniki share"><?php echo $odnoklassniki_icon; ?></a>
+								<a class="s_od" target="_blank" <?php esc_html(ampforwp_rel_attributes_social_links()); ?> href="https://connect.ok.ru/offer?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>&imageUrl=<?php echo esc_url($feature_img); ?>" aria-label="odnoklassniki share">
+								<?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $odnoklassniki_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-reddit-share')){
@@ -229,7 +266,10 @@ function ampforwp_swift_social_icons(){
 							}
 								?>
 							<li>
-								<a class="s_rd" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://reddit.com/submit?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="reddit share"><?php echo $reddit_icon; ?></a>
+								<a class="s_rd" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://reddit.com/submit?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="reddit share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $reddit_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-tumblr-share')){
@@ -237,7 +277,10 @@ function ampforwp_swift_social_icons(){
 								if('css-icons' == ampforwp_get_setting('ampforwp_font_icon')){
 								$tumblr_icon = '<amp-img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNjQgNjQiIGZpbGw9IiNmZmZmZmYiID48cGF0aCBkPSJNMzYuMDAyIDI4djE0LjYzNmMwIDMuNzE0LS4wNDggNS44NTMuMzQ2IDYuOTA2LjM5IDEuMDQ3IDEuMzcgMi4xMzQgMi40MzcgMi43NjMgMS40MTguODUgMy4wMzQgMS4yNzMgNC44NTcgMS4yNzMgMy4yNCAwIDUuMTU1LS40MjggOC4zNi0yLjUzNHY5LjYyYy0yLjczMiAxLjI4Ni01LjExOCAyLjAzOC03LjMzNCAyLjU2LTIuMjIuNTE0LTQuNjE2Ljc3NC03LjE5Ljc3NC0yLjkyOCAwLTQuNjU1LS4zNjgtNi45MDItMS4xMDMtMi4yNDctLjc0Mi00LjE2Ni0xLjgtNS43NS0zLjE2LTEuNTkyLTEuMzctMi42OS0yLjgyNC0zLjMwNC00LjM2M3MtLjkyLTMuNzc2LS45Mi02LjcwM1YyNi4yMjRoLTguNTl2LTkuMDYzYzIuNTE0LS44MTUgNS4zMjQtMS45ODcgNy4xMTItMy41MSAxLjc5Ny0xLjUyNyAzLjIzNS0zLjM1NiA0LjMyLTUuNDk2QzI0LjUzIDYuMDIyIDI1LjI3NiAzLjMgMjUuNjgzIDBoMTAuMzJ2MTZINTJ2MTJIMzYuMDA0eiI+PC9wYXRoPjwvc3ZnPg==" width="16" height="16" ></amp-img>';}?>
 							<li>
-								<a class="s_tb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=<?php echo esc_url($amp_permalink); ?>" aria-label="tumbler share"><?php echo $tumblr_icon; ?></a>
+								<a class="s_tb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=<?php echo esc_url($amp_permalink); ?>" aria-label="tumbler share">
+								<?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $tumblr_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-telegram-share')){
@@ -248,7 +291,10 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_tg" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://telegram.me/share/url?url=<?php echo esc_url($amp_permalink); ?>&text=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="telegram share"><?php echo $telegram_icon; ?></a>
+								<a class="s_tg" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://telegram.me/share/url?url=<?php echo esc_url($amp_permalink); ?>&text=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="telegram share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $telegram_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-stumbleupon-share')){
@@ -259,7 +305,10 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_su" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://www.stumbleupon.com/submit?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="stumbleupon share"><?php echo $stumbleupon; ?></a>
+								<a class="s_su" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://www.stumbleupon.com/submit?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="stumbleupon share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $stumbleupon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-wechat-share')){
@@ -267,7 +316,10 @@ function ampforwp_swift_social_icons(){
 								if('css-icons' == ampforwp_get_setting('ampforwp_font_icon')){
 									$wechat_icon = '<amp-img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjA0OCAxODk2LjA4MzMiIGZpbGw9IiNmZmZmZmYiID48cGF0aCBkPSJNNTgwIDQ2MXEwLTQxLTI1LTY2dC02Ni0yNXEtNDMgMC03NiAyNS41VDM4MCA0NjFxMCAzOSAzMyA2NC41dDc2IDI1LjVxNDEgMCA2Ni0yNC41dDI1LTY1LjV6bTc0MyA1MDdxMC0yOC0yNS41LTUwdC02NS41LTIycS0yNyAwLTQ5LjUgMjIuNVQxMTYwIDk2OHEwIDI4IDIyLjUgNTAuNXQ0OS41IDIyLjVxNDAgMCA2NS41LTIydDI1LjUtNTF6bS0yMzYtNTA3cTAtNDEtMjQuNS02NlQ5OTcgMzcwcS00MyAwLTc2IDI1LjVUODg4IDQ2MXEwIDM5IDMzIDY0LjV0NzYgMjUuNXE0MSAwIDY1LjUtMjQuNVQxMDg3IDQ2MXptNjM1IDUwN3EwLTI4LTI2LTUwdC02NS0yMnEtMjcgMC00OS41IDIyLjVUMTU1OSA5NjhxMCAyOCAyMi41IDUwLjV0NDkuNSAyMi41cTM5IDAgNjUtMjJ0MjYtNTF6bS0yNjYtMzk3cS0zMS00LTcwLTQtMTY5IDAtMzExIDc3VDg1MS41IDg1Mi41IDc3MCAxMTQwcTAgNzggMjMgMTUyLTM1IDMtNjggMy0yNiAwLTUwLTEuNXQtNTUtNi41LTQ0LjUtNy01NC41LTEwLjUtNTAtMTAuNWwtMjUzIDEyNyA3Mi0yMThRMCA5NjUgMCA2NzhxMC0xNjkgOTcuNS0zMTF0MjY0LTIyMy41VDcyNSA2MnExNzYgMCAzMzIuNSA2NnQyNjIgMTgyLjVUMTQ1NiA1NzF6bTU5MiA1NjFxMCAxMTctNjguNSAyMjMuNVQxNzk0IDE1NDlsNTUgMTgxLTE5OS0xMDlxLTE1MCAzNy0yMTggMzctMTY5IDAtMzExLTcwLjVUODk3LjUgMTM5NiA4MTYgMTEzMnQ4MS41LTI2NFQxMTIxIDY3Ni41dDMxMS03MC41cTE2MSAwIDMwMyA3MC41dDIyNy41IDE5MlQyMDQ4IDExMzJ6Ij48L3BhdGg+PC9zdmc+" width="16" height="16" ></amp-img>';}?>
 							<li>
-								<a class="s_wc" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=<?php echo esc_url($amp_permalink); ?>" aria-label="wechat share"><?php echo $wechat_icon; ?></a>
+								<a class="s_wc" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=<?php echo esc_url($amp_permalink); ?>" aria-label="wechat share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $wechat_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if(ampforwp_get_setting('enable-single-viber-share')){
@@ -277,7 +329,9 @@ function ampforwp_swift_social_icons(){
 								}
 								?>
 							<li>
-								<a class="s_vb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="viber://forward?text=<?php echo esc_url($amp_permalink); ?>" aria-label="viber share"><?php echo $viber_icon; ?></a>
+								<a class="s_vb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="viber://forward?text=<?php echo esc_url($amp_permalink); ?>" aria-label="viber share"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $viber_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if ( ampforwp_get_setting('enable-single-yummly-share')){
@@ -287,7 +341,10 @@ function ampforwp_swift_social_icons(){
 								}
 								?>
 							<li>
-								<a class="s_ym" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://www.yummly.com/urb/verify?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>&yumtype=button" aria-label="yummly share"><?php echo $yummly_icon; ?></a>
+								<a class="s_ym" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://www.yummly.com/urb/verify?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>&yumtype=button" aria-label="yummly share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $yummly_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if ( ampforwp_get_setting('enable-single-hatena-bookmarks')){
@@ -298,7 +355,10 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_hb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://b.hatena.ne.jp/entry/<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="hatena share"><?php echo $hatena_icon; ?></a>
+								<a class="s_hb" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="http://b.hatena.ne.jp/entry/<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="hatena share">
+									<?php 
+										//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo $hatena_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if ( ampforwp_get_setting('enable-single-pocket-share')){
@@ -310,7 +370,9 @@ function ampforwp_swift_social_icons(){
 
 								?>
 							<li>
-								<a class="s_pk" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://getpocket.com/save?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="pocket share"><?php echo $pocket_icon; ?></a>
+								<a class="s_pk" target="_blank" <?php ampforwp_rel_attributes_social_links(); ?> href="https://getpocket.com/save?url=<?php echo esc_url($amp_permalink); ?>&title=<?php echo esc_attr(htmlspecialchars(get_the_title())); ?>" aria-label="pocket share"><?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $pocket_icon; ?></a>
 							</li>
 							<?php } ?>
 							<?php if ( true == ampforwp_get_setting('enable-single-mewe-share')){?>

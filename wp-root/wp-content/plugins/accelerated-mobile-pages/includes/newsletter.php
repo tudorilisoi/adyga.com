@@ -28,6 +28,7 @@ class ampforwp_pointers {
 		global $pagenow;
 		global $current_user;
 		$tour = array ();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
         $tab = isset($_GET['tab']) ? sanitize_text_field( wp_unslash($_GET['tab'])) : '';
 		$function = '';
 		$button2 = '';
@@ -52,11 +53,11 @@ class ampforwp_pointers {
             	<form method="POST" id="subscribe-newsletter-form">
 	            	<div id="mc_embed_signup_scroll">
 	            	<div class="mc-field-group" style="    margin-left: 15px;    width: 195px;    float: left;">
-					<input type="text" name="name" class="form-control" placeholder="Name" hidden value="' . esc_attr( $current_user->display_name ) . '" style="display:none">
+					<input type="text" name="name" class="form-control" placeholder="'.esc_attr__('Name','accelerated-mobile-pages').'" hidden value="' . esc_attr( $current_user->display_name ) . '" style="display:none">
 
-					<input type="text" value="' . esc_attr( $current_user->user_email ) . '" name="email" class="form-control" placeholder="Email*"  style="      width: 180px;    padding: 6px 5px;">
+					<input type="text" value="' . esc_attr( $current_user->user_email ) . '" name="email" class="form-control" placeholder="'.esc_attr__('Email*','accelerated-mobile-pages').'"  style="      width: 180px;    padding: 6px 5px;">
 
-					<input type="text" name="company" class="form-control" placeholder="Website" hidden style=" display:none; width: 168px; padding: 6px 5px;" value="' . esc_url( get_home_url() ) . '">
+					<input type="text" name="company" class="form-control" placeholder="'.esc_attr__('Website','accelerated-mobile-pages').'" hidden style=" display:none; width: 168px; padding: 6px 5px;" value="' . esc_url( get_home_url() ) . '">
 
 					<input type="hidden" name="ml-submit" value="1" />
 	            	</div>
@@ -88,7 +89,7 @@ class ampforwp_pointers {
 		?>
 		<script type="text/javascript">
 			(function ($) {
-				var wp_pointers_tour_opts = <?php echo json_encode ($options); ?>, setup;
+				var wp_pointers_tour_opts = <?php echo wp_json_encode ($options); ?>, setup;
 				wp_pointers_tour_opts = $.extend (wp_pointers_tour_opts, {
 					buttons: function (event, t) {
 						button= jQuery ('<a id="pointer-close" class="button-secondary">' + '<?php echo wp_kses_post($button1); ?>' + '</a>');
@@ -113,7 +114,10 @@ class ampforwp_pointers {
 					<?php if ($button2) { ?>
 						jQuery ('#pointer-close').after ('<a id="pointer-primary" class="button-primary">' + '<?php echo wp_kses_post($button2); ?>' + '</a>');
 						jQuery ('#pointer-primary').click (function () {
-							<?php echo $function; ?>
+							<?php 
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $function; 
+							?>
 						});
 						jQuery ('#pointer-close').click (function () {
 							$.post (ajaxurl, {

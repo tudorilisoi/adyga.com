@@ -8,6 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'ReduxFramework_select' ) ) {
     class ReduxFramework_select {
 
+        public $parent;
+        public $field;
+        public $value;
+
         /**
          * Field Constructor.
          * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
@@ -87,12 +91,12 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
                     $nameBrackets = "[]";
                 }
 
-                $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : __( 'Select an option', 'accelerated-mobile-pages' );
+                $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : esc_attr__( 'Select an option', 'accelerated-mobile-pages' );
 
                 if ( isset( $this->field['select2'] ) ) { // if there are any let's pass them to js
-                    $select2_params = json_encode( $this->field['select2'] );
+                    $select2_params = wp_json_encode( $this->field['select2'] );
                     $select2_params = htmlspecialchars( $select2_params, ENT_QUOTES );
-
+/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                     echo '<input type="hidden" class="select2_params" value="' . $select2_params . '">';
                 }
 
@@ -114,6 +118,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
                 }
 
                 $sortable = ( isset( $this->field['sortable'] ) && $this->field['sortable'] ) ? ' select2-sortable"' : "";
+                /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
                 echo '<select ' . $multi . ' id="' . $this->field['id'] . '-select" data-placeholder="' . $placeholder . '" name="' . $this->field['name'] . $this->field['name_suffix'] . $nameBrackets . '" class="redux-select-item ' . 'redux-select-item'.$ajax. ' ' . $this->field['class'] . $sortable . '"' . $width . ' rows="6" '.$action.'>';
                 $redux_options = get_option('redux_builder_amp');
                 $options = $new_options = array();
@@ -124,6 +129,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
                     if ( is_array($options) ) {
                         $options = array_keys(array_filter($options));
                         foreach ($options as $option ) {
+                            /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
                             echo '<option selected="selected" value="'.$option.'">'.get_the_category_by_ID($option).'</option>';
                             $new_options[] = $option;
                         }
@@ -136,6 +142,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
                     if ( is_array($options) ) {
                         $options = array_keys(array_filter($options));
                         foreach ($options as $option ) {
+                            /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
                             echo '<option selected="selected" value="'.$option.'">'.get_tag($option)->name.'</option>';
                         }
                     }
@@ -144,6 +151,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
                 foreach ( $this->field['options'] as $k => $v ) {
 
                     if (is_array($v)) {
+                        /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                         echo '<optgroup label="' . $k . '">';
 
                         foreach($v as $opt => $val) {
@@ -161,6 +169,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
 
                 echo '</select>';
             } else {
+                /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */
                 echo '<strong>' . __( 'No items of this type were found.', 'accelerated-mobile-pages' ) . '</strong>';
             }
         } //function
@@ -171,7 +180,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
             } else {
                 $selected = selected( $this->value, $id, false );
             }
-
+/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.OutputNotEscaped */
             echo '<option value="' . $id . '"' . $selected . '>' . $value . '</option>';                
         }
 

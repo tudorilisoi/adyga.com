@@ -3,17 +3,19 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
  add_action('wp_ajax_ampforwp_enable_modules_upgread', 'ampforwp_enable_modules_upgread');
 function ampforwp_enable_modules_upgread(){
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
     if(!wp_verify_nonce( $_REQUEST['verify_nonce'], 'verify_module' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('Request not valid','accelerated-mobile-pages')));
         exit();
     }
     // Exit if the user does not have proper permissions
     if(! current_user_can( 'install_plugins' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'User Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('User Request not valid','accelerated-mobile-pages')));
         exit();
     }
     $plugins = array();
     $redirectSettingsUrl = '';
+     /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated */
     $currentActivateModule = sanitize_text_field( wp_unslash($_REQUEST['activate']));
     switch($currentActivateModule){
         case 'pwa': 
@@ -108,14 +110,33 @@ function ampforwp_enable_modules_upgread(){
                         );
             $redirectSettingsUrl = admin_url('admin.php?page=quads-settings');        
         break;
+        case 'cwvpsb': 
+            $nonceUrl = add_query_arg(
+                                    array(
+                                        'action'        => 'activate',
+                                        'plugin'        => 'core-web-vitals-pagespeed-booster',
+                                        'plugin_status' => 'all',
+                                        'paged'         => '1',
+                                        '_wpnonce'      => wp_create_nonce( 'core-web-vitals-pagespeed-booster' ),
+                                    ),
+                        esc_url(network_admin_url( 'plugins.php' ))
+                        );
+            $plugins[] = array(
+                            'name' => 'core-web-vitals-pagespeed-booster',
+                            'path_' => 'https://downloads.wordpress.org/plugin/core-web-vitals-pagespeed-booster.zip',
+                            'path' => $nonceUrl,
+                            'install' => 'core-web-vitals-pagespeed-booster/core-web-vitals-pagespeed-booster.php',
+                        );
+            $redirectSettingsUrl = admin_url('admin.php?page=cwvpsb');        
+        break;
         default:
             $plugins = array();
         break;
     }
     if(count($plugins)>0){
-       echo json_encode( array( "status"=>200, "message"=>"Module successfully Added",'redirect_url'=>esc_url($redirectSettingsUrl) , "slug"=>$plugins[0]['name'], 'path'=> $plugins[0]['path'] ) );
+       echo wp_json_encode( array( "status"=>200, "message"=>esc_html__("Module successfully Added",'accelerated-mobile-pages'),'redirect_url'=>esc_url($redirectSettingsUrl) , "slug"=>$plugins[0]['name'], 'path'=> $plugins[0]['path'] ) );
     }else{
-        echo json_encode(array("status"=>300, "message"=>"Modules not Found"));
+        echo wp_json_encode(array("status"=>300, "message"=>esc_html__("Modules not Found",'accelerated-mobile-pages')));
     }
     wp_die();
 } 
@@ -125,8 +146,9 @@ function ampforwp_admin_notice_module_reference_install() {
     if(! current_user_can( 'manage_options' )) {
         return ;
     }
-
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
     $reference = isset($_GET['reference']) ? sanitize_text_field( wp_unslash($_GET['reference'])) : '';
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
     $page = isset($_GET['page']) ? sanitize_text_field( wp_unslash($_GET['page'])) : '';
     $message = '';
     if($reference=='ampforwp'){
@@ -161,13 +183,14 @@ add_action( 'admin_notices', 'ampforwp_admin_notice_module_reference_install' );
 //On module upgrade
 add_action('wp_ajax_ampforwp_import_modules_scema', 'ampforwp_import_structure_data');
 function ampforwp_import_structure_data(){
+     /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
     if(!wp_verify_nonce( $_REQUEST['verify_nonce'], 'verify_module' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('Request not valid','accelerated-mobile-pages')));
         exit();
     }
     // Exit if the user does not have proper permissions
     if(! current_user_can( 'install_plugins' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'User Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('User Request not valid','accelerated-mobile-pages')));
         exit();
     }
     global $redux_builder_amp;
@@ -254,7 +277,7 @@ function ampforwp_import_structure_data(){
             }
        
     update_option('sd_data', $sd_data_update);
-    update_option('ampforwp_structure_data_module_upgrade','migrated');
+    update_option('ampforwp_structure_data_module_upgrade','migrated', false);
     return true;
     wp_die();
 }
@@ -263,22 +286,23 @@ function ampforwp_import_structure_data(){
 add_action('wp_ajax_ampforwp_import_modules_ads', 'ampforwp_import_ads_data');
 function ampforwp_import_ads_data(){
     global $redux_builder_amp;
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
     if(!wp_verify_nonce( $_REQUEST['verify_nonce'], 'verify_module' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('Request not valid','accelerated-mobile-pages')));
         exit();
     }
     // Exit if the user does not have proper permissions
     if(! current_user_can( 'install_plugins' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'User Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('User Request not valid','accelerated-mobile-pages')));
         exit();
     }
     $adsforwp_object = new adsforwp_admin_common_functions();
     $result = $adsforwp_object->adsforwp_migrate_ampforwp_ads();
     $result = array_filter($result);
     if($result){           
-        echo json_encode(array('status'=>'t', 'message'=>esc_html__('Data has been imported succeessfully','accelerated-mobile-pages')));            
+        echo wp_json_encode(array('status'=>'t', 'message'=>esc_html__('Data has been imported succeessfully','accelerated-mobile-pages')));            
     }else{
-        echo json_encode(array('status'=>'f', 'message'=>esc_html__('Plugin data is not available or it is not activated','accelerated-mobile-pages')));
+        echo wp_json_encode(array('status'=>'f', 'message'=>esc_html__('Plugin data is not available or it is not activated','accelerated-mobile-pages')));
     }
     wp_die();  
 }       

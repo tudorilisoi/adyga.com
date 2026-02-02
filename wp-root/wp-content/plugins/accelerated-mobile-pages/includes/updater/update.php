@@ -6,24 +6,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function ampforwp_get_licence_activate_update(){
-    if(!wp_verify_nonce( $_REQUEST['verify_nonce'], 'verify_extension' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'Request not valid'));
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
+    if(!wp_verify_nonce( $_POST['verify_nonce'], 'verify_extension' ) ) {
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('Request not valid','accelerated-mobile-pages')));
         die;
     }
     // Exit if the user does not have proper permissions
     if(! current_user_can( 'manage_options' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'User not have authority'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('User not have authority','accelerated-mobile-pages')));
         die;
     }
     $selectedOption = get_option('redux_builder_amp',true);
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated */
     if($_SERVER['REQUEST_METHOD']=='POST'){
         if(!isset($_POST['update_check'])){
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
             $ampforwp_license_activate = sanitize_text_field($_POST['ampforwp_license_activate']);
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
             $license = sanitize_text_field($_POST['license']);
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
             $item_name = sanitize_text_field($_POST['item_name']);
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
             $store_url = sanitize_text_field($_POST['store_url']);
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
             $plugin_active_path = sanitize_text_field($_POST['plugin_active_path']);
         }else{
+            /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash */
             $ampforwp_license_activate = sanitize_text_field($_POST['ampforwp_license_activate']);
             $license = $selectedOption['amp-license'][$ampforwp_license_activate]['license'];
             $item_name = $selectedOption['amp-license'][$ampforwp_license_activate]['item_name'];
@@ -71,6 +79,7 @@ function ampforwp_get_licence_activate_update(){
                         switch( $license_data->error ) {
                             case 'expired' :
                                 $message = sprintf(
+                                    /* translators: %s: expiry date */
                                     esc_html__( 'Your license key expired on %s.', 'accelerated-mobile-pages' ),
                                     date_i18n( get_option( 'date_format' ), strtotime( $license_data->expires, current_time( 'timestamp' ) ) )
                                 );
@@ -93,8 +102,8 @@ function ampforwp_get_licence_activate_update(){
                                 break;
 
                             case 'item_name_mismatch' :
-
                                 $message = sprintf( 
+                                    /* translators: %s: product name */
                                     esc_html__( 'This appears to be an invalid license key for %s.', 'accelerated-mobile-pages' ),
                                     $item_name
                                 );
@@ -142,16 +151,16 @@ function ampforwp_get_licence_activate_update(){
             if($status=='valid'){
                 update_option( 'redux_builder_amp', $selectedOption );
                 $status     = "200";
-                $message    = "Plugin activated successfully";
+                $message    = esc_html__("Plugin activated successfully",'accelerated-mobile-pages');
             }else{
                 $status     = "500";
             }
             }else{
             $status     = "400";
-            $message    = "License not found";
+            $message    = esc_html__("License not found",'accelerated-mobile-pages');
         }
 
-        echo json_encode(array("status"=>$status,"message"=>$message,"other"=> $selectedOption['amp-license'][$ampforwp_license_activate]));
+        echo wp_json_encode(array("status"=>$status,"message"=>$message,"other"=> $selectedOption['amp-license'][$ampforwp_license_activate]));
         die;
     }
 }
@@ -159,6 +168,15 @@ add_action( 'wp_ajax_ampforwp_get_licence_activate_update', 'ampforwp_get_licenc
 
 add_action( 'wp_ajax_ampforwp_set_license_transient', 'ampforwp_set_license_transient' );
 function ampforwp_set_license_transient(){
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
+    if(!isset($_POST['verify_nonce']) || !wp_verify_nonce( $_POST['verify_nonce'], 'verify_extension' ) ) {
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('Request not valid','accelerated-mobile-pages')));
+        die;
+    }
+    // Exit if the user does not have proper permissions
+    if(! current_user_can( 'manage_options' ) ) {
+        return ;
+    }
     $transient_load =  'ampforwp_addon_set_transient';
     $value_load =  'ampforwp_addon_set_transient_value';
     $expiration_load =  86400 ;
@@ -172,8 +190,9 @@ function ampforwp_set_license_transient(){
 ***********************************************/
 
 function ampforwp_deactivate_license() {
+    /* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized */
     if(!wp_verify_nonce( $_REQUEST['verify_nonce'], 'verify_extension' ) ) {
-        echo json_encode(array("status"=>300,"message"=>'Request not valid'));
+        echo wp_json_encode(array("status"=>300,"message"=>esc_html__('Request not valid','accelerated-mobile-pages')));
         die;
     }
     // Exit if the user does not have proper permissions
@@ -214,13 +233,13 @@ function ampforwp_deactivate_license() {
             if ( is_wp_error( $response ) ) {
                 $message = $response->get_error_message();
             } else {
-                $message = esc_html__( 'An error occurred, please try again.', 'advanced-amp-ads' );
+                $message = esc_html__( 'An error occurred, please try again.', 'accelerated-mobile-pages' );
             }
 
-            echo json_encode(array('status'=>500,"message"=>$message,"test"=>$selectedOption['amp-license'][$ampforwp_license_deactivate], "dsc"=>$pluginItemStoreUrl));
+            echo wp_json_encode(array('status'=>500,"message"=>$message,"test"=>$selectedOption['amp-license'][$ampforwp_license_deactivate], "dsc"=>$pluginItemStoreUrl));
             exit();
         }else{
-            $message = 'Plugin deactivated successfully';
+            $message = esc_html__( 'Plugin deactivated successfully', 'accelerated-mobile-pages' );
         }
 
         // decode the license data
@@ -235,7 +254,7 @@ function ampforwp_deactivate_license() {
            $selectedOption['amp-license'][$ampforwp_license_deactivate]['license']= '';
            update_option( 'redux_builder_amp', $selectedOption );
         }
-        echo json_encode(array('status'=>200,"message"=>$message));
+        echo wp_json_encode(array('status'=>200,"message"=>$message));
         exit();
     }
     exit();
@@ -246,11 +265,13 @@ add_action( 'wp_ajax_ampforwp_deactivate_license', 'ampforwp_deactivate_license'
  * This is a means of catching errors from the activation method above and displaying it to the customer
  */
 function ampforwp_admin_notices() {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
     if ( isset( $_GET['sl_activation'] ) && ! empty( $_GET['message'] ) ) {
-
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
         switch( $_GET['sl_activation'] ) {
 
             case 'false':
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
                 $message = urldecode( $_GET['message'] );
                 ?>
                 <div class="error">
@@ -333,10 +354,10 @@ function ampforwp_plgins_update_message_according_pluginOpt( $plugin_data, $r )
     }
 
     if($license_key==""){
-        echo "<a href='".self_admin_url("?page=amp_options&tab=29")."'>Please enter key</a>";
+        echo "<a href='".esc_url(self_admin_url("?page=amp_options&tab=29"))."'>Please enter key</a>";
     }
     if($pluginstatus!="valid"){
-        echo "<a href='".self_admin_url("?page=amp_options&tab=29")."'>Please enter a valid key</a>";
+        echo "<a href='".esc_url(self_admin_url("?page=amp_options&tab=29"))."'>Please enter a valid key</a>";
     }
 
 }

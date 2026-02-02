@@ -136,7 +136,7 @@ class TNP_Profile {
     }
 
     function show_on_profile() {
-        return $this->status == self::STATUS_PROFILE_ONLY || $this->status == self::STATUS_PUBLIC;
+        return $this->status == self::STATUS_PUBLIC;
     }
 }
 
@@ -390,4 +390,36 @@ class TNP_Email {
     const EDITOR_TINYMCE = 0;
 
     var $options = [];
+    var $id;
+    var $message = '';
+    var $message_text = '';
+    var $track = '1';
+    var $send_on = 0;
+    var $token = '';
+    var $status = self::STATUS_DRAFT;
+}
+
+/**
+ * @property string $to
+ * @property string $to_name
+ * @property string $subject
+ * @property string $body
+ * @property array $headers
+ * @property string $from
+ * @property string $from_name
+ */
+class TNP_Mailer_Message {
+
+    var $ch; // Transient variable for mailers with turbo send option
+    var $to = '';
+    var $to_name = '';
+    var $headers = [];
+    var $user_id = 0;
+    var $email_id = 0;
+    var $error = '';
+    var $subject = '';
+    var $body = '';
+    var $body_text = '';
+    var $from = '';
+    var $from_name = '';
 }

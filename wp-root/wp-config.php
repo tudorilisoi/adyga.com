@@ -1,4 +1,7 @@
 <?php
+//Begin Really Simple Security key
+define('RSSSL_KEY', 'neMrrI4KSTQx6lZpMe5roLNeTTzbaXxUgKtgF6XVFMHZdXzKhdrZGZOYQA1PPHOJ');
+//END Really Simple Security key
 
 //Begin Really Simple SSL session cookie settings
 @ini_set('session.cookie_httponly', true);

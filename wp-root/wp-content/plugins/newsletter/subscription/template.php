@@ -1,6 +1,8 @@
 <?php
-/* @var $this NewsletterSubscriptionAdmin */
-/* @var $controls NewsletterControls */
+/** @var NewsletterSubscriptionAdmin $this */
+/** @var NewsletterControls $controls */
+/** @var NewsletterLogger $logger */
+/** @var string $language */
 
 defined('ABSPATH') || exit;
 
@@ -8,7 +10,7 @@ if (!$controls->is_action()) {
     $controls->data = $this->get_options('template', $language);
 } else {
 
-    if (!current_user_can('unfiltered_html')) {
+    if (!$this->is_html_allowed()) {
         die('Not allowed');
     }
 
@@ -95,7 +97,7 @@ if (strpos($controls->data['template'], '{message}') === false) {
             want the specific message text to be included.
         </p>
 
-        <?php if (!current_user_can('unfiltered_html')) { ?>
+        <?php if (!$this->is_html_allowed()) { ?>
             <p style="font-weight: strong">
                 This configuration can be edited only by users with "unfiltered html" catabilities. On multisite installation
                 even the site administrator is missing that capiability.

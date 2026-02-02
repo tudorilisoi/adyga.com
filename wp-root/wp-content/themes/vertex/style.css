@@ -3,12 +3,12 @@ Theme Name: Vertex
 Theme URI: https://dessign.net/vertex-theme/
 Author: Dessign Themes
 Author URI: https://dessign.net
-Tested up to:       5.5
-Requires at least:  5.3
+Tested up to:       6.0
+Requires at least:  5.5
 Requires PHP:       7.2
-Description: Vertex responsive beautiful and simple theme mostly for portfolio websites or photography and blog sites. With clean and modern design and aesthetic feel,showcase your content in an contemporary timeless style. Make your images stand out and focus on your content. 
+Description: Vertex modern responsive beautiful and simple theme mostly for portfolio websites or photography and blog sites. With clean and modern design and aesthetic feel,showcase your content in an contemporary timeless style. Make your images stand out and focus on your content. 
 With clean and elegant design and fully responsive slider.Vertex give you full power to customize and visually impress your audience. With SEO friendly design and mobile friendly layout, your website will stand out.
-Version: 1.1.8
+Version: 1.1.9
 License: GNU General Public License version v3
 License URI: http://www.gnu.org/licenses/gpl.html
 Text Domain: vertex
@@ -51,23 +51,20 @@ img { max-width: 100%; height: auto; }
  ::selection { background-color: #000; color: #fff; }
 
 /**HEADER**/
-.float-header { background: rgba(255, 255, 255, 0.7) none repeat scroll 0 0; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; box-sizing: border-box; padding: 5px 20px 30px; position: absolute; text-align: center; top: 0; width: 235px; z-index: 99999;}
+.float-header { background: #ffffff none repeat scroll 0 0; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; box-sizing: border-box; padding: 5px 20px 30px; position: absolute; text-align: center; top: 0; width: 235px; z-index: 99999; }
 header.fixed .float-header { position: fixed; top: 0; }
 .logo a { color: #333; }
-.logo h2 {
-    font-size:14px;
-}
 .head-nav ul { font-size: 0; list-style-type: none; margin: 0; padding: 0; }
 .head-nav ul li { display: block; margin: 0; position: relative; }
 .head-nav ul li:last-child { margin-right: 0; }
-.head-nav ul li a { color: #333333; display: block; font-size: 15px; letter-spacing: 1.2px; padding: 5px 15px; text-transform: uppercase; border-bottom: 2px solid rgba(255, 255, 255, 0.3);}
-.head-nav ul li a:hover { font-weight: bold; border-bottom: 2px solid #000;}
-.head-nav ul li.current-menu-item a { font-weight: bold; border-bottom: 2px solid #02bfbd;}
+.head-nav ul li a { color: #333333; display: block; font-size: 14px; letter-spacing: 1.5px; padding: 5px 15px; text-transform: uppercase; }
+.head-nav ul li a:hover { font-weight: bold; }
+.head-nav ul li.current-menu-item a { font-weight: bold; }
 .head-nav ul li ul { display: none; left: 100%; padding-left: 20px; position: absolute; top: 0; z-index: 100; }
 .head-nav ul li ul li { background-color: #ffffff; float: none; font-size: 13px; margin: 0; padding: 0; width: 180px; }
 .head-nav ul li ul li ul { padding: 0; top: 0; }
 .head-nav ul li ul li a { padding: 8px 10px; display: block; border-bottom: none; }
-.head-nav ul li ul li a:hover { background-color: #000; color: #fff; text-decoration: none; border-bottom: 2px solid #000;}
+.head-nav ul li ul li a:hover { background-color: #000; color: #fff; text-decoration: none; border: none; }
 .slicknav_menu { display: none; background: #fff; }
 .slicknav_menu ul li a { color: #333; }
 .slicknav_menu ul li a:hover a,
@@ -144,18 +141,6 @@ article.post_box, .blog_posts { width: 760px; }
 .post_content h4,
 .post_content h5,
 .post_content h6 { line-height: 1; font-size: 18px; font-weight: bold; margin: 0 0 10px; }
-.p1 {
-  list-style: none; /* Remove default bullets */
-}
-
-.p1 li::before {
-  content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
-  color: #02bfbd; /* Change the color */
-  font-weight: bold; /* If you want it to be bold */
-  display: inline-block; /* Needed to add space between the bullet and the text */
-  width: 1em; /* Also needed for space (tweak if needed) */
-  margin-left: -1em; /* Also needed for space (tweak if needed) */
-}
 .post_content img { max-width: 100%; }
 .post_content input[type="text"],
 .post_content input[type="email"],
@@ -181,22 +166,7 @@ article.post_box, .blog_posts { width: 760px; }
 input[type="email"],
 input[type="password"],
 input[type="search"],
-input[type="phone"] { width: 300px; height: 40px; border: 2px solid #ddd; background: #fff; box-sizing: border-box; padding: 5px 10px; margin: 0 0 5px; }   
-input[type="submit"], button { padding: 5px 10px; background-color: #02bfbd; color: #fff; text-transform: uppercase; border: none; margin: 0 0 5px; cursor: pointer; } 
-.button-submit {
-    background-color: #02bfbd;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 5px 10px;
-}
-.button-submit:hover {
-    padding: 5px 10px;
-    background-color: #000;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-}
-/**WIDGETS**/
+input[type="phone"] { width: 300px; height: 40px; border: 2px solid #ddd; background: #fff; box-sizing: border-box; padding: 5px 10px; margin: 0 0 5px; }   input[type="submit"], button { padding: 5px 10px; background: #000; color: #fff; text-transform: uppercase; border: none; margin: 0 0 5px; cursor: pointer; } /**WIDGETS**/
 .widget_box ul { list-style: outside none none; margin: 0; padding: 0; }
 .widget_box ul.children { padding-left: 20px; margin: 10px 0 0; }
 .widget_box ul li { margin: 0 0 10px; }
@@ -237,16 +207,6 @@ input[type="submit"], button { padding: 5px 10px; background-color: #02bfbd; col
 .bottom-foot { background: #f6f6f6 none repeat scroll 0 0; padding: 20px 0; text-align: center; }
 .bottom-foot p { margin: 0; }
 .bottom-foot p a { color: #333; }
-.credits {
-    flex-wrap: wrap;
-}
-
-.credits:before {
-    content: "Created by ATENȚiA Agenția de Advertising";
-    display: block;
-    margin-bottom: 16px;
-    width: 100%;
-}
 
 /**RESPONSIVE**/
 @media only screen and ( max-width: 1200px ){

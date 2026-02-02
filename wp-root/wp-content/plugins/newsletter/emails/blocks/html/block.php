@@ -6,8 +6,8 @@
  *
  */
 
-/* @var $options array */
-/* @var $wpdb wpdb */
+/** @var array $options */
+/** @var array $composer */
 
 $defaults = array(
     'html'=>'This is a piece of nice html code. You can use any tag, but be aware that email readers do not render everything.',
@@ -35,7 +35,7 @@ $title_style = TNP_Composer::get_text_style($options, '', $composer);
 </style>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
     <tr>
-        <td valign="top" align="center" inline-class="html-td" class="html-td-global">
+        <td valign="top" inline-class="html-td" class="html-td-global">
             <?php echo $options['html'] ?>
         </td>
     </tr>

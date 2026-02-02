@@ -80,8 +80,10 @@ function ampforwp_framework_get_post_pagination( $args = '' ) {
 	 */
 	$html = apply_filters( 'ampforwp_framework_get_post_pagination', $output, $args );
 		if ( $r['echo'] ) {
+			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ($html);
 		}
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
 }
 
@@ -113,9 +115,12 @@ function ampforwp_framework_get_post_paginated_link( $i, $args = '' ) {
 	}
 
 	if ( is_preview() ) {
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 		if ( ( 'draft' !== $post->post_status ) && isset( $_GET['preview_id'], $_GET['preview_nonce'] ) ) {
+			
+			/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended  */
 			$query_args['preview_id'] = wp_unslash( $_GET['preview_id'] );
+			/* phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended */
 			$query_args['preview_nonce'] = wp_unslash( $_GET['preview_nonce'] );
 		}
 

@@ -8,7 +8,7 @@ wp-root/wp-content/advanced-cache.php
 wp-root/wp-content/wpo-cache/config/config-localhost-port8000.php
 docker/docker-compose.env
 
-wp-root/wp-content/plugins/*
-!wp-root/wp-content/plugins/snapshots/
+#wp-root/wp-content/plugins/*
+wp-root/wp-content/plugins/snapshots/
 
 

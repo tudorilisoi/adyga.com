@@ -17,6 +17,7 @@ final class Plugin {
 		Controllers\Helpers::instance();
 		Controllers\Frontend::instance();
 		Controllers\WooCommerce::instance();
+		Controllers\WooCommerce_Archives::instance();
 		Controllers\Components::instance();
 		if ( version_compare( $wp_version, '6.2', '<' ) ) {
 			Controllers\Admin_Menu::instance();

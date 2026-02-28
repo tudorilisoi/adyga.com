@@ -29,3 +29,34 @@
 
 02-02-2026 13:32:32 - INFO  - 9.1.2 - 5,3 Mo/256 Mo -  > Backing up options of 8.8.5
 02-02-2026 13:32:32 - INFO  - 9.1.2 - 5,5 Mo/256 Mo -  > End
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Start upgrade from 9.1.2
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Array
+(
+)
+
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 4.7 MB/256 MB - gabriel > Backing up options of 9.1.2
+28-02-2026 14:39:44 - INFO  - 9.1.5 - 5.0 MB/256 MB - gabriel > End

@@ -23,8 +23,8 @@ class Contacts {
 		->setDefaultEntities(
 			array(
 				array(
-					'phone'       => qlwapp_format_phone( $button['phone'] ),
-					'message'     => qlwapp_replacements_vars( $button['message'] ),
+					'phone'   => qlwapp_format_phone( $button['phone'] ),
+					'message' => qlwapp_replacements_vars( $button['message'] ),
 				),
 			)
 		)
@@ -132,7 +132,9 @@ class Contacts {
 				$contact['phone'] = qlwapp_format_phone( $button['phone'] );
 			}
 
-			if ( ! is_admin() ) {
+			// Only replace variables on frontend (not in admin or REST API admin requests).
+			$is_rest_admin = defined( 'REST_REQUEST' ) && REST_REQUEST && is_user_logged_in();
+			if ( ! is_admin() && ! $is_rest_admin ) {
 				$contact['message'] = qlwapp_replacements_vars( $contact['message'] );
 			}
 

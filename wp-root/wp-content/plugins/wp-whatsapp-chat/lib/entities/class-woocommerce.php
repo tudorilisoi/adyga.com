@@ -6,7 +6,7 @@ use QuadLayers\WP_Orm\Entity\SingleEntity;
 class WooCommerce extends SingleEntity {
 	public $layout             = 'button';
 	public $box                = 'no';
-	public $position           = 'none';
+	public $position           = 'woocommerce_before_add_to_cart_form';
 	public $text               = '';
 	public $message            = '';
 	public $icon               = 'qlwapp-whatsapp-icon';
@@ -24,10 +24,11 @@ class WooCommerce extends SingleEntity {
 	public $animation_name     = '';
 	public $animation_delay    = '';
 	public $position_priority  = 10;
+	public $devices            = 'hide';
 
 	public function __construct() {
-		$this->text     = esc_html__( 'How can I help you?', 'wp-whatsapp-chat' );
-		$this->message  = sprintf( esc_html__( 'Hello! I\'m testing the %1$s plugin %2$s', 'wp-whatsapp-chat' ), QLWAPP_PLUGIN_NAME, QLWAPP_LANDING_URL );
+		$this->text     = esc_html__( 'Ask about this product', 'wp-whatsapp-chat' );
+		$this->message  = esc_html__( 'Hi! I\'m interested in *{PRODUCT_TITLE}* ({PRODUCT_PRICE}). Could you provide more information? {PRODUCT_URL}', 'wp-whatsapp-chat' );
 		$this->timezone = qlwapp_get_timezone_current();
 	}
 }

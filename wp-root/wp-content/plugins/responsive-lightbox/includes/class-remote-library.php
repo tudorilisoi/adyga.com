@@ -55,6 +55,18 @@ class Responsive_Lightbox_Remote_Library {
 		// get active providers
 		$providers = $this->get_active_providers();
 
+		// normalize provider value
+		if ( is_array( $args['media_provider'] ) ) {
+			$args['media_provider'] = reset( $args['media_provider'] );
+		}
+		$args['media_provider'] = sanitize_key( (string) $args['media_provider'] );
+		if ( $args['media_provider'] === '' ) {
+			$args['media_provider'] = 'all';
+		}
+		if ( $args['media_provider'] !== 'all' && ! in_array( $args['media_provider'], $providers, true ) ) {
+			$args['media_provider'] = 'all';
+		}
+
 		$html = '';
 
 		// any providers?
@@ -127,7 +139,7 @@ class Responsive_Lightbox_Remote_Library {
 		$active_providers = [];
 
 		foreach ( $providers as $provider => $data ) {
-			if ( Responsive_Lightbox()->options['remote_library'][$provider]['active'] )
+			if ( $this->is_provider_enabled( $provider ) )
 				$active_providers[] = $provider;
 		}
 
@@ -141,10 +153,98 @@ class Responsive_Lightbox_Remote_Library {
 	 * @return bool
 	 */
 	public function is_active_provider( $provider ) {
-		$providers = $this->get_providers();
-		$rl = Responsive_Lightbox();
+		$is_active = $this->is_provider_enabled( $provider );
 
-		return (bool) apply_filters( 'rl_is_active_provider', array_key_exists( $provider, $rl->options['remote_library'] ) && $rl->options['remote_library'][$provider]['active'], $provider );
+		return (bool) apply_filters( 'rl_is_active_provider', $is_active, $provider );
+	}
+
+	/**
+	 * Check whether a provider is enabled in settings.
+	 *
+	 * Supports both legacy key: [provider][active]
+	 * and migrated key pattern: [provider][provider_active].
+	 *
+	 * @param string $provider Provider slug.
+	 * @return bool
+	 */
+	private function is_provider_enabled( $provider ) {
+		$rl = Responsive_Lightbox();
+		$remote_settings = isset( $rl->options['remote_library'] ) && is_array( $rl->options['remote_library'] )
+			? $rl->options['remote_library']
+			: [];
+		$alt_key = $provider . '_active';
+
+		if ( array_key_exists( $provider, $remote_settings ) ) {
+			$provider_settings = $remote_settings[$provider];
+
+			// Migrated key ({provider}_active) takes priority over legacy key (active)
+			// to prevent false negatives when both exist with conflicting values.
+			if ( is_array( $provider_settings ) ) {
+				if ( isset( $provider_settings[$alt_key] ) ) {
+					return $this->normalize_bool_value( $provider_settings[$alt_key] );
+				}
+
+				if ( isset( $provider_settings['active'] ) ) {
+					return $this->normalize_bool_value( $provider_settings['active'] );
+				}
+			} else {
+				// Fallback for scalar provider values.
+				return $this->normalize_bool_value( $provider_settings );
+			}
+		}
+
+		// Fallback shape: remote_library[provider_active]
+		if ( isset( $remote_settings[$alt_key] ) ) {
+			return $this->normalize_bool_value( $remote_settings[$alt_key] );
+		}
+
+		// Fallback to plugin defaults when option payload does not carry provider keys.
+		if ( isset( $rl->defaults['remote_library'][$provider] ) && is_array( $rl->defaults['remote_library'][$provider] ) ) {
+			$default_provider = $rl->defaults['remote_library'][$provider];
+			if ( isset( $default_provider['active'] ) ) {
+				return $this->normalize_bool_value( $default_provider['active'] );
+			}
+			if ( isset( $default_provider[$alt_key] ) ) {
+				return $this->normalize_bool_value( $default_provider[$alt_key] );
+			}
+		}
+
+		// Fallback to provider registration defaults.
+		if ( isset( $rl->providers[$provider]['defaults'] ) && is_array( $rl->providers[$provider]['defaults'] ) ) {
+			$provider_defaults = $rl->providers[$provider]['defaults'];
+			if ( isset( $provider_defaults['active'] ) ) {
+				return $this->normalize_bool_value( $provider_defaults['active'] );
+			}
+			if ( isset( $provider_defaults[$alt_key] ) ) {
+				return $this->normalize_bool_value( $provider_defaults[$alt_key] );
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Normalize mixed bool-like values from options.
+	 *
+	 * @param mixed $value Value to normalize.
+	 * @return bool
+	 */
+	private function normalize_bool_value( $value ) {
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+
+		if ( is_string( $value ) ) {
+			$value = strtolower( trim( $value ) );
+			if ( $value === '' || $value === 'false' || $value === '0' ) {
+				return false;
+			}
+			if ( $value === 'true' || $value === '1' ) {
+				return true;
+			}
+		}
+
+		return ! empty( $value );
 	}
 
 	/**
@@ -195,6 +295,11 @@ class Responsive_Lightbox_Remote_Library {
 	 */
 	public function ajax_query_media() {
 		$data = stripslashes_deep( $_POST );
+
+		// check rate limiting (30 queries per minute to prevent API abuse)
+		if ( ! Responsive_Lightbox()->check_rate_limit( 'rl_ajax_query_media', 30, 60 ) ) {
+			wp_send_json_error( esc_html__( 'Rate limit exceeded. Please try again later.', 'responsive-lightbox' ) );
+		}
 
 		// check user capabilities
 		if ( ! current_user_can( 'upload_files' ) )
@@ -293,6 +398,13 @@ class Responsive_Lightbox_Remote_Library {
 
 		// verified upload?
 		if ( current_user_can( 'upload_files' ) && isset( $data['rlnonce'], $data['image'], $data['post_id'] ) && wp_verify_nonce( $data['rlnonce'], 'rl-remote-library-upload-image' ) ) {
+			// check rate limiting (10 uploads per minute)
+			if ( ! Responsive_Lightbox()->check_rate_limit( 'rl_upload_image', 10, 60 ) ) {
+				$result['error'] = true;
+				$result['message'] = __( 'Rate limit exceeded. Please try again later.', 'responsive-lightbox' );
+				wp_send_json( $result );
+			}
+
 			// include required files if needed
 			if ( ! function_exists( 'media_handle_upload' ) )
 				require_once( path_join( ABSPATH, 'wp-admin/includes/media.php' ) );
@@ -317,31 +429,44 @@ class Responsive_Lightbox_Remote_Library {
 					// get allowed hosts
 					$hosts = $this->get_allowed_hosts( $media_provider );
 
-					if ( ! empty( $hosts ) ) {
-						$valid_host = false;
+					$valid_host = false;
 
+					if ( ! empty( $hosts ) ) {
 						// get image host
 						$image_host = parse_url( $image_url, PHP_URL_HOST );
 
-						// check allowed hosts
-						foreach ( $hosts as $host ) {
-							// invalid host?
-							if ( strpos( $image_host, $host ) !== false ) {
-								$valid_host = true;
+						// validate that we got a valid hostname
+						if ( ! is_string( $image_host ) || $image_host === '' ) {
+							$result['error'] = true;
+							$result['message'] = __( 'Invalid image URL.', 'responsive-lightbox' );
+						} else {
+							// normalize hostname to lowercase for case-insensitive comparison
+							$image_host = strtolower( $image_host );
 
-								// no need to check rest of the hosts
-								break;
+							// check allowed hosts - strict validation to prevent SSRF bypasses
+							foreach ( $hosts as $host ) {
+								$host = strtolower( $host );
+
+								// Validate exact match or valid subdomain (e.g., upload.wikimedia.org matches wikimedia.org)
+								// Prevent substring bypass: evil-wikimedia.org or upload.wikimedia.org.evil.com must NOT match
+								if ( $image_host === $host || substr( $image_host, -( strlen( $host ) + 1 ) ) === '.' . $host ) {
+									$valid_host = true;
+
+									// no need to check rest of the hosts
+									break;
+								}
 							}
 						}
-					} else
+					} else {
 						$valid_host = true;
+					}
 
-					if ( $valid_host ) {
+					if ( $valid_host && empty( $result['error'] ) ) {
 						// get max image size (ensure at least 1MB)
 						$max_size = max( 1, absint( Responsive_Lightbox()->options['remote_library']['max_image_size'] ) ) * 1024 * 1024;
 
-						// check image size via HEAD request
-						$head_response = wp_remote_head( $image_url );
+					// check image size via HEAD request - use wp_safe_remote_head for SSRF protection
+						$head_response = wp_safe_remote_head( $image_url );
 						$skip_size_check = false;
 
 						if ( is_wp_error( $head_response ) ) {
@@ -355,22 +480,24 @@ class Responsive_Lightbox_Remote_Library {
 							}
 						}
 
-						if ( empty( $result['error'] ) ) {
-							// get image as binary data with timeout
-							$response = wp_safe_remote_get( $image_url, [ 'timeout' => 30 ] );
+					if ( empty( $result['error'] ) ) {
+							// get image as binary data with timeout and size limit to prevent memory exhaustion
+							$response = wp_safe_remote_get( $image_url, [
+								'timeout' => 30,
+								'limit_response_size' => $max_size + 1024, // Add 1KB buffer for headers
+							] );
 
 							// no errors?
 							if ( ! is_wp_error( $response ) ) {
 								// get image binary data
 								$image_bits = wp_remote_retrieve_body( $response );
 
-								// check body size if HEAD was skipped or as fallback
+								// check body size as validation
+								// Note: limit_response_size prevents memory exhaustion, but we still validate the actual size
 								$body_size = strlen( $image_bits );
-								if ( $skip_size_check || $body_size > $max_size ) {
-									if ( $body_size > $max_size ) {
-										$result['error'] = true;
-										$result['message'] = __( 'Image size exceeds maximum allowed size.', 'responsive-lightbox' );
-									}
+								if ( $body_size > $max_size ) {
+									$result['error'] = true;
+									$result['message'] = __( 'Image size exceeds maximum allowed size.', 'responsive-lightbox' );
 								}
 
 								if ( empty( $result['error'] ) ) {
@@ -386,10 +513,11 @@ class Responsive_Lightbox_Remote_Library {
 										$file_ext = 'jpg';
 									}
 
-									// simple mime checking
-									$check = wp_check_filetype( $file_name );
+									// strict file validation using wp_check_filetype with allowed formats whitelist
+									$check = wp_check_filetype( $file_name, $image_formats );
 
-									if ( $check['type'] === $data['image']['mime'] && $check['ext'] !== false && array_key_exists( $file_ext, $image_formats ) ) {
+									// validate extension is allowed and mime type matches
+									if ( $check['ext'] && $check['type'] && array_key_exists( $check['ext'], $image_formats ) && $check['type'] === $data['image']['mime'] ) {
 										// upload image
 										$uploaded_image = wp_upload_bits( $file_name, null, $image_bits, current_time( 'Y/m' ) );
 
@@ -460,7 +588,8 @@ class Responsive_Lightbox_Remote_Library {
 								}
 							}
 						}
-					} else {
+					} elseif ( empty( $result['error'] ) ) {
+						// Only set "Invalid host" if no previous error was set (e.g., "Invalid image URL")
 						$result['error'] = true;
 						$result['message'] = __( 'Invalid host', 'responsive-lightbox' );
 					}

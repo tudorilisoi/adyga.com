@@ -30,6 +30,8 @@ class Responsive_Lightbox_Settings_Lightboxes extends Responsive_Lightbox_Settin
 	 */
 	public function validate( $input ) {
 		$rl = Responsive_Lightbox();
+		$input = is_array( $input ) ? $input : [];
+		$current_configuration = isset( $rl->options['configuration'] ) && is_array( $rl->options['configuration'] ) ? $rl->options['configuration'] : [];
 
 		// check if this is a reset operation
 		if ( $this->is_reset_request() ) {
@@ -52,7 +54,7 @@ class Responsive_Lightbox_Settings_Lightboxes extends Responsive_Lightbox_Settin
 				if ( is_array( $defaults ) ) {
 					$input[$script] = $defaults;
 					// merge with saved config to preserve other scripts
-					$input = array_merge( $rl->options['configuration'], $input );
+					$input = array_merge( $current_configuration, $input );
 					add_settings_error( 'reset_rl_configuration', 'settings_restored', esc_html__( 'Settings restored to defaults.', 'responsive-lightbox' ), 'updated' );
 				}
 			}
@@ -60,14 +62,29 @@ class Responsive_Lightbox_Settings_Lightboxes extends Responsive_Lightbox_Settin
 			return $input;
 		}
 
-		// sanitize fields for the active script section
-		$section_key = $this->get_current_section();
-		if ( $section_key !== '' ) {
-			$input = $this->sanitize_fields( $input, 'configuration' );
+		// Sanitize only the submitted script section.
+		// options.php saves do not preserve ?section in $_GET, so detect script from payload first.
+		$script_key = '';
+		if ( is_array( $input ) && ! empty( $input ) ) {
+			$payload_script = key( $input );
+			if ( is_string( $payload_script ) && $payload_script !== '' )
+				$script_key = sanitize_key( $payload_script );
+		}
+
+		if ( $script_key === '' )
+			$script_key = $this->get_current_section();
+
+		if ( $script_key === '' && ! empty( $rl->options['settings']['script'] ) )
+			$script_key = sanitize_key( $rl->options['settings']['script'] );
+
+		if ( $script_key !== '' ) {
+			$fields = $this->get_configuration_fields( $script_key );
+			if ( ! empty( $fields ) && is_array( $fields ) )
+				$input = $this->sanitize_fields( $input, 'configuration', $fields );
 		}
 
 		// merge with saved configuration to preserve other lightbox scripts
-		$input = array_merge( $rl->options['configuration'], $input );
+		$input = array_merge( $current_configuration, $input );
 
 		return $input;
 	}

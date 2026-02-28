@@ -276,8 +276,8 @@ class rsssl_admin {
 		$current_date = strtotime( gmdate( 'Y-m-d H:i:s' ) );
 
 		// Define the start and end dates for the range in GMT (including specific times)
-		$start_date = strtotime( 'November 24 2025 00:00:00 GMT' );
-		$end_date   = strtotime( 'December 1 2025 23:59:59 GMT' );
+		$start_date = strtotime( 'November 23 2026 00:00:00 GMT' );
+		$end_date   = strtotime( 'November 30 2026 23:59:59 GMT' );
 
 		// Check if the current date and time falls within the date range
 		if ( $current_date >= $start_date && $current_date <= $end_date ) {
@@ -1867,9 +1867,7 @@ class rsssl_admin {
 								echo wp_kses_post( sprintf( __( 'Hi, Really Simple Security has kept your site secure for a month now, awesome! If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %1$smessage%2$s.', 'really-simple-ssl' ), '<a href="https://really-simple-ssl.com/contact" rel="noopener noreferrer" target="_blank">', '</a>' ) );
 								?>
                             </p>
-						<?php } ?>
-						<i>- Rogier</i>
-						<?php
+						<?php }
 						$maybe_later_url = wp_nonce_url(
 							rsssl_admin_url(['rsssl_review_notice' => 'later']),
 							'rsssl_review_notice_action_later'

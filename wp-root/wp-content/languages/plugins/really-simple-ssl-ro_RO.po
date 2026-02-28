@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Really Simple Security &#8211; Simple and Performant Security (formerly Really Simple SSL) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-12-17 14:37:46+0000\n"
+"PO-Revision-Date: 2026-02-12 10:31:54+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27,11 +27,11 @@ msgstr "Configurația dvs. de autentificare cu doi factori este coruptă. Vă ru
 msgid "Invalid user."
 msgstr "Utilizatorul nu este valid."
 
-#: core/app/Managers/EndpointManager.php:174
+#: core/app/Managers/EndpointManager.php:175
 msgid "Forbidden."
 msgstr "Interzis."
 
-#: core/app/Features/Onboarding/OnboardingController.php:138
+#: core/app/Features/Onboarding/OnboardingController.php:147
 msgid "Nonce validation failed"
 msgstr "Validarea nunicului a eșuat"
 
@@ -514,23 +514,23 @@ msgstr "Acces refuzat."
 msgid "Verification code re-sent"
 msgstr "Am retrimis codul de verificare"
 
-#: class-admin.php:3464
+#: class-admin.php:3462
 msgid "Claim your 6 Free months"
 msgstr "Solicită cele 6 luni gratuite"
 
-#: class-admin.php:3461
+#: class-admin.php:3459
 msgid "And many more powerful Security features.."
 msgstr "Și multe alte caracteristici puternice de securitate.."
 
-#: class-admin.php:3457
+#: class-admin.php:3455
 msgid "Performant Firewall"
 msgstr "Firewall performant"
 
-#: class-admin.php:3454
+#: class-admin.php:3452
 msgid "Discover:"
 msgstr "Descoperă:"
 
-#: class-admin.php:3449
+#: class-admin.php:3447
 msgid "Thank you for being a long-time user! As a token of our gratitude, we want to offer you %s6 months Really Simple Security Pro, 100%% Free!%s"
 msgstr "Îți mulțumim că ești un utilizator consecvent! În semn de apreciere, dorim să îți oferim %s6 luni de Really Simple Security Pro, 100%% Gratuit!%s"
 
@@ -542,7 +542,7 @@ msgstr "Erori 404 detectate pe pagina ta de pornire. Aceasta înseamnă că pagi
 msgid "404 errors detected on your homepage"
 msgstr "Erori 404 detectate pe prima pagină"
 
-#: class-admin.php:2508 settings/config/fields/firewall.php:104
+#: class-admin.php:2506 settings/config/fields/firewall.php:104
 #: settings/config/fields/firewall.php:126
 #: settings/config/fields/firewall.php:148
 msgid "404 errors detected on your homepage. 404 blocking is unavailable, to prevent blocking of legitimate visitors. It is strongly recommended to resolve these errors."
@@ -844,25 +844,25 @@ msgstr "Furnizor invalid"
 msgid "Code was was invalid, try \"Resend Code\""
 msgstr "Codul a fost invalid, încearcă „Retrimite codul”"
 
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:587
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:585
 msgid "Receive a code by email"
 msgstr "Primești un cod prin email"
 
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:584
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:582
 msgid "Enabled"
 msgstr "Activată"
 
 #. translators: %s: email address
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:484
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:482
 msgid "Authentication codes will be sent to %s."
 msgstr "Codurile de autentificare vor fi trimise la %s."
 
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:415
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:413
 msgid "Don't use Two-Factor Authentication"
 msgstr "Nu folosi Autentificare pe două niveluri"
 
 #: assets/templates/passkey/login.php:17
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:380
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:381
 msgid "Log In"
 msgstr "Autentificare"
 
@@ -945,11 +945,11 @@ msgstr[0] "Configurația de securitate nu a fost finalizată încă. Încă mai 
 msgstr[1] "Încă mai ai %s sarcini deschise."
 msgstr[2] "Încă mai ai %s sarcini deschise."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:144
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:151
 msgid "Please %sconsider upgrading to Pro%s to enjoy all simple and performant security features."
 msgstr "Te rugăm %sconsideră actualizarea la Pro%s pentru a te bucura de toate caracteristicile simple și performante de securitate."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:140
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:147
 msgid "Instantly configure these essential features."
 msgstr "Configurează instantaneu aceste funcționalități esențiale."
 
@@ -965,31 +965,31 @@ msgstr "Autentificare prin e-mail"
 msgid "Essential WordPress hardening"
 msgstr "Întărire WordPress esențială"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:209
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:216
 msgid "We think you will like this"
 msgstr "Credem că-ți va plăcea asta"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:175
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:182
 msgid "Activate your license key"
 msgstr "Activează-ți cheia de licență"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:155
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:162
 msgid "Essential security"
 msgstr "Securitate esențială"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:127
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:134
 msgid "Really Simple Security will send email notifications and security warnings from your server. We will send a test email to confirm that email is correctly configured on your site. Look for the confirmation button in the email."
 msgstr "Really Simple Security va trimite notificări prin e-mail și avertismente de securitate de pe serverul tău. Vom trimite un e-mail de testare pentru a confirma că e-mailul este configurat corect pe site-ul tău. Va fi nevoie sp apeși butonul de confirmare în e-mail."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:126
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:133
 msgid "Verify your email"
 msgstr "Confirmă-ți adresa de email"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:80
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:87
 msgid "The onboarding wizard will help to configure essential security features in 1 minute! Select your hosting provider to start."
 msgstr "Expertul de instalare te va ajuta să configurezi caracteristicile esențiale de securitate în 1 minut! Selectează furnizorul tău de găzduire pentru a începe."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:79
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:86
 msgid "Welcome to Really Simple Security"
 msgstr "Bun venit la Really Simple Security"
 
@@ -997,32 +997,32 @@ msgstr "Bun venit la Really Simple Security"
 msgid "Essential security headers installed"
 msgstr "Antetele de securitate recomandate au fost instalate"
 
-#: class-admin.php:3430
+#: class-admin.php:3428
 msgid "Experience all powerful features of Really Simple Security Pro using this %slimited time discount%s: %s"
 msgstr "Descoperă toate caracteristicile puternice ale Really Simple Security Pro folosind această %sreducere pe timp limitat%s: %s"
 
-#: class-admin.php:3424
+#: class-admin.php:3422
 msgid "Read about our journey towards Really Simple Security"
 msgstr "Citește despre călătoria noastră către Really Simple Security"
 
 #. translators: %1$s: opening bold tag, %2$s: closing bold tag
-#: class-admin.php:3417
+#: class-admin.php:3415
 msgid "Really Simple SSL is now %1$sReally Simple Security!%2$s"
 msgstr "Really Simple SSL este acum %1$sReally Simple Security!%2$s"
 
-#: class-admin.php:2448
+#: class-admin.php:2446
 msgid "Complete email validation and enable notifications to make sure you will receive security warnings."
 msgstr "Finalizează validarea e-mailului și activează notificările pentru a te asigura că vei primi avertismente de securitate."
 
-#: class-admin.php:2409
+#: class-admin.php:2407
 msgid "Protect your site with a performant Firewall."
 msgstr "Protejează-ți site-ul cu un Firewall performant."
 
-#: class-admin.php:2397
+#: class-admin.php:2395
 msgid "Protect your login form with Limit Login Attempts."
 msgstr "Protejează-ți formularul de autentificare cu Limitează încercările de autentificare."
 
-#: class-admin.php:2385
+#: class-admin.php:2383
 msgid "Implement Two-Factor Authentication or Passkey login."
 msgstr "Implementează Autentificare pe două niveluri sau autentificare Passkey."
 
@@ -1126,7 +1126,7 @@ msgstr "Omite (a rămas doar ziua de azi)"
 
 #: assets/templates/two_fa/onboarding.php:126
 #: assets/templates/two_fa/profile-settings.php:121
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:383
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:382
 msgid "Resend Code"
 msgstr "Retrimite codul"
 
@@ -1497,15 +1497,15 @@ msgstr "Măsuri împotriva vulnerabilităților"
 msgid "Mixed Content Fixer"
 msgstr "Program de reparare a conținutului mixt"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:68
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:75
 msgid "You may need to login in again, have your credentials prepared."
 msgstr "Poate fi necesar să te conectezi din nou, păstrează acreditările la îndemână."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:194
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:201
 msgid "Heavyweight security features, in a lightweight performant plugin from Really Simple Plugins. Get started with below features and get the latest and greatest updates for peace of mind!"
 msgstr "Caracteristici de securitate foarte mari, într-un plugin ușor și performant de la Really Simple Plugins. Începe cu funcțiile de mai jos și obține cele mai recente și mai bune actualizări pentru liniște sufletească!"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:210
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:217
 msgid "Really Simple Plugins is also the author of the below privacy-focused plugins including consent management and legal documents!"
 msgstr "Really Simple Plugins este, de asemenea, autorul modulelor de mai jos, axate pe confidențialitate, inclusiv gestionarea consimțământului și documentele legale!"
 
@@ -1518,7 +1518,7 @@ msgid "Password security"
 msgstr "Securitatea parolei"
 
 #: assets/templates/two_fa/expired.php:3
-#: assets/templates/two_fa/onboarding.php:44 class-admin.php:3459
+#: assets/templates/two_fa/onboarding.php:44 class-admin.php:3457
 #: class-site-health.php:61 core/app/Services/SettingsConfigService.php:57
 #: core/app/Services/SettingsConfigService.php:124 settings/config/menu.php:302
 #: modal/build/index.dc39341c6b0a7592427c.js:1
@@ -1715,7 +1715,7 @@ msgstr "Protejarea vizitatorilor site-ului tău de atacuri rău intenționate ș
 msgid "The Essentials"
 msgstr "Esențiale"
 
-#: class-admin.php:3460 core/app/Services/SettingsConfigService.php:71
+#: class-admin.php:3458 core/app/Services/SettingsConfigService.php:71
 #: core/app/Services/SettingsConfigService.php:139 settings/config/menu.php:98
 msgid "Security Headers"
 msgstr "Antete de securitate"
@@ -1988,7 +1988,7 @@ msgstr "Te rog confirmă-ți emailul"
 msgid "Really Simple Security - Verify your email address"
 msgstr "Really Simply Security - Verifică-ți adresa de e-mail"
 
-#: class-admin.php:2456
+#: class-admin.php:2454
 msgid "Email address successfully verified."
 msgstr "Adresa de e-mail a fost verificată"
 
@@ -2131,7 +2131,7 @@ msgid "This will send emails about vulnerabilities directly from your server. Ma
 msgstr "Această opțiune va trimite e-mailuri despre vulnerabilități direct de pe serverul tău. Asigură-te că poți primi e-mailuri testând o previzualizare, mai jos. Dacă această caracteristică este dezactivată, te rugăm să activezi notificările din setările generale."
 
 #: security/wordpress/two-fa/class-rsssl-two-factor-settings.php:659
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:586
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:584
 #: settings/config/fields/vulnerability-detection.php:108
 #: settings/config/menu.php:35
 msgid "Email"
@@ -2313,7 +2313,7 @@ msgstr "E-mailul nu a putut fi trimis. Nu  a fost setat un mesaj sau un subiect.
 msgid "Why did I receive this email?"
 msgstr "De ce am primit acest e-mail?"
 
-#: class-admin.php:2305
+#: class-admin.php:2303
 msgid "The 301 redirect with .htaccess to HTTPS is now enabled."
 msgstr "Setare redirecționare 301 către HTTPS, prin .htaccess, este acum activată."
 
@@ -2323,7 +2323,7 @@ msgstr "Setare redirecționare 301 către HTTPS, prin .htaccess, este acum activ
 msgid "Skip"
 msgstr "Sari peste"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:128
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:135
 #: settings/build/995.7a0675fe0519b06656b3.js:1
 #: settings/src/Settings/Settings.js:153
 msgid "Save and continue"
@@ -2333,7 +2333,7 @@ msgstr "Salvează și continuă"
 msgid "Settings update: .htaccess redirect"
 msgstr "Actualizare setări: redirecționare .htaccess"
 
-#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:584
+#: security/wordpress/two-fa/providers/class-rsssl-two-factor-email.php:582
 #: settings/config/fields/firewall.php:101
 #: settings/config/fields/firewall.php:106
 #: settings/config/fields/security-headers.php:14
@@ -2548,7 +2548,7 @@ msgstr "Utilizezi suplimentul Really Simple Security Shell Exec, dar versiunea t
 msgid "(recommended)"
 msgstr "(recomandat)"
 
-#: class-admin.php:2166
+#: class-admin.php:2164
 msgid "SSL is now activated. Follow the three steps in this article to check if your website is secure."
 msgstr "SSL este acum activat. Urmează cei trei pași din acest articol pentru a verifica dacă site-ul tău este sigur."
 
@@ -2906,7 +2906,7 @@ msgstr "Reparator de conținut mixt - partea administrativă a site-ului"
 msgid "Mixed content fixer - init hook"
 msgstr "Reparator de conținut mixt - cârlig de inițiere"
 
-#: class-admin.php:2304 class-admin.php:2310
+#: class-admin.php:2302 class-admin.php:2308
 msgid "301 .htaccess redirect"
 msgstr "Redirecționare 301 prin .htaccess"
 
@@ -2961,7 +2961,7 @@ msgstr "Scanare pentru conținut mixt"
 msgid "XML-RPC"
 msgstr "XML-RPC"
 
-#: class-admin.php:3458 settings/config/menu.php:254
+#: class-admin.php:3456 settings/config/menu.php:254
 msgid "Advanced Hardening"
 msgstr "Întărire avansată"
 
@@ -3145,7 +3145,7 @@ msgstr "Detalii"
 msgid "Mixed content in PHP file in %s"
 msgstr "Conținut mixt în fișierul PHP în %s"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:180
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:187
 #: settings/config/menu.php:755 settings/build/366.0e8cd32aeda45546f72d.js:1
 #: settings/build/485.09b2206e7cb2f9ad160e.js:1
 #: settings/build/635.1aee1a8a0b3a1aed2ce2.js:1
@@ -3210,7 +3210,7 @@ msgstr "Testul nu a fost găsit."
 
 #: lets-encrypt/class-le-restapi.php:166 lets-encrypt/class-le-restapi.php:227
 msgid "Permission denied."
-msgstr "Permisiune refuzată."
+msgstr "Permisiunea a fost refuzată."
 
 #: class-site-health.php:225
 msgid "Read more about security concerns with debug display enabled"
@@ -3258,15 +3258,15 @@ msgstr "SSL nu este activat încă în rețeaua ta"
 msgid "Improve security - Upgrade"
 msgstr "Îmbunătățește securitatea - actualizează la Pro"
 
-#: class-admin.php:2365
+#: class-admin.php:2363
 msgid "See which recommended security headers are not present on your website."
 msgstr "Vezi ce antete de securitate recomandate nu sunt prezente pe site-ul tău"
 
-#: class-admin.php:2114
+#: class-admin.php:2112
 msgid "To safely enable SSL on your server configuration, you should add the following line of code to your wp-config.php."
 msgstr "Pentru a activa SSL în condiții de siguranță pe site-ul tău, ar fi indicat să adaugi următorul rând în fișierul tău wp-config.php."
 
-#: class-admin.php:2051 settings/build/366.0e8cd32aeda45546f72d.js:1
+#: class-admin.php:2049 settings/build/366.0e8cd32aeda45546f72d.js:1
 #: settings/src/Dashboard/OtherPlugins/OtherPlugins.js:21
 msgid "Upgrade"
 msgstr "Actualizează"
@@ -3281,7 +3281,7 @@ msgstr "Se pare că această cheie de licență nu este validă pentru acest mod
 
 #: upgrade/upgrade-to-pro.php:551
 msgid "Your license is not active for this URL."
-msgstr "Cheia ta de licență nu este activă pentru acest URL."
+msgstr "Licența ta nu este activă pentru acest URL."
 
 #: upgrade/upgrade-to-pro.php:548
 msgid "Invalid license."
@@ -3399,17 +3399,17 @@ msgstr "Pot să creez dosarul de destinație"
 msgid "Checking if plugin folder exists..."
 msgstr "Verific dacă există dosarul modulului..."
 
-#: class-admin.php:2219
+#: class-admin.php:2217
 msgid "Check manually"
 msgstr "Verifică manual"
 
-#: class-admin.php:2214
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:103
+#: class-admin.php:2212
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:110
 msgid "Could not test certificate"
 msgstr "Nu am putut să testez certificatul"
 
-#: class-admin.php:2215
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:103
+#: class-admin.php:2213
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:110
 msgid "Automatic certificate detection is not possible on your server."
 msgstr "Detectarea automată a certificatelor nu este posibilă pe serverul tău."
 
@@ -3425,7 +3425,7 @@ msgstr "După finalizarea instalării, poți lăsa modulul Really Simple Securit
 msgid "We have not detected any known hosting limitations."
 msgstr "Nu am detectat nicio limită de găzduire cunoscută."
 
-#: class-admin.php:2199
+#: class-admin.php:2197
 msgid "The wp-config.php file is not writable, and needs to be edited. Please set this file to writable."
 msgstr "Fișierul wp-config.php nu poate fi scris, dar el trebuie să fie editat. Te rog să setezi acest fișier ca să poată fi scris."
 
@@ -3443,7 +3443,7 @@ msgstr "Site-ul tău web nu trimite toate antetele de securitate recomandate."
 msgid "Security"
 msgstr "Securitate"
 
-#: class-admin.php:2374
+#: class-admin.php:2372
 msgid "Recommended security headers enabled."
 msgstr "Antetele de securitate recomandate au fost activate."
 
@@ -3455,7 +3455,7 @@ msgstr "OCSP stapling este configurată și activată în mod implicit. Poți s�
 msgid "For more information, please read this %sarticle%s"
 msgstr "Pentru mai multe informații, te rugăm să citești acest %sarticol%s"
 
-#: class-admin.php:2435
+#: class-admin.php:2433
 msgid "Black Friday sale! Get 40% Off Really Simple Security Pro"
 msgstr "Reducere de Black Friday! Ai o reducere de 40% la Really Simple Security Pro"
 
@@ -3472,20 +3472,20 @@ msgid "Terms & Conditions are accepted."
 msgstr "Ai acceptat termenii și condițiile."
 
 #. translators: %s is replaced with the plugin name.
-#: class-admin.php:2421
+#: class-admin.php:2419
 msgid "As Really Simple Security handles all the functionality this plugin provides, we recommend to disable this plugin to prevent unexpected behavior."
 msgstr "Deoarece Really Simple Security gestionează toate funcționalitățile oferite de acest modul, recomandăm să dezactivezi modulul pentru a evita un comportament neașteptat."
 
 #. translators: %s is replaced with the plugin name.
-#: class-admin.php:2421
+#: class-admin.php:2419
 msgid "We have detected the %s plugin on your website."
 msgstr "Am detectat modulul %s pe site-ul tău."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:110
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:117
 msgid "Please refresh the SSL status if a certificate has been installed recently."
 msgstr "Te rog reîmprospătează starea SSL dacă ai instalat recent un certificat."
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:110
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:117
 msgid "No SSL certificate has been detected."
 msgstr "Nu a fost detectat niciun certificat SSL."
 
@@ -4157,7 +4157,7 @@ msgstr "Continuă pentru a reînnoi."
 msgid "Your certificate will expire on %s."
 msgstr "Certificatul tău va expira pe %s."
 
-#: class-admin.php:2103 lets-encrypt/class-letsencrypt-handler.php:303
+#: class-admin.php:2101 lets-encrypt/class-letsencrypt-handler.php:303
 msgid "(unknown)"
 msgstr "(necunoscut)"
 
@@ -4177,7 +4177,7 @@ msgstr "Nu este posibilă instalarea Let's Encrypt pe o configurație cu subdire
 msgid "It is not possible to install Let's Encrypt on a subsite. Please go to the main site of your website."
 msgstr "Nu poți să instalezi Let's Encrypt pe un sub-site. Te rog mergi la site-ul tău principal."
 
-#: class-admin.php:2234 settings/build/366.0e8cd32aeda45546f72d.js:1
+#: class-admin.php:2232 settings/build/366.0e8cd32aeda45546f72d.js:1
 #: settings/build/485.09b2206e7cb2f9ad160e.js:1
 #: settings/build/635.1aee1a8a0b3a1aed2ce2.js:1
 #: settings/src/Dashboard/TaskElement.js:66
@@ -4186,37 +4186,37 @@ msgstr "Reverificare"
 
 #. translators: %1$ and %2$s are replaced with the opening and closing tag with
 #. link.
-#: class-admin.php:2229
+#: class-admin.php:2227
 msgid "Depending on your hosting provider, %1$smanual installation%2$s may be required."
 msgstr "În funcție de furnizorul tău de găzduire, poate fi necesară %1$sinstalarea manuală%2$s."
 
 #. translators: %s is replaced with date.
-#: class-admin.php:2227
+#: class-admin.php:2225
 msgid "If your hosting provider auto-renews your certificate, no action is required. Alternatively, you have the option to generate an SSL certificate with Really Simple Security."
 msgstr "Dacă furnizorul tău de găzduire îți reînnoiește certificatul, nu este necesară nicio acțiune. În plus, ai opțiunea să generezi un certificat SSL cu Really Simple Security."
 
 #. translators: %s is replaced with date.
-#: class-admin.php:2227
+#: class-admin.php:2225
 msgid "SSL certificate will expire on %s."
 msgstr "Certificatul SSL va expira pe %s."
 
-#: class-admin.php:2224
+#: class-admin.php:2222
 msgid "Your SSL certificate will expire soon."
 msgstr "Certificatul tău SSL va expira în curând."
 
-#: class-admin.php:2204
+#: class-admin.php:2202
 msgid "No SSL detected. Use the retry button to check again."
 msgstr "Nu a fost detectat SSL. Folosește butonul pentru reîncercare pentru a verifica din nou."
 
-#: class-admin.php:2208 class-admin.php:2218 class-admin.php:2233
+#: class-admin.php:2206 class-admin.php:2216 class-admin.php:2231
 msgid "Install SSL certificate"
 msgstr "Instalează certificatul SSL"
 
-#: class-admin.php:2209
+#: class-admin.php:2207
 msgid "Retry"
 msgstr "Reîncearcă"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:95
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:102
 msgid "An SSL certificate has been detected"
 msgstr "A fost detectat un certificat SSL"
 
@@ -4240,7 +4240,7 @@ msgstr "Test antet securitate"
 msgid "SSL Status Test"
 msgstr "Test de stare SSL"
 
-#: class-admin.php:2203 class-site-health.php:344
+#: class-admin.php:2201 class-site-health.php:344
 msgid "No SSL detected"
 msgstr "Nu a fost detectat SSL"
 
@@ -4268,16 +4268,16 @@ msgstr "Really Simple Security a detectat un certificat SSL, dar nu a fost confi
 msgid "SSL is not enabled."
 msgstr "SSL nu este activat."
 
-#: class-admin.php:2050
+#: class-admin.php:2048
 msgid "Open"
 msgstr "Deschide"
 
-#: class-admin.php:2049 settings/build/485.09b2206e7cb2f9ad160e.js:1
+#: class-admin.php:2047 settings/build/485.09b2206e7cb2f9ad160e.js:1
 #: settings/src/Settings/MixedContentScan/MixedContentScan.js:58
 msgid "Warning"
 msgstr "Avertizare"
 
-#: class-admin.php:2048
+#: class-admin.php:2046
 msgid "Completed"
 msgstr "Efectuat"
 
@@ -4286,47 +4286,47 @@ msgstr "Efectuat"
 msgid "Installed"
 msgstr "Instalat"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:196
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:212
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:203
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:219
 #: upgrade/upgrade-to-pro.php:132 upgrade/upgrade-to-pro.php:145
 #: settings/build/366.0e8cd32aeda45546f72d.js:1
 #: settings/src/Dashboard/OtherPlugins/OtherPluginsData.js:73
 msgid "Install"
 msgstr "Instalează"
 
-#: class-admin.php:2354
+#: class-admin.php:2352
 msgid "Your site uses Divi. This can require some additional steps before getting the secure lock."
 msgstr "Site-ul tău folosește Divi. Acest lucru poate necesita câțiva pași suplimentari înainte de a obține blocarea sigură."
 
-#: class-admin.php:2340
+#: class-admin.php:2338
 msgid "Your site uses Elementor. This can require some additional steps before getting the secure lock."
 msgstr "Site-ul tău folosește Elementor. Acest lucru poate necesita câțiva pași suplimentari înainte de a obține blocarea sigură."
 
-#: class-admin.php:2325
+#: class-admin.php:2323
 msgid "The .htaccess redirect rules selected by this plugin failed in the test. Set manually or dismiss to leave on PHP redirect."
 msgstr "Regulile de redirecționare .htaccess selectate de acest modul au eșuat la testare. Setează manual sau închide pentru a lăsa activă redirecționarea PHP."
 
-#: class-admin.php:2311
+#: class-admin.php:2309
 msgid "WordPress 301 redirect enabled. We recommend to enable a 301 .htaccess redirect."
 msgstr "Redirecționare WordPress 301 activată. Îți recomandăm să activezi o redirecționare 301 .htaccess."
 
-#: class-admin.php:2265
+#: class-admin.php:2263
 msgid "Mixed content fixer not enabled. Enable the option to fix mixed content on your site."
 msgstr "Programul pentru corectarea conținutului mixt nu este activat. Activează opțiunea ca să corectezi conținutul mixt pe site-ul tău."
 
-#: class-admin.php:2254
+#: class-admin.php:2252
 msgid "The mixed content fixer is active, but was not detected on the frontpage."
 msgstr "Programul de reparare a conținutului mixt este activ, dar nu a fost detectat pe prima pagină."
 
-#: class-admin.php:2247
+#: class-admin.php:2245
 msgid "Really Simple Security has received no response from the webpage."
 msgstr "Really Simple Security nu a primit niciun răspuns de la pagina web."
 
-#: class-admin.php:2182
+#: class-admin.php:2180
 msgid "SSL is not enabled yet."
 msgstr "SSL nu este activat încă."
 
-#: class-admin.php:2088
+#: class-admin.php:2086
 msgid "No recommended redirect rules detected."
 msgstr "Nu am detectat reguli de redirecționare recomandate."
 
@@ -4377,16 +4377,16 @@ msgstr "Citește mai mult"
 msgid "Hi, Really Simple Security has kept your site secure for some time now, awesome! If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %1$smessage%2$s."
 msgstr "Salut, Really Simple Security a păstrat site-ul tău securizat de ceva timp, minunat! Dacă ai un moment, te rog să lași o recenzie pe WordPress.org pentru a răspândi vestea. Apreciem foarte mult acest lucru! Dacă ai întrebări sau feedback, lasă-ne un %1$smesaj%2$s."
 
-#: class-admin.php:1894
+#: class-admin.php:1892
 msgid "Don't show again"
 msgstr "Nu mai arăta din nou"
 
 #. translators: %s is replaced with the error description.
-#: class-admin.php:2272
+#: class-admin.php:2270
 msgid "The mixed content fixer could not be detected due to a cURL error: %s. cURL errors are often caused by an outdated version of PHP or cURL and don't affect the front-end of your site. Contact your hosting provider for a fix."
 msgstr "Programul de reparare a conținutului mixt nu a putut fi detectat din cauza unei erori cURL: %s. Erorile cURL sunt adesea cauzate de o versiune învechită a PHP sau cURL și nu afectează partea din față a sitului tău. Contactează furnizorul de găzduire pentru o soluție."
 
-#: class-admin.php:2259
+#: class-admin.php:2257
 msgid "Error occurred when retrieving the webpage."
 msgstr "A apărut o eroare la preluarea paginii web."
 
@@ -4410,13 +4410,13 @@ msgstr "Redirecționarea 301 prin SSL este activată"
 msgid "Dismiss"
 msgstr "Închide"
 
-#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:158
+#: core/app/Features/Onboarding/OnboardingStepsGenerator.php:165
 #: settings/build/366.0e8cd32aeda45546f72d.js:1
 #: settings/src/Dashboard/Vulnerabilities/Vulnerabilities.js:116
 msgid "Enable"
 msgstr "Activează"
 
-#: class-admin.php:2149
+#: class-admin.php:2147
 msgid "The 'force-deactivate.php' file has to be renamed to .txt. Otherwise your ssl can be deactivated by anyone on the internet."
 msgstr "Fișierul „force-deactivate.php” trebuie redenumit în .txt. Dacă nu faci asta, SSL-ul tău poate fi dezactivat de oricine de pe internet."
 
@@ -4424,11 +4424,11 @@ msgstr "Fișierul „force-deactivate.php” trebuie redenumit în .txt. Dacă n
 msgid "Once every month"
 msgstr "O dată pe lună"
 
-#: class-admin.php:1889
+#: class-admin.php:1887
 msgid "Maybe later"
 msgstr "Poate mai târziu"
 
-#: class-admin.php:1885
+#: class-admin.php:1883
 msgid "Leave a review"
 msgstr "Lasă o recenzie"
 
@@ -4489,19 +4489,19 @@ msgstr "Dacă această opțiune este activată, programul de reparare a conținu
 msgid "Enable 301 .htaccess redirect"
 msgstr "Activează redirecționarea 301 prin .htaccess"
 
-#: class-admin.php:2289
+#: class-admin.php:2287
 msgid "No 301 redirect is set. Enable the WordPress 301 redirect in the settings to get a 301 permanent redirect."
 msgstr "Nicio redirecționare 301 setată. Activează redirecționarea 301 WordPress în setări pentru a obține o redirecționare 301 permanentă."
 
-#: class-admin.php:2318
+#: class-admin.php:2316
 msgid "Enable a .htaccess redirect or PHP redirect in the settings to create a 301 redirect."
 msgstr "Activează o redirecționare .htaccess sau o redirecționare PHP în setări ca să creezi o redirecționare 301."
 
-#: class-admin.php:2323
+#: class-admin.php:2321
 msgid ".htaccess redirect."
 msgstr "Redirecționare .htaccess."
 
-#: class-admin.php:2285
+#: class-admin.php:2283
 msgid "301 redirect to https set."
 msgstr "Setare redirecționare 301 către https."
 
@@ -4519,19 +4519,19 @@ msgstr "Suport premium"
 msgid "Instructions"
 msgstr "Instrucțiuni"
 
-#: class-admin.php:2178
+#: class-admin.php:2176
 msgid "SSL is enabled on your site."
 msgstr "SSL este activat pe site-ul tău."
 
-#: class-admin.php:2112
+#: class-admin.php:2110
 msgid "Your wp-config.php has to be edited, but is not writable."
 msgstr "wp-config.php trebuie să fie editat, dar nu poate fi scris."
 
-#: class-admin.php:2113 class-admin.php:2134
+#: class-admin.php:2111 class-admin.php:2132
 msgid "Set your wp-config.php to writable and reload this page."
 msgstr "Configurează wp-config.php ca să poată fi scris și apoi reîncarcă această pagină."
 
-#: class-admin.php:2134
+#: class-admin.php:2132
 msgid "A definition of a site url or home url was detected in your wp-config.php, but the file is not writable."
 msgstr "Am detectat o definiție pentru siteurl sau homeurl în wp-config.php, dar fișierul nu poate fi scris."
 
@@ -4575,7 +4575,7 @@ msgstr "Deoarece variabila $ _SERVER [\"HTTPS\"] nu este setată, site-ul tău w
 msgid "You run a Multisite installation with subfolders, which prevents this plugin from fixing your missing server variable in the wp-config.php."
 msgstr "Rulezi o instalare Multisite cu subdirectoare, ceea ce împiedică acest modul să remedieze variabila server lipsă din wp-config.php."
 
-#: class-admin.php:2150 settings/build/635.1aee1a8a0b3a1aed2ce2.js:1
+#: class-admin.php:2148 settings/build/635.1aee1a8a0b3a1aed2ce2.js:1
 #: settings/src/Onboarding/Items/ListItem.js:46
 msgid "Check again"
 msgstr "Verifică din nou"

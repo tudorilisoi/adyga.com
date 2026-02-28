@@ -34,7 +34,9 @@ class Button {
 			$result = $admin->getProperties();
 		}
 
-		if ( ! is_admin() ) {
+		// Only replace variables on frontend (not in admin or REST API admin requests).
+		$is_rest_admin = defined( 'REST_REQUEST' ) && REST_REQUEST && is_user_logged_in();
+		if ( ! is_admin() && ! $is_rest_admin ) {
 			$result['text']    = qlwapp_replacements_vars( $result['text'] );
 			$result['message'] = qlwapp_replacements_vars( $result['message'] );
 		}

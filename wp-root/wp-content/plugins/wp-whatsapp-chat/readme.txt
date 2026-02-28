@@ -5,11 +5,11 @@ Tags: whatsapp, whatsapp business, whatsapp chat, woocommerce whatsapp, click to
 Requires at least: 4.7
 Requires PHP: 5.6
 Tested up to: 6.9
-Stable tag: 8.1.6
+Stable tag: 8.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 4.0
-WC tested up to: 10.4
+WC tested up to: 10.5
 
 WhatsApp Chat🔥 allows you to enhance customer engagement! Integrate "WhatsApp" or "WhatsApp Business" with a single click.
 
@@ -58,11 +58,20 @@ Synce version 5.0.6 you're able use variables in your WhatsApp Button or contact
 {CURRENT_TITLE} ➡ Is replaced by the current page title
 {CURRENT_URL} 	➡ Is replaced by the current page url
 
+== WooCommerce WhatsApp Message Variables ==
+Since version 8.1.9, WooCommerce users can use product-specific variables in their WhatsApp messages:
+
+{PRODUCT_TITLE} ➡ Is replaced by the product name
+{PRODUCT_URL} 	➡ Is replaced by the product URL
+{PRODUCT_PRICE} ➡ Is replaced by the product price
+{PRODUCT_SKU} 	➡ Is replaced by the product SKU
+{PRODUCT_ID} 	➡ Is replaced by the product ID
+
 == 🎁 New!! WooCommerce WhatsApp ==
 
 Since version 6.0.1 you can include a WooCommerce WhatsApp button in the Single product pages to allows your users to prompt a custom message to your WhatsApp App.
 
-The WhatsApp Button can be included directly on your WooCoomerce product pages next to the “Add to cart” button.
+The WhatsApp Button can be included directly on your WooCoomerce product pages next to the "Add to cart" button.
 
 Also you can include WooCommerce WhatsApp button in the next actions:
 
@@ -71,6 +80,17 @@ Also you can include WooCommerce WhatsApp button in the next actions:
 > * After "Add To Cart" button
 > * After "Add To Cart" form
 > * After "Additional information"
+
+== 🎁 New!! WooCommerce Archives WhatsApp ==
+
+Since version 8.1.9 you can display a customizable WhatsApp button on WooCommerce archive pages, including:
+
+> * Shop page
+> * Product category archives
+> * Product tag archives
+> * Product brand archives (for plugins that support it)
+
+You can configure a custom message, button style, and position for each archive type. The button supports all WooCommerce product variables, making it easy for customers to inquire about products directly from archive pages.
 
 == WhatsApp Premium ==
 The premium version of the Social Chat plugin allows you to include multiple team member agents, distinguishing their names and labels inside. The contact box helps to provide direct contacts to the different support areas of your site.
@@ -143,6 +163,21 @@ Don't use: +001-(555)1234567
 * Brazilian Portuguese (thanks to [Dionizio Bach](@djio))
 
 == Changelog ==
+
+= 8.2.0 =
+* Improve: WooCommerce product pages now use dynamic product variables by default
+* Improve: WooCommerce archive pages now use site-specific variables by default
+
+= 8.1.9 =
+* Feat: Add WooCommerce Archives button support (shop, categories, tags, brands)
+* Feat: Add WooCommerce product dynamic variables (PRODUCT_TITLE, PRODUCT_URL, PRODUCT_PRICE, PRODUCT_SKU, PRODUCT_ID)
+* Feat: Add device visibility control for WooCommerce buttons
+
+= 8.1.8 =
+* Feat: Add admin menu better tooltips & helpers
+
+= 8.1.7 =
+* Feat: Update rating request notice
 
 = 8.1.6 =
 * Feat: Add WooCommerce button preview

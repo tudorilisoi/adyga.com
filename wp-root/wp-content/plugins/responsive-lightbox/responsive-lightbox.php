@@ -2,7 +2,7 @@
 /*
 Plugin Name: Responsive Lightbox & Gallery
 Description: Responsive Lightbox & Gallery allows users to create galleries and view larger versions of images, galleries and videos in a lightbox (overlay) effect optimized for mobile devices.
-Version: 2.7.0
+Version: 2.7.4
 Author: dFactory
 Author URI: http://www.dfactory.co/
 Plugin URI: http://www.dfactory.co/products/responsive-lightbox/
@@ -45,7 +45,7 @@ include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes' . DIRECTORY_SEPARATOR . 'fun
  * Responsive Lightbox class.
  *
  * @class Responsive_Lightbox
- * @version	2.7.0
+ * @version	2.7.4
  */
 class Responsive_Lightbox {
 
@@ -255,7 +255,7 @@ class Responsive_Lightbox {
 			'columns_sm'		=> 2,
 			'columns_xs'		=> 1,
 			'gutter'			=> 2,
-			'force_height'		=> false,
+			'force_height'		=> true,
 			'row_height'		=> 150
 		],
 		'basicslider_gallery' => [
@@ -284,7 +284,7 @@ class Responsive_Lightbox {
 			'origin_left'		=> true,
 			'origin_top'		=> true
 		],
-		'version' => '2.7.0',
+		'version' => '2.7.4',
 		'activation_date' => ''
 	];
 	public $options = [];
@@ -319,6 +319,7 @@ class Responsive_Lightbox {
 	public $remote_library;
 	public $settings;
 	public $settings_api;
+	public $gallery_api;
 
 	/**
 	 * Class constructor.
@@ -354,11 +355,12 @@ class Responsive_Lightbox {
 		if ( empty( $capabilities ) )
 			$capabilities = [];
 
-		$this->options['settings'] = array_merge( $this->defaults['settings'], ( ( $array = get_option( 'responsive_lightbox_settings' ) ) === false ? [] : $array ) );
+		$array = get_option( 'responsive_lightbox_settings' );
+		$this->options['settings'] = array_merge( $this->defaults['settings'], is_array( $array ) ? $array : [] );
 		
 		// load folders options with migration check
 		$raw_folders = get_option( 'responsive_lightbox_folders', false );
-		$raw_folders = $raw_folders === false ? [] : $raw_folders;
+		$raw_folders = is_array( $raw_folders ) ? $raw_folders : [];
 		$this->options['folders'] = array_merge( $this->defaults['folders'], $raw_folders );
 		
 		// migrate existing users: detect if they're using custom taxonomy
@@ -367,21 +369,28 @@ class Responsive_Lightbox {
 			update_option( 'responsive_lightbox_folders', $this->options['folders'] );
 		}
 		
-		$this->options['builder'] = array_merge( $this->defaults['builder'], ( ( $array = get_option( 'responsive_lightbox_builder' ) ) === false ? [] : $array ) );
-		$this->options['capabilities'] = array_merge( $this->defaults['capabilities'], $capabilities );
-		$this->options['remote_library'] = array_merge( $this->defaults['remote_library'], ( ( $array = get_option( 'responsive_lightbox_remote_library' ) ) === false ? [] : $array ) );
+		$array = get_option( 'responsive_lightbox_builder' );
+		$this->options['builder'] = array_merge( $this->defaults['builder'], is_array( $array ) ? $array : [] );
+		$this->options['capabilities'] = array_merge( $this->defaults['capabilities'], is_array( $capabilities ) ? $capabilities : [] );
+		$array = get_option( 'responsive_lightbox_remote_library' );
+		$this->options['remote_library'] = array_merge( $this->defaults['remote_library'], is_array( $array ) ? $array : [] );
 
 		// for multi arrays we have to merge them separately
-		$db_conf_opts = ( ( $base = get_option( 'responsive_lightbox_configuration' ) ) === false ? [] : $base );
+		$base = get_option( 'responsive_lightbox_configuration' );
+		$db_conf_opts = is_array( $base ) ? $base : [];
 
 		foreach ( $this->defaults['configuration'] as $script => $settings ) {
-			$this->options['configuration'][$script] = array_merge( $settings, ( isset( $db_conf_opts[$script] ) ? $db_conf_opts[$script] : [] ) );
+			$script_options = ( isset( $db_conf_opts[$script] ) && is_array( $db_conf_opts[$script] ) ) ? $db_conf_opts[$script] : [];
+			$this->options['configuration'][$script] = array_merge( $settings, $script_options );
 		}
 
 		// add default galleries options
-		$this->options['basicgrid_gallery'] = array_merge( $this->defaults['basicgrid_gallery'], ( ( $array = get_option( 'responsive_lightbox_basicgrid_gallery', $this->defaults['basicgrid_gallery'] ) ) == false ? [] : $array ) );
-		$this->options['basicslider_gallery'] = array_merge( $this->defaults['basicslider_gallery'], ( ( $array = get_option( 'responsive_lightbox_basicslider_gallery', $this->defaults['basicslider_gallery'] ) ) == false ? [] : $array ) );
-		$this->options['basicmasonry_gallery'] = array_merge( $this->defaults['basicmasonry_gallery'], ( ( $array = get_option( 'responsive_lightbox_basicmasonry_gallery', $this->defaults['basicmasonry_gallery'] ) ) == false ? [] : $array ) );
+		$array = get_option( 'responsive_lightbox_basicgrid_gallery', $this->defaults['basicgrid_gallery'] );
+		$this->options['basicgrid_gallery'] = array_merge( $this->defaults['basicgrid_gallery'], is_array( $array ) ? $array : [] );
+		$array = get_option( 'responsive_lightbox_basicslider_gallery', $this->defaults['basicslider_gallery'] );
+		$this->options['basicslider_gallery'] = array_merge( $this->defaults['basicslider_gallery'], is_array( $array ) ? $array : [] );
+		$array = get_option( 'responsive_lightbox_basicmasonry_gallery', $this->defaults['basicmasonry_gallery'] );
+		$this->options['basicmasonry_gallery'] = array_merge( $this->defaults['basicmasonry_gallery'], is_array( $array ) ? $array : [] );
 
 		// set current lightbox script
 		$this->current_script = $this->options['settings']['script'];
@@ -554,7 +563,7 @@ class Responsive_Lightbox {
 	public function deactivate_site( $multi = false ) {
 		if ( $multi === true ) {
 			$options = get_option( 'responsive_lightbox_settings' );
-			$check = $options['deactivation_delete'];
+			$check = is_array( $options ) && ! empty( $options['deactivation_delete'] );
 		} else
 			$check = $this->options['settings']['deactivation_delete'];
 
@@ -1066,7 +1075,7 @@ class Responsive_Lightbox {
 			$other = sanitize_text_field( $_POST['other'] );
 
 			// avoid fake submissions
-			if ( $option_id == 6 && $other == '' )
+			if ( $option_id === 6 && $other === '' )
 				wp_send_json_success();
 
 			wp_remote_post(
@@ -1320,13 +1329,16 @@ class Responsive_Lightbox {
 		$breadcrumbs = [];
 
 		// get page
-		$page_raw = isset( $_GET['page'] ) ? wp_unslash( $_GET['page'] ) : '';
+		$page_raw = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 		$page_parts = $page_raw !== '' ? explode( '&', $page_raw, 2 ) : [ '' ];
 		$page = $page_parts[0] !== '' ? sanitize_key( $page_parts[0] ) : '';
 		$page_args = [];
 
 		if ( ! empty( $page_parts[1] ) )
 			parse_str( $page_parts[1], $page_args );
+
+		// sanitize all page_args to prevent XSS
+		$page_args = array_map( 'sanitize_text_field', $page_args );
 
 		// get tabs from Settings API
 		$api_pages = $this->settings_api->get_pages();
@@ -1604,12 +1616,13 @@ class Responsive_Lightbox {
 			}
 		' );
 
-		// get tab keys from Settings API
-		$api_pages = $this->settings_api->get_pages();
-		$tab_keys = isset( $api_pages['settings'], $api_pages['settings']['tabs'] ) ? array_keys( $api_pages['settings']['tabs'] ) : [ 'settings' ];
+		$page_raw = isset( $_GET['page'] ) ? wp_unslash( $_GET['page'] ) : '';
+		$page_parts = $page_raw !== '' ? explode( '&', $page_raw, 2 ) : [ '' ];
+		$page_slug = $page_parts[0] !== '' ? sanitize_key( $page_parts[0] ) : '';
 
 		// settings pages?
-		if ( preg_match( '/^(toplevel|lightbox)_page_responsive-lightbox-(' . implode( '|', $tab_keys ) . ')$/', $page ) === 1 ) {
+		if ( $page_slug === 'responsive-lightbox-settings' ) {
+			wp_enqueue_script( 'responsive-lightbox-admin-theme', RESPONSIVE_LIGHTBOX_URL . '/js/admin-theme.js', [], $this->defaults['version'] );
 			wp_enqueue_script( 'responsive-lightbox-admin-settings', RESPONSIVE_LIGHTBOX_URL . '/js/admin-settings.js', [ 'jquery' ], $this->defaults['version'] );
 
 			// prepare script data
@@ -1624,12 +1637,13 @@ class Responsive_Lightbox {
 
 			wp_enqueue_style( 'responsive-lightbox-admin', RESPONSIVE_LIGHTBOX_URL . '/css/admin.css', [], $this->defaults['version'] );
 			wp_enqueue_style( 'responsive-lightbox-admin-settings', RESPONSIVE_LIGHTBOX_URL . '/css/admin-settings.css', [ 'responsive-lightbox-admin' ], $this->defaults['version'] );
-		// galleries?
-		} elseif ( in_array( $page, [ 'post.php', 'post-new.php' ], true ) && get_post_type() === 'rl_gallery' || ( $page === 'edit.php' && $typenow === 'rl_gallery' ) ) {
+		// gallery editor screens
+		} elseif ( in_array( $page, [ 'post.php', 'post-new.php' ], true ) && get_post_type() === 'rl_gallery' ) {
 			wp_enqueue_media();
 
 			wp_enqueue_script( 'responsive-lightbox-admin-select2', RESPONSIVE_LIGHTBOX_URL . '/assets/select2/select2.full' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ], '4.1.0' );
-			wp_enqueue_script( 'responsive-lightbox-admin-galleries', RESPONSIVE_LIGHTBOX_URL . '/js/admin-galleries.js', [ 'jquery', 'underscore', 'wp-color-picker', 'jquery-ui-sortable' ], $this->defaults['version'] );
+			wp_enqueue_script( 'responsive-lightbox-admin-theme', RESPONSIVE_LIGHTBOX_URL . '/js/admin-theme.js', [], $this->defaults['version'] );
+			wp_enqueue_script( 'responsive-lightbox-admin-galleries', RESPONSIVE_LIGHTBOX_URL . '/js/admin-galleries.js', [ 'jquery', 'underscore', 'jquery-ui-sortable' ], $this->defaults['version'] );
 
 			// get fields
 			$fields = $this->galleries->get_data( 'fields' );
@@ -1662,10 +1676,24 @@ class Responsive_Lightbox {
 
 			wp_add_inline_script( 'responsive-lightbox-admin-galleries', 'var rlArgsGalleries = ' . wp_json_encode( $script_data ) . ";\n", 'before' );
 
-			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_style( 'responsive-lightbox-admin', RESPONSIVE_LIGHTBOX_URL . '/css/admin.css', [], $this->defaults['version'] );
 			wp_enqueue_style( 'responsive-lightbox-admin-select2', RESPONSIVE_LIGHTBOX_URL . '/assets/select2/select2' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', [], '4.1.0' );
 			wp_enqueue_style( 'responsive-lightbox-admin-galleries', RESPONSIVE_LIGHTBOX_URL . '/css/admin-galleries.css', [], $this->defaults['version'] );
+		// gallery list screen
+		} elseif ( $page === 'edit.php' && $typenow === 'rl_gallery' ) {
+			wp_enqueue_style( 'responsive-lightbox-admin', RESPONSIVE_LIGHTBOX_URL . '/css/admin.css', [], $this->defaults['version'] );
+
+			// Keep thumbnail column layout without loading full gallery editor styles on list table screens.
+			wp_register_style( 'responsive-lightbox-admin-galleries-list', false );
+			wp_enqueue_style( 'responsive-lightbox-admin-galleries-list' );
+			wp_add_inline_style(
+				'responsive-lightbox-admin-galleries-list',
+				'.wp-list-table .column-image { width: 80px; }' .
+				'.wp-list-table .column-image .media-icon { position: relative; overflow: hidden; text-align: center; height: 62px; }' .
+				'.wp-list-table .column-image img { position: absolute; left: 50%; top: 50%; height: 100%; width: auto; transform: translate(-50%, -50%); }' .
+				'.wp-list-table .column-image img.format-portrait { width: 100%; height: auto; }' .
+				'.wp-list-table .column-image span { display: block; }'
+			);
 		// plugins?
 		} elseif ( $page === 'plugins.php' ) {
 			add_thickbox();
@@ -2147,6 +2175,55 @@ class Responsive_Lightbox {
 			return false;
 
 		return [ 'r' => hexdec( $r ), 'g' => hexdec( $g ), 'b' => hexdec( $b ) ];
+	}
+
+	/**
+	 * Check rate limit for AJAX actions to prevent abuse.
+	 *
+	 * @param string $action The action name to rate limit.
+	 * @param int $max_requests Maximum number of requests allowed in time window.
+	 * @param int $time_window Time window in seconds.
+	 * @return bool True if request is allowed, false if rate limit exceeded.
+	 */
+	public function check_rate_limit( $action, $max_requests = 30, $time_window = 60 ) {
+		$current_user_id = get_current_user_id();
+
+		// skip rate limiting for administrators
+		if ( $current_user_id && current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		// Get client IP with fallbacks for various server configurations
+		$client_ip = '127.0.0.1';
+		if ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+			$client_ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			// Handle proxied requests - extract first IP if multiple are present
+			$forwarded_ips = explode( ',', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) );
+			$client_ip = trim( $forwarded_ips[0] );
+		} elseif ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+			$client_ip = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) );
+		}
+
+		// Validate IP address format
+		if ( ! filter_var( $client_ip, FILTER_VALIDATE_IP ) ) {
+			$client_ip = '127.0.0.1';
+		}
+
+		$transient_key = 'rl_rate_limit_' . $action . '_' . ( $current_user_id ? $current_user_id : md5( $client_ip ) );
+		$requests = get_transient( $transient_key );
+
+		if ( false === $requests ) {
+			set_transient( $transient_key, 1, $time_window );
+			return true;
+		}
+
+		if ( $requests >= $max_requests ) {
+			return false;
+		}
+
+		set_transient( $transient_key, $requests + 1, $time_window );
+		return true;
 	}
 }
 

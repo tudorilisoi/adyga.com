@@ -18,21 +18,49 @@ if ( class_exists( 'QuadLayers\\WP_Notice_Plugin_Promote\\Load' ) ) {
 		define( 'QLWAPP_PROMOTE_PREMIUM_SELL_URL', 'https://quadlayers.com/products/whatsapp-chat/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=premium_upgrade&utm_content=more_info_button' );
 		define( 'QLWAPP_PROMOTE_PREMIUM_INSTALL_URL', 'https://quadlayers.com/products/whatsapp-chat/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=premium_upgrade&utm_content=more_info_button' );
 		/**
-		 * Notice cross sell 1
+		 * Notice premium sell - WhatsApp Bots
 		 */
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_1_SLUG', 'ai-copilot' );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_1_NAME', 'AI Copilot' );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_1_DESCRIPTION', esc_html__( 'Boost your productivity in WordPress content creation with AI-driven tools, automated content generation, and enhanced editor utilities.', 'wp-whatsapp-chat' ) );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_1_URL', 'https://quadlayers.com/products/ai-copilot/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=cross_sell&utm_content=more_info_button' );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_1_LOGO_SRC', plugins_url( '/assets/backend/img/ai-copilot.png', QLWAPP_PLUGIN_FILE ) );
+		define( 'QLWAPP_PROMOTE_PREMIUM_BOTS_SLUG', 'wp-whatsapp-chat-bots' );
+		define( 'QLWAPP_PROMOTE_PREMIUM_BOTS_NAME', 'Social Chat Bots' );
+		define(
+			'QLWAPP_PROMOTE_PREMIUM_BOTS_TITLE',
+			wp_kses(
+				sprintf(
+					'<h3 style="margin:0">%s</h3>',
+					esc_html__( 'Overwhelmed by WhatsApp Support Requests?', 'wp-whatsapp-chat' )
+				),
+				array(
+					'h3' => array(
+						'style' => array()
+					)
+				)
+			)
+		);
+		define( 'QLWAPP_PROMOTE_PREMIUM_BOTS_DESCRIPTION', esc_html__( 'Transform your customer service with AI-powered conversational bots. No coding required—build automated flows in minutes with our visual drag-and-drop builder. Capture leads, qualify customers, and scale support without losing the human touch.', 'wp-whatsapp-chat' ) );
+		define( 'QLWAPP_PROMOTE_PREMIUM_BOTS_URL', 'https://quadlayers.com/landing/whatsapp-chat-bots/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=premium_bots&utm_content=more_info_button' );
+		define( 'QLWAPP_PROMOTE_PREMIUM_BOTS_INSTALL_LABEL', esc_html__( 'Claim Early Access', 'wp-whatsapp-chat' ) );
 		/**
-		 * Notice cross sell 2
+		 * Notice premium sell - Founder Users Program
 		 */
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_2_SLUG', 'insta-gallery' );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_2_NAME', 'Instagram Feed Gallery' );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_2_DESCRIPTION', esc_html__( 'Instagram Feed Gallery is a user-friendly WordPress plugin. It simplifies integration, speeds up site updates, and aligns with the rapidly evolving social media landscape.', 'wp-whatsapp-chat' ) );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_2_URL', 'https://quadlayers.com/products/instagram-feed-gallery/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=cross_sell&utm_content=more_info_button' );
-		define( 'QLWAPP_PROMOTE_CROSS_INSTALL_2_LOGO_SRC', plugins_url( '/assets/backend/img/insta-gallery.jpg', QLWAPP_PLUGIN_FILE ) );
+		define( 'QLWAPP_PROMOTE_FOUNDER_PROGRAM_SLUG', 'wp-whatsapp-chat-founder-program' );
+		define( 'QLWAPP_PROMOTE_FOUNDER_PROGRAM_NAME', 'Founder Users Program' );
+		define(
+			'QLWAPP_PROMOTE_FOUNDER_PROGRAM_TITLE',
+			wp_kses(
+				sprintf(
+					'<h3 style="margin:0">%s</h3>',
+					esc_html__( 'Shape the Future of Social Chat', 'wp-whatsapp-chat' )
+				),
+				array(
+					'h3' => array(
+						'style' => array()
+					)
+				)
+			)
+		);
+		define( 'QLWAPP_PROMOTE_FOUNDER_PROGRAM_DESCRIPTION', esc_html__( 'Join our Founder Users Program and help build Social Chat Pro alongside our team. Get lifetime pricing, influence our roadmap, and access new features before public release. The best software is built with users, not just for them.', 'wp-whatsapp-chat' ) );
+		define( 'QLWAPP_PROMOTE_FOUNDER_PROGRAM_URL', 'https://quadlayers.com/landing/whatsapp-chat-founder-users-program/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=founder_program&utm_content=more_info_button' );
+		define( 'QLWAPP_PROMOTE_FOUNDER_PROGRAM_INSTALL_LABEL', esc_html__( 'Lock In Lifetime Pricing', 'wp-whatsapp-chat' ) );
 
 
 		new \QuadLayers\WP_Notice_Plugin_Promote\Load(
@@ -42,12 +70,18 @@ if ( class_exists( 'QuadLayers\\WP_Notice_Plugin_Promote\\Load' ) ) {
 					'type'               => 'ranking',
 					'notice_delay'       => 0,
 					'notice_logo'        => QLWAPP_PROMOTE_LOGO_SRC,
-					'notice_description' => sprintf(
-									esc_html__( 'Hello! %2$s We\'ve spent countless hours developing this free plugin for you and would really appreciate it if you could drop us a quick rating. Your feedback is extremely valuable to us. %3$s It helps us to get better. Thanks for using %1$s.', 'wp-whatsapp-chat' ),
-									'<b>'.QLWAPP_PLUGIN_NAME.'</b>',
-									'<span style="font-size: 16px;">🙂</span>',
-									'<br>'
+					'notice_title'       => wp_kses(
+						sprintf(
+							'<h3 style="margin:0">%s</h3>',
+							esc_html__( 'Enjoying Social Chat?', 'wp-whatsapp-chat' )
+						),
+						array(
+							'h3' => array(
+								'style' => array()
+							)
+						)
 					),
+					'notice_description' => esc_html__( 'A quick 5-star review helps us keep improving the plugin and supporting users like you. It only takes 2 seconds — thank you!', 'wp-whatsapp-chat' ),
 					'notice_link'        => QLWAPP_PROMOTE_REVIEW_URL,
 					'notice_more_link'   => 'https://quadlayers.com/account/support/?utm_source=qlwapp_plugin&utm_medium=dashboard_notice&utm_campaign=support&utm_content=report_bug_button',
 					'notice_more_label'  => esc_html__(
@@ -64,9 +98,16 @@ if ( class_exists( 'QuadLayers\\WP_Notice_Plugin_Promote\\Load' ) ) {
 					),
 					'notice_delay'       => WEEK_IN_SECONDS,
 					'notice_logo'        => QLWAPP_PROMOTE_LOGO_SRC,
-					'notice_title'       => esc_html__(
-						'Hello! We have a special gift!',
-						'wp-whatsapp-chat'
+					'notice_title'       => wp_kses(
+						sprintf(
+							'<h3 style="margin:0">%s</h3>',
+							esc_html__( 'Save 20% today!', 'wp-whatsapp-chat' )
+						),
+						array(
+							'h3' => array(
+								'style' => array()
+							)
+						)
 					),
 					'notice_description' => sprintf(
 						esc_html__(
@@ -80,32 +121,24 @@ if ( class_exists( 'QuadLayers\\WP_Notice_Plugin_Promote\\Load' ) ) {
 					'notice_more_link'   => QLWAPP_PROMOTE_PREMIUM_SELL_URL,
 				),
 				array(
-					'plugin_slug'        => QLWAPP_PROMOTE_CROSS_INSTALL_1_SLUG,
-					'notice_delay'       => MONTH_IN_SECONDS * 3,
-					'notice_logo'        => QLWAPP_PROMOTE_CROSS_INSTALL_1_LOGO_SRC,
-					'notice_title'       => sprintf(
-						esc_html__(
-							'Hello! We want to invite you to try our %s plugin!',
-							'wp-whatsapp-chat'
-						),
-						QLWAPP_PROMOTE_CROSS_INSTALL_1_NAME
-					),
-					'notice_description' => QLWAPP_PROMOTE_CROSS_INSTALL_1_DESCRIPTION,
-					'notice_more_link'   => QLWAPP_PROMOTE_CROSS_INSTALL_1_URL
+					'plugin_slug'           => QLWAPP_PROMOTE_PREMIUM_BOTS_SLUG,
+					'plugin_install_link'   => QLWAPP_PROMOTE_PREMIUM_BOTS_URL,
+					'plugin_install_label'  => QLWAPP_PROMOTE_PREMIUM_BOTS_INSTALL_LABEL,
+					'notice_delay'          => MONTH_IN_SECONDS * 3,
+					'notice_logo'           => QLWAPP_PROMOTE_LOGO_SRC,
+					'notice_title'          => QLWAPP_PROMOTE_PREMIUM_BOTS_TITLE,
+					'notice_description'    => QLWAPP_PROMOTE_PREMIUM_BOTS_DESCRIPTION,
+					'notice_more_link'      => QLWAPP_PROMOTE_PREMIUM_BOTS_URL
 				),
 				array(
-					'plugin_slug'        => QLWAPP_PROMOTE_CROSS_INSTALL_2_SLUG,
-					'notice_delay'       => MONTH_IN_SECONDS * 6,
-					'notice_logo'        => QLWAPP_PROMOTE_CROSS_INSTALL_2_LOGO_SRC,
-					'notice_title'       => sprintf(
-						esc_html__(
-							'Hello! We want to invite you to try our %s plugin!',
-							'wp-whatsapp-chat'
-						),
-						QLWAPP_PROMOTE_CROSS_INSTALL_2_NAME
-					),
-					'notice_description' => QLWAPP_PROMOTE_CROSS_INSTALL_2_DESCRIPTION,
-					'notice_more_link'   => QLWAPP_PROMOTE_CROSS_INSTALL_2_URL
+					'plugin_slug'           => QLWAPP_PROMOTE_FOUNDER_PROGRAM_SLUG,
+					'plugin_install_link'   => QLWAPP_PROMOTE_FOUNDER_PROGRAM_URL,
+					'plugin_install_label'  => QLWAPP_PROMOTE_FOUNDER_PROGRAM_INSTALL_LABEL,
+					'notice_delay'          => MONTH_IN_SECONDS * 6,
+					'notice_logo'           => QLWAPP_PROMOTE_LOGO_SRC,
+					'notice_title'          => QLWAPP_PROMOTE_FOUNDER_PROGRAM_TITLE,
+					'notice_description'    => QLWAPP_PROMOTE_FOUNDER_PROGRAM_DESCRIPTION,
+					'notice_more_link'      => QLWAPP_PROMOTE_FOUNDER_PROGRAM_URL
 				),
 			)
 		);

@@ -34,6 +34,25 @@ function qlwapp_get_replacements() {
 	);
 }
 
+function qlwapp_get_woocommerce_replacements() {
+
+	global $product;
+
+	$replacements = array();
+
+	if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+		return $replacements;
+	}
+
+	$replacements['{PRODUCT_TITLE}'] = $product->get_name();
+	$replacements['{PRODUCT_URL}']   = get_permalink( $product->get_id() );
+	$replacements['{PRODUCT_PRICE}'] = strip_tags( wc_price( wc_get_price_to_display( $product ) ) );
+	$replacements['{PRODUCT_SKU}']   = $product->get_sku();
+	$replacements['{PRODUCT_ID}']    = $product->get_id();
+
+	return $replacements;
+}
+
 function qlwapp_get_replacements_text() {
 
 	$replacements = qlwapp_get_replacements();
@@ -41,9 +60,28 @@ function qlwapp_get_replacements_text() {
 	return implode( ' ', array_keys( $replacements ) );
 }
 
+function qlwapp_get_woocommerce_replacements_text() {
+
+	$replacements = array(
+		'{PRODUCT_TITLE}',
+		'{PRODUCT_URL}',
+		'{PRODUCT_PRICE}',
+		'{PRODUCT_SKU}',
+		'{PRODUCT_ID}',
+	);
+
+	return implode( ' ', $replacements );
+}
+
 function qlwapp_replacements_vars( $text ) {
 
 	$replacements = qlwapp_get_replacements();
+
+	// Merge WooCommerce replacements if available.
+	$wc_replacements = qlwapp_get_woocommerce_replacements();
+	if ( ! empty( $wc_replacements ) ) {
+		$replacements = array_merge( $replacements, $wc_replacements );
+	}
 
 	return str_replace( array_keys( $replacements ), array_values( $replacements ), $text );
 }

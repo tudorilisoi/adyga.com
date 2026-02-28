@@ -3,8 +3,8 @@ Contributors: dfactory
 Donate link: http://www.dfactory.co/
 Tags: gallery, galleries, lightbox, image, images
 Requires at least: 6.0
-Tested up to: 6.9
-Stable tag: 2.7.0
+Tested up to: 6.9.1
+Stable tag: 2.7.4
 Requires PHP: 7.0
 License: MIT License
 License URI: http://opensource.org/licenses/MIT
@@ -139,6 +139,28 @@ Responsive Lightbox and Gallery plugin comes with many styles and effects alread
 2. screenshot-2.jpg
 
 == Changelog ==
+
+= 2.7.4 =
+* Fix: Make gallery title sorting independent of lightbox title setting
+* Fix: Guard early user option reads in folders to prevent undefined array key errors
+* Fix: Guard early folder user option reads for better error handling
+
+= 2.7.3 =
+* Fix: Prevent bootstrap fatal on malformed options
+* Fix: Harden option/meta type guards to prevent fatal errors when stored option/meta values are non-array
+
+= 2.7.2 =
+* New: Media Folders sticky sidebar with collapsible panel, drag-to-resize, and persistent collapse state
+* New: Persist folders tree open/close state and selected folder across page reloads
+* Fix: Preserve GLightbox caption links on mobile devices
+* Fix: Sync media grid folder counters and upload folder target after attachment changes
+
+= 2.7.1 =
+* New: Gallery UI revamp with improved editor reliability
+* Fix: Media frame reuse hardening for gallery editor stability
+* Fix: Lightbox settings now save boolean fields correctly
+* Fix: Handle array gallery include/exclude attrs safely
+* Fix: Preserve image alt text in PrettyPhoto galleries
 
 = 2.7.0 =
 * New: Complete Settings API revamp with modern UI theming
@@ -595,5 +617,5 @@ Initial release
 
 == Upgrade Notice ==
 
-= 2.7.0 =
-Major update with complete Settings revamp, modern UI theming and improved security.
+= 2.7.4 =
+Important fixes for gallery title sorting and folder option handling to prevent errors

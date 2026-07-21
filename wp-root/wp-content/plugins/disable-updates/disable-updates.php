@@ -4,7 +4,7 @@
 Plugin Name:    Disable Updates
 Plugin URI:     https://wordpress.org/plugins/disable-updates/
 Description:    A simple plugin that prevents updating the WordPress core, plugins and themes.
-Version:        1.4.2
+Version:        1.4.3
 Author:         Johan van der Wijk
 Author URI:     https://vanderwijk.com/
 License:        GPL-2.0+

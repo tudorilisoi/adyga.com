@@ -62,6 +62,7 @@ $rev_dir = is_rtl() ? 'ltr' : 'rlt';
     <?php $this->hidden('sender_email'); ?>
     <?php $this->hidden('sender_name'); ?>
     <?php $this->hidden('track'); ?>
+    <?php $this->hidden('email_id'); ?>
 
     <div id="tnpb-main">
 
@@ -87,6 +88,7 @@ $rev_dir = is_rtl() ? 'ltr' : 'rlt';
                     </td>
                     <td id="tnpc-subject-icons" style="white-space: nowrap">
                         <a href="#subject-ideas-modal" rel="modal:open"><i class="far fa-lightbulb tnp-suggest-subject"></i></a>
+                        <a href="#" id="tnpc-subject-ai-button"><i class="far fa-smile"></i></a>
                         <?php do_action('newsletter_composer_subject'); ?>
                     </td>
                 </tr>
@@ -104,17 +106,19 @@ $rev_dir = is_rtl() ? 'ltr' : 'rlt';
 
             <div class="tnpb-actions">
 
-                <a class="button-primary" href="#templates-modal" rel="modal:open" title="<?php esc_attr_e('Templates', 'newsletter') ?>"><i class="far fa-file"></i></a>
+                <a href="#templates-modal" rel="modal:open" title="<?php esc_attr_e('Templates', 'newsletter') ?>"><i class="far fa-file"></i></a>
 
-                <a class="button-primary" href="#tnpc-placeholders-modal" rel="modal:open" title="<?php esc_attr_e('Placeholders', 'newsletter') ?>"><i class="fas fa-user"></i></a>
+                <a href="#tnpc-placeholders-modal" rel="modal:open" title="<?php esc_attr_e('Placeholders', 'newsletter') ?>"><i class="fas fa-user"></i></a>
 
-                <a class="button-primary" href="#tnpc-attachment-modal" rel="modal:open" title="<?php esc_attr_e('Attachments', 'newsletter') ?>"><i class="fas fa-paperclip"></i></a>
+                <a href="#tnpc-attachment-modal" rel="modal:open" title="<?php esc_attr_e('Attachments', 'newsletter') ?>"><i class="fas fa-paperclip"></i></a>
 
-                <a class="button-primary" href="#test-newsletter-modal" rel="modal:open" title="<?php esc_attr_e('Test', 'newsletter') ?>"><i class="fas fa-paper-plane"></i></a>
+                <a href="#test-newsletter-modal" rel="modal:open" title="<?php esc_attr_e('Test', 'newsletter') ?>"><i class="fas fa-paper-plane"></i></a>
 
-                <span class="button-primary" id="tnpc-view-mode" title="<?php esc_attr_e('Switch preview mode', 'newsletter') ?>">
+                <span id="tnpc-view-mode" title="<?php esc_attr_e('Switch preview mode', 'newsletter') ?>">
                     <i id="tnpc-view-mode-icon" class="fas fa-desktop"></i>
                 </span>
+
+                <?php do_action('newsletter_composer_actions'); ?>
 
             </div>
 
@@ -210,17 +214,21 @@ $rev_dir = is_rtl() ? 'ltr' : 'rlt';
 </div>
 
 <script type="text/javascript">
-    TNP_PLUGIN_URL = "<?php echo esc_js(Newsletter::plugin_url()) ?>";
-    TNP_HOME_URL = "<?php echo esc_js(home_url('/', is_ssl() ? 'https' : 'http')) ?>";
-    tnp_context_type = "<?php echo esc_js($context_type) ?>";
-    tnp_nonce = '<?php echo esc_js(wp_create_nonce('save')) ?>';
+    var TNP_PLUGIN_URL = '<?php echo esc_js(Newsletter::plugin_url()) ?>';
+    var TNP_HOME_URL = '<?php echo esc_js(home_url('/', is_ssl() ? 'https' : 'http')) ?>';
+    var tnp_context_type = "<?php echo esc_js($context_type) ?>";
+    var tnp_nonce = '<?php echo esc_js(wp_create_nonce('save')) ?>';
+    var tnp_ai_nonce = '<?= esc_js(wp_create_nonce('tnp-ai')) ?>';
 </script>
 
 <?php
+
 wp_enqueue_script('tnp-composer', plugins_url('newsletter') . '/composer/composer.js', ['jquery'], NEWSLETTER_VERSION);
+wp_enqueue_script('tnp-composer-ai', plugins_url('newsletter') . '/composer/composer-ai.js', ['jquery'], NEWSLETTER_VERSION);
 include __DIR__ . '/modals/test.php';
 include __DIR__ . '/modals/attachment.php';
 include __DIR__ . '/modals/subjects.php';
+include __DIR__ . '/modals/subjects-ai.php';
 include __DIR__ . '/modals/placeholders.php';
 include __DIR__ . '/modals/templates.php';
 

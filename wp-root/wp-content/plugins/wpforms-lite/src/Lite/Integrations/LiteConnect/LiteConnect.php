@@ -59,6 +59,10 @@ class LiteConnect extends \WPForms\Integrations\LiteConnect\LiteConnect {
 
 		parent::load();
 
+		// Register outside the cap check — wizard REST calls have no current user
+		// at plugins_loaded, so this stamping filter must always be attached.
+		add_filter( 'wpforms_update_settings', [ $this, 'update_enabled_settings' ] );
+
 		// Do not load if user doesn't have permissions to update settings.
 		if ( ! wpforms_current_user_can( wpforms_get_capability_manage_options() ) ) {
 			return;
@@ -77,6 +81,10 @@ class LiteConnect extends \WPForms\Integrations\LiteConnect\LiteConnect {
 
 		// We always need to instance the Integration class as part of the load process for the Lite Connect integration.
 		$this->integration = new Integration();
+
+		if ( is_admin() ) {
+			new Admin();
+		}
 	}
 
 	/**
@@ -88,10 +96,6 @@ class LiteConnect extends \WPForms\Integrations\LiteConnect\LiteConnect {
 
 		// Add Lite Connect option to settings.
 		add_filter( 'wpforms_settings_defaults', [ $this, 'settings_option' ] );
-
-		// Automatically save the timestamp when Lite Connect was enabled first time.
-		add_filter( 'wpforms_update_settings', [ $this, 'update_enabled_settings' ] );
-
 	}
 
 	/**
@@ -116,7 +120,7 @@ class LiteConnect extends \WPForms\Integrations\LiteConnect\LiteConnect {
 				'input-attr'    => 'disabled',
 				'desc-on'       => sprintf(
 					wp_kses( /* translators: %s - upgrade to WPForms Pro landing page URL. */
-						__( '<strong>Your form entries are not being stored locally, but are backed up remotely.</strong> If you <a href="%s" target="_blank" rel="noopener noreferrer" class="wpforms-upgrade-modal">upgrade to WPForms PRO</a>, you can restore your entries and they’ll be available in the WordPress dashboard.', 'wpforms-lite' ),
+						__( '<strong>Your form entries are not being stored locally, but are backed up remotely.</strong> If you <a href="%s" target="_blank" rel="noopener noreferrer" class="wpforms-upgrade-modal">upgrade to WPForms PRO</a>, you can restore your entries and they’ll be available in the WordPress dashboard. Entry backups expire after 1 year.', 'wpforms-lite' ),
 						[
 							'a'      => [
 								'href'   => [],

@@ -397,6 +397,9 @@ class NewsletterModule extends NewsletterModuleBase {
     }
 
     function set_user_cookie($user) {
+        if (!$user) {
+            return;
+        }
         setcookie('newsletter', $this->get_user_key($user), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
     }
 
@@ -491,7 +494,7 @@ class NewsletterModule extends NewsletterModuleBase {
         //if (is_null($customfields)) {
         $customfields = [];
         $options = $this->get_options('customfields');
-        $main_options = $this->get_options('customfields', '');
+        $main_options = $this->get_main_options('customfields');
         for ($i = 1; $i <= NEWSLETTER_PROFILE_MAX; $i++) {
             $prefix = 'profile_' . $i;
             if (!empty($main_options[$prefix])) {
@@ -1215,15 +1218,16 @@ class NewsletterModule extends NewsletterModuleBase {
     }
 
     static function get_signature($text) {
-        $key = NewsletterStatistics::instance()->options['key'];
+        $key = NewsletterStatistics::instance()->get_main_option('key');
         return md5($text . $key);
     }
 
     static function check_signature($text, $signature) {
-        if (empty($signature)) {
+        $signature = trim($signature);
+        if (!$signature) {
             return false;
         }
-        $key = NewsletterStatistics::instance()->options['key'];
+        $key = NewsletterStatistics::instance()->get_main_option('key');
         return md5($text . $key) === $signature;
     }
 

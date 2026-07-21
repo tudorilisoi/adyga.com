@@ -1,0 +1,31 @@
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Start upgrade from 9.1.5
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Array
+(
+)
+
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.2 MB/256 MB - gabriel > Backing up options of 9.1.5
+25-03-2026 16:28:06 - INFO  - 9.1.8 - 7.5 MB/256 MB - gabriel > End

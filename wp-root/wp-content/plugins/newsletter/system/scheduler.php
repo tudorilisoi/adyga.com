@@ -11,7 +11,7 @@ wp_enqueue_script('tnp-chart');
 
 if ($controls->is_action('reset')) {
     $this->reset_cron_stats();
-    $controls->add_message_done();
+    $controls->add_message('Statistics reset, now wait at least one hour to see new valid data');
 }
 
 if ($controls->is_action('reschedule')) {
@@ -22,7 +22,7 @@ if ($controls->is_action('reschedule')) {
 
 if ($controls->is_action('trigger')) {
     wp_clear_scheduled_hook('newsletter');
-    wp_schedule_event(time() + NEWSLETTER_CRON_INTERVAL, 'newsletter', 'newsletter');
+    wp_schedule_event(time() + NEWSLETTER_REAL_CRON_INTERVAL, 'newsletter', 'newsletter');
     Newsletter::instance()->hook_newsletter();
     $controls->add_message_done();
 }
@@ -58,10 +58,7 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
     <?php include NEWSLETTER_ADMIN_HEADER; ?>
 
     <div id="tnp-heading">
-
-<!--        <h2><?php esc_html_e('System', 'newsletter') ?></h2>-->
         <?php include __DIR__ . '/nav.php' ?>
-
     </div>
 
     <div id="tnp-body">
@@ -71,6 +68,8 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
 
         <form method="post" action="">
             <?php $controls->init(); ?>
+
+            <p><?php $controls->btn('reset', __('Reset statistics', 'newsletter'), ['confirm' => true, 'secondary' => true]); ?></p>
 
 
             <div class="tnp-dashboard">
@@ -183,6 +182,15 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
                                     <?php $controls->echo_date($this->get_last_cron_call()) ?>
                                 </td>
                             </tr>
+
+                            <tr>
+                                <td>Scheduler working?</td>
+                                <td class="status">&nbsp;</td>
+                                <td>
+                                    <?php echo get_transient('doing_cron') ? 'Yes' : 'No'; ?>
+                                </td>
+                            </tr>
+
                         </table>
                     </div>
                 </div>
@@ -239,9 +247,6 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
                                     new Chart('tnp-cron-chart', cronChartConfig);
                                 });
                             </script>
-
-                            <p><?php $controls->button_reset() ?></p>
-
 
                         <?php } ?>
                     </div>
@@ -356,8 +361,21 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
                                 </td>
                             </tr>
 
+                            <tr>
+                                <td><code>NEWSLETTER_REAL_CRON_INTERVAL</code></td>
+                                <td class="status">
+
+                                </td>
+                                <td>
+                                    <?php echo (int)NEWSLETTER_REAL_CRON_INTERVAL, ' seconds'; ?>
+                                </td>
+                            </tr>
+
                             <?php
                             $condition = NEWSLETTER_CRON_INTERVAL == 300 ? 1 : 2;
+                            if (NEWSLETTER_CRON_INTERVAL < 60 || NEWSLETTER_CRON_INTERVAL > 900) {
+                                $condition = 0;
+                            }
                             ?>
                             <tr>
                                 <td><code>NEWSLETTER_CRON_INTERVAL</code></td>
@@ -365,8 +383,12 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
                                     <?php $this->condition_flag($condition) ?>
                                 </td>
                                 <td>
-                                    <?php echo NEWSLETTER_CRON_INTERVAL, ' seconds'; ?>
+                                    <?php echo (int)NEWSLETTER_CRON_INTERVAL, ' seconds'; ?>
                                     <br><br>
+                                    <?php if ($condition == 0) { ?>
+                                        <span style="color: red; font-weight: bold;">The interval is too short, se it to at least 60 seconds.</span>
+                                        <br><br>
+                                    <?php } ?>
                                     How often the Newsletter engine should be activated. Default 300 seconds. Different value can be set on your <code>wp-config.php</code>
                                     (not recommended).
                                 </td>
@@ -455,6 +477,23 @@ if (isset($_GET['debug']) || !defined('Crontrol\WP_CRONTROL_VERSION')) {
                                     your site background jobs.
                                 </td>
                             </tr>
+
+                            <?php
+                            if (is_plugin_active('litespeed-cache/litespeed-cache.php')) {
+                                ?>
+                                <tr>
+                                    <td>LiteSpeed Cache plugin</td>
+                                    <td class="status">
+                                        <?php $this->condition_flag(2); ?>
+                                    </td>
+                                    <td>
+                                        If the Object Cache is active check if the Redis or Memcached parameters are set correctly and
+                                        the connection is ok, otherwise the scheduler will suffer serious problems (skipped jobs and
+                                        execution of only one job per run).
+                                    </td>
+                                </tr>
+                            <?php } ?>
+
                         </table>
                     </div>
                 </div>

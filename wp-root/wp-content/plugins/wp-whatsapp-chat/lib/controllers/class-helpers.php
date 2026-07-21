@@ -54,30 +54,38 @@ class Helpers {
 			$default_contact['id'] = null;
 		}
 
+		$ab_upgrade_group = get_option( 'qlwapp_ab_upgrade_group' );
+		if ( false === $ab_upgrade_group ) {
+			$ab_upgrade_group = ( wp_rand( 0, 1 ) === 0 ) ? 'control' : 'variant';
+			update_option( 'qlwapp_ab_upgrade_group', $ab_upgrade_group, true );
+		}
+
 		wp_localize_script(
 			'qlwapp-helpers',
 			'qlwappHelpers',
 			array(
-				'WP_LANGUAGE'                         => get_locale(),
-				'WP_STATUSES'                         => get_post_statuses(),
-				'WP_VERSION'                          => $wp_version,
-				'QLWAPP_PLUGIN_URL'                   => plugins_url( '/', QLWAPP_PLUGIN_FILE ),
-				'QLWAPP_PLUGIN_NAME'                  => QLWAPP_PLUGIN_NAME,
-				'QLWAPP_PLUGIN_VERSION'               => QLWAPP_PLUGIN_VERSION,
-				'QLWAPP_PLUGIN_FILE'                  => QLWAPP_PLUGIN_FILE,
-				'QLWAPP_PLUGIN_DIR'                   => QLWAPP_PLUGIN_DIR,
-				'QLWAPP_TIMEZONE_OPTIONS'             => $timezone_options,
-				'QLWAPP_MESSAGE_REPLACEMENTS'         => qlwapp_get_replacements_text(),
-				'QLWAPP_WOOCOMMERCE_REPLACEMENTS'     => qlwapp_get_woocommerce_replacements_text(),
-				'QLWAPP_IS_WOOCOMMERCE_ACTIVE'        => class_exists( 'WooCommerce' ),
-				'QLWAPP_DEFAULT_CONTACT'              => $default_contact,
-				'QLWAPP_DEFAULT_BUTTON'               => $default_button,
-				'QLWAPP_DEFAULT_BOX'                  => $default_box,
-				'QLWAPP_DEFAULT_DISPLAY'              => $default_display,
-				'QLWAPP_DEFAULT_SCHEME'               => $default_scheme,
-				'QLWAPP_DEFAULT_SETTINGS'             => $default_settings,
-				'QLWAPP_DEFAULT_WOOCOMMERCE'          => $default_woocommerce,
-				'QLWAPP_DEFAULT_WOOCOMMERCE_ARCHIVES' => $default_woocommerce_archives,
+				'WP_LANGUAGE'                           => get_locale(),
+				'WP_STATUSES'                           => get_post_statuses(),
+				'WP_VERSION'                            => $wp_version,
+				'QLWAPP_PLUGIN_URL'                     => plugins_url( '/', QLWAPP_PLUGIN_FILE ),
+				'QLWAPP_PLUGIN_NAME'                    => QLWAPP_PLUGIN_NAME,
+				'QLWAPP_PLUGIN_VERSION'                 => QLWAPP_PLUGIN_VERSION,
+				'QLWAPP_PLUGIN_FILE'                    => QLWAPP_PLUGIN_FILE,
+				'QLWAPP_PLUGIN_DIR'                     => QLWAPP_PLUGIN_DIR,
+				'QLWAPP_TIMEZONE_OPTIONS'               => $timezone_options,
+				'QLWAPP_MESSAGE_REPLACEMENTS'           => qlwapp_get_replacements_text(),
+				'QLWAPP_WOOCOMMERCE_REPLACEMENTS'       => qlwapp_get_woocommerce_replacements_text(),
+				'QLWAPP_WOOCOMMERCE_ORDER_REPLACEMENTS' => qlwapp_get_woocommerce_order_replacements_text(),
+				'QLWAPP_IS_WOOCOMMERCE_ACTIVE'          => class_exists( 'WooCommerce' ),
+				'QLWAPP_DEFAULT_CONTACT'                => $default_contact,
+				'QLWAPP_DEFAULT_BUTTON'                 => $default_button,
+				'QLWAPP_DEFAULT_BOX'                    => $default_box,
+				'QLWAPP_DEFAULT_DISPLAY'                => $default_display,
+				'QLWAPP_DEFAULT_SCHEME'                 => $default_scheme,
+				'QLWAPP_DEFAULT_SETTINGS'               => $default_settings,
+				'QLWAPP_DEFAULT_WOOCOMMERCE'            => $default_woocommerce,
+				'QLWAPP_DEFAULT_WOOCOMMERCE_ARCHIVES'   => $default_woocommerce_archives,
+				'QLWAPP_AB_UPGRADE_GROUP'               => $ab_upgrade_group,
 			)
 		);
 	}

@@ -471,7 +471,10 @@ function lz_update_htaccess_admin(e){
 	}
 	
 	var htaccess = textarea.val();
-	htaccess = htaccess.replace(/\^.+?\(/, '^' + admin_name + '(');
+	htaccess = htaccess.replace(
+		/RewriteRule \^\(?([^\(\s]+)(?=\(-lzs|\()/g,
+		(match, current_slug) => match.replace(current_slug, admin_name)
+	);
 	textarea.val(htaccess);
 
 }
@@ -993,6 +996,7 @@ function loginizer_htaccess_rules($is_csrf = false){
 	$rule .= '<IfModule mod_rewrite.c>' . "\n";
 	$rule .= 'RewriteEngine On' . "\n";
 	$rule .= 'RewriteBase ' . $home_root . "\n\n";
+	$rule .= 'RewriteRule ^(' . preg_quote($admin_slug, '/') . '(-lzs.{20})?)$ $1/ [R=301,L]' . "\n";
 	$rule .= 'RewriteRule ^' . $admin_slug . '(-lzs.{20})?(/?)(.*) wp-admin/$3 [L]' . "\n";
 	$rule .= '</IfModule>' . "\n";
 	$rule .= '# END Loginizer' . "\n";

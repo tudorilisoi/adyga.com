@@ -49,6 +49,10 @@ class NewsletterUpgrade {
 
         wp_cache_flush();
 
+        //update_option('newsletter_engine_heartbeat', 0, false); // to have the autoload set to false once, for optimization
+        delete_option('newsletter_lock_engine');
+        update_option('newsletter_engine_lock', 0, false); // to have the autoload set to false once, for optimization
+
         if (!get_option('newsletter_install_time')) {
             update_option('newsletter_install_time', time(), false);
         }
@@ -536,6 +540,16 @@ class NewsletterUpgrade {
         delete_transient('newsletter_license_data');
         delete_transient('tnp_extensions_json');
         touch(NEWSLETTER_LOG_DIR . '/index.html');
+
+        $main_options = $this->get_option_array('newsletter_main');
+
+        if (isset($main_options['max_per_second'])) {
+            $max_per_second = intval($main_options['max_per_second']);
+            if ($max_per_second) {
+                $main_options['send_delay'] = intval(1000.0 / $max_per_second);
+                update_option('newsletter_main', $main_options);
+            }
+        }
 
         $this->logger->info('End');
     }

@@ -109,11 +109,13 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
 
         $('form.wizform').each(function ()
         {
-            $thisForm = $(this);
+            var $thisForm = $(this);
+            var pasteTimeout;
             $thisForm.find('.txturlpastecustom').on('paste change', function ()
             {
-                $thisTxtUrl = $(this);
-                setTimeout(function ()
+                var $thisTxtUrl = $(this);
+                clearTimeout(pasteTimeout);
+                pasteTimeout = setTimeout(function ()
                 {
                     var thepaste = $.trim($thisTxtUrl.val());
                     var badpaste = /<.*/i;
@@ -142,6 +144,9 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                     }
 
                 }, 100);
+            });
+            $thisForm.on('submit', function() {
+                clearTimeout(pasteTimeout);
             });
         });
 

@@ -4,8 +4,8 @@ Donate link: https://www.paypal.me/vanderwijk
 Tags: disable updates, updates, plugin update, theme update, core update
 Requires PHP: 5.6
 Requires at least: 4.6
-Tested up to: 6.9
-Stable tag: 1.4.2
+Tested up to: 7.0
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,9 @@ No, keeping WordPress up-to-date is very important for security reasons. You sho
 Yes, please use the [support forum](https://wordpress.org/support/plugin/disable-updates/) to report any issues you may have. You can submit code suggestions in the [GitHub repository](https://github.com/vanderwijk/disable-updates).
 
 == Changelog ==
+
+= 1.4.3 =
+WP 7.0 compatibility tested
 
 = 1.4.2 =
 WP 6.9 compatibility tested

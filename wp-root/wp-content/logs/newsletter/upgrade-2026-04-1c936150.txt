@@ -1,0 +1,62 @@
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.7 MB/256 MB - gabriel > Start upgrade from 9.1.8
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Array
+(
+)
+
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 9.8 MB/256 MB - gabriel > Backing up options of 9.1.8
+13-04-2026 11:38:20 - INFO  - 9.2.1 - 6969 - 10.1 MB/256 MB - gabriel > End
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 10.9 MB/256 MB - gabriel > Start upgrade from 9.2.1
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Array
+(
+)
+
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.0 MB/256 MB - gabriel > Backing up options of 9.2.1
+30-04-2026 10:43:56 - INFO  - 9.2.5 - 4310 - 11.2 MB/256 MB - gabriel > End

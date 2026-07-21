@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Contact Form 7 - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-12-08 09:44:09+0000\n"
+"PO-Revision-Date: 2026-04-20 12:39:31+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -648,17 +648,17 @@ msgstr "Cu Brevo, cea mai importantă platformă CRM și de marketing prin email
 msgid "You have not been authenticated. Make sure the provided API key is correct."
 msgstr "Nu te-ai autentificat. Asigură-te că cheia API furnizată este corectă."
 
-#: includes/mail.php:311
+#: includes/mail.php:314
 msgid "Failed to attach a file. The total file size exceeds the limit of 25 megabytes."
 msgstr "Atașarea unui fișier a eșuat. Dimensiunea totală a fișierului depășește limita de 25 megaocteți."
 
 #. translators: %s: Attachment file path.
-#: includes/mail.php:291
+#: includes/mail.php:294
 msgid "Failed to attach a file. %s is not a readable file."
 msgstr "Atașarea unui fișier a eșuat. %s nu este un fișier care poate fi citit."
 
 #. translators: %s: Attachment file path.
-#: includes/mail.php:277
+#: includes/mail.php:280
 msgid "Failed to attach a file. %s is not in the allowed directory."
 msgstr "Atașarea unui fișier a eșuat. %s nu este în directorul permis."
 
@@ -1131,7 +1131,7 @@ msgstr "Etichetă"
 
 #: modules/submit.php:56
 msgid "Submit button"
-msgstr "Buton de trimitere"
+msgstr "Buton Trimite"
 
 #: modules/submit.php:47
 msgid "submit"

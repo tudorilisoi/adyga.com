@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Gallery, Livestream and Lazy Loading with Facades
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx?ref=plugin
   Description: A multi-featured plugin to embed YouTube in WordPress. Embed a video, YouTube channel gallery, playlist, or YouTube livestream. Defer JavaScript too!
-  Version: 14.2.4
+  Version: 14.2.6
   Author: Embed Plus for YouTube Plugin Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -11,7 +11,7 @@
 
 /*
   Embed Plus for YouTube Gallery, Livestream and Lazy Loading with Facades
-  Copyright (C) 2025 EmbedPlus.com
+  Copyright (C) 2026 EmbedPlus.com
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class YouTubePrefs
 
     public static $folder_name = 'youtube-embed-plus';
     public static $curltimeout = 30;
-    public static $version = '14.2.4';
+    public static $version = '14.2.6';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -489,6 +489,11 @@ class YouTubePrefs
         $result = array();
         if (self::is_ajax())
         {
+            if (!current_user_can('edit_posts'))
+            {
+                wp_send_json_error('Unauthorized');
+                die();
+            }
             $postid = intval($_REQUEST['postid']);
             $currpost = get_post($postid);
 
@@ -612,6 +617,11 @@ class YouTubePrefs
         $result = array();
         if (self::is_ajax())
         {
+            if (!current_user_can('edit_posts'))
+            {
+                wp_send_json_error('Unauthorized');
+                die();
+            }
             $thehtml = '';
 
             try
@@ -1753,6 +1763,11 @@ class YouTubePrefs
         $result = array();
         if (self::is_ajax())
         {
+            if (!current_user_can('manage_options'))
+            {
+                wp_send_json_error('Unauthorized');
+                die();
+            }
             $user_id = get_current_user_id();
             update_user_meta($user_id, 'embedplus_double_plugin_warning', 1);
             $result['type'] = 'success';
@@ -3157,7 +3172,7 @@ class YouTubePrefs
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= 'This version fixes a lightbox gallery issue for <a target=_blank href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">pro</a> users, and allows you to disable keyboard controls for both free and pro users.';
+        $new_pointer_content .= 'This version is tested for compatibility with WordPress 7.0 and PHP 8.4 for both Free and <a target=_blank href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">Pro</a> plugins.';
         if (!empty(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
             $new_pointer_content .= ' <strong>Important message to Pro users</strong>: From version 11.7 onward, you must <a href="https://www.embedplus.com/youtube-pro/download/?prokey=' . esc_attr(self::$alloptions[self::$opt_pro]) . '" target="_blank">download the separate plugin here</a> to regain your Pro features. All your settings will automatically migrate after installing the separate Pro download. Thank you for your support and patience during this transition.';
@@ -3260,15 +3275,7 @@ class YouTubePrefs
             p.submit {margin: 10px 0 0 0; padding: 10px 0 5px 0;}
             .wp-core-ui p.submit .button-primary {
                 font-weight: bold;
-                font-size: 21px; height: 50px; padding: 0 20px 1px;
-                background: #2ea2cc; /* Old browsers */
-                background: -moz-linear-gradient(top,  #2ea2cc 0%, #007396 98%); /* FF3.6+ */
-                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2ea2cc), color-stop(98%,#007396)); /* Chrome,Safari4+ */
-                background: -webkit-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* Chrome10+,Safari5.1+ */
-                background: -o-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* Opera 11.10+ */
-                background: -ms-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* IE10+ */
-                background: linear-gradient(to bottom,  #2ea2cc 0%,#007396 98%); /* W3C */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea2cc', endColorstr='#007396',GradientType=0 ); /* IE6-9 */
+                font-size: 21px; min-height: 50px; padding: 0 20px 1px;                
             }
             .wp-core-ui p.submit .button-primary[disabled] {
                 opacity: .4;
@@ -4332,7 +4339,7 @@ class YouTubePrefs
                             <b>For galleries:</b> <a href="#jumpgallery">Click here</a> to scroll down to gallery settings and directions.
                         </p>
                         <p>
-                            <b>For self-contained playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want the first video to always be the latest video in your playlist, check the option "Playlist Ordering" in the settings down below (you will also see this option available if you use the Pro Wizard). If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
+                            <b>For self-contained playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="https://www.youtube.com/playlist?list=PLsRNoUx8w3rPxNGCQYBPobGxNj1BfDT7P">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want the first video to always be the latest video in your playlist, check the option "Playlist Ordering" in the settings down below (you will also see this option available if you use the Pro Wizard). If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
                         </p>                
                         <p>
                             <b>For self-contained channel playlists:</b> At your editor, click on the <img style="vertical-align: text-bottom;" src="<?php echo plugins_url('images/wizbuttonbig.png', __FILE__) ?>"> wizard button and choose the option <i>Search for a video or channel to insert in my editor.</i> Then, click on the <i>channel playlist</i> option there (instead of <i>single video</i>). Search for the channel username and follow the rest of the directions there.

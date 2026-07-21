@@ -45,7 +45,7 @@ class NewsletterAdmin extends NewsletterModuleAdmin {
             $time = wp_next_scheduled('newsletter');
             if (!$time) {
                 wp_schedule_event(time() + 30, 'newsletter', 'newsletter');
-            } elseif ($time > time() + NEWSLETTER_CRON_INTERVAL * 2) {
+            } elseif ($time > time() + NEWSLETTER_REAL_CRON_INTERVAL * 2) {
                 // Someone played with the cron scheduling the event in the far future...
                 wp_clear_scheduled_hook('newsletter');
                 wp_schedule_event(time() + 30, 'newsletter', 'newsletter');
@@ -216,6 +216,8 @@ class NewsletterAdmin extends NewsletterModuleAdmin {
 
             wp_enqueue_script('tnp-toastify', $url . '/vendor/toastify/toastify.js', [], NEWSLETTER_VERSION);
             wp_enqueue_style('tnp-toastify', $url . '/vendor/toastify/toastify.css', [], NEWSLETTER_VERSION);
+
+            wp_enqueue_script('tnp-marked', $url . '/vendor/marked/marked.umd.js', [], NEWSLETTER_VERSION);
         }
     }
 

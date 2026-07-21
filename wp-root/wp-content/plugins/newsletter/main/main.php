@@ -3,8 +3,8 @@
 /** @var NewsletterControls $controls */
 /** @var NewsletterLogger $logger */
 /** @var wpdb $wpdb */
-/** @var string $language */
 
+/** @var string $language */
 use Newsletter\License;
 
 defined('ABSPATH') || exit;
@@ -46,14 +46,13 @@ if (!$controls->is_action()) {
                 $controls->data['scheduler_max'] = 12;
             }
 
-            if (defined('NEWSLETTER_SEND_DELAY')) {
-                $controls->data['max_per_second'] = (float) $controls->data['max_per_second'];
-            } else {
-                $controls->data['max_per_second'] = (float) $controls->data['max_per_second'];
-                if ($controls->data['max_per_second'] <= 0) {
-                    $controls->data['max_per_second'] = 0;
-                }
-            }
+            $send_delay = intval($controls->data['send_delay'] ?? 0);
+            $send_delay = min(max(0, $send_delay), 5000);
+            $controls->data['send_delay'] = $send_delay;
+
+            $autorecovery_delay = intval($controls->data['autorecovery_delay'] ?? 0);
+            $autorecovery_delay = min(max(0, $autorecovery_delay), 60);
+            $controls->data['autorecovery_delay'] = $autorecovery_delay;
 
             if (!$this->is_email($controls->data['reply_to'], true)) {
                 $controls->errors .= __('Reply to email is not correct.', 'newsletter') . '<br>';
@@ -63,6 +62,12 @@ if (!$controls->is_action()) {
 
             if (!empty($controls->data['contract_key'])) {
                 $controls->data['contract_key'] = trim($controls->data['contract_key']);
+            }
+
+            $controls->data['schedule_start'] = (int)$controls->data['schedule_start'];
+            $controls->data['schedule_end'] = (int)$controls->data['schedule_end'];
+            if ($controls->data['schedule_start'] === $controls->data['schedule_end']) {
+                $controls->data['schedule'] = 0;
             }
 
             update_option('newsletter_log_level', $controls->data['log_level']);
@@ -331,16 +336,27 @@ if (!empty($controls->data['page'])) {
 
                             <tr>
                                 <th>
-                                    <?php esc_html_e('Max emails per second', 'newsletter') ?>
+                                    <?php esc_html_e('Delay between emails', 'newsletter') ?>
                                     <?php $controls->field_help('/installation/newsletter-configuration/#speed') ?>
                                 </th>
                                 <td>
                                     <?php if (defined('NEWSLETTER_SEND_DELAY')) { ?>
-                                        Delay set to <?php echo esc_html(NEWSLETTER_SEND_DELAY); ?> in <code>wp-config.php</code>
+
+                                            This value is set by the constant <code>NEWSLETTER_SEND_DELAY</code> in the site <code>wp-config.php</code>
+                                            with value <?php echo esc_html(NEWSLETTER_SEND_DELAY); ?>.
+
                                     <?php } else { ?>
-                                        <?php $controls->text('max_per_second', 5); ?>
-                                        <span class="description"><?php esc_html_e('0 for unlimited', 'newsletter') ?></span>
+                                        <?php $controls->text('send_delay', 5); ?> milliseconds
                                     <?php } ?>
+                                    <p class="description">
+                                        From 0 (default) to 5000 (5 seconds). It's a time delay added after each email
+                                        to respect specific provider contraints.
+                                        <br>
+                                        For example when your provider requires you to:<br>
+                                        - send no more than 1 email every 2 seconds: set it to 2000.
+                                        <br>
+                                        - send no more than 10 emails per second: set it to 100 (1 second / 10 emails = 100 milliseconds).
+                                    </p>
                                 </td>
                             </tr>
 
@@ -358,7 +374,37 @@ if (!empty($controls->data['page'])) {
                                     </p>
                                 </td>
                             </tr>
+                            <tr valign="top">
+                                <th>Autorecovery delay</th>
+                                <td>
+                                    <?php $controls->select('autorecovery_delay', ['' => 'Never',
+                                        '5'=>'5',  '10'=>'10', '15'=>'15', '20'=>'20', '30'=>'30',
+                                         '40'=>'40', '50'=>'50', '60'=>'60']); ?> (minutes)
 
+                                    <p class="description">
+                                        Minuto to wait before restarting the sending process when blocked by a fatal error
+                                    </p>
+                                </td>
+                            </tr>
+                            <!--
+                            <tr valign="top">
+                                <th>Sending time window</th>
+                                <td>
+                            <?php
+                            /*
+
+        $schedule_end_hours = [];
+        for ($i = 0; $i < 24; $i++) {
+            echo '<div style="float:left; width: 30px; margin-right: 3px;">';
+            echo '<label>';
+            echo sprintf('%02d', $i);
+            echo '<br>';
+            $controls->checkbox_group('schedule_hours', $i);
+            echo '</label>';
+            echo '</div>';
+        } */?></td>
+                            </tr>
+-->
                         </table>
 
                         <?php do_action('newsletter_panel_main_speed', $controls) ?>
@@ -452,13 +498,24 @@ if (!empty($controls->data['page'])) {
 
                             <tr>
                                 <th>
-                                    <?php $controls->label(__('Tracking and action links', 'newsletter'), '') ?>
+                                    <?php $controls->label(__('Action links', 'newsletter'), '') ?>
                                 </th>
                                 <td>
-                                    <?php $controls->select('links', ['' => 'Standard', 'ajax' => 'Alternative']); ?>
+                                    <?php $controls->select('links', ['' => 'Standard', 'ajax' => 'AJAX']); ?>
                                     <span class="description">
-                                        Select "alternative" if confirmation/unsubscription/tracking links seems to not work. Resend a test nessletter
+                                        Select "AJAX" if confirmation/unsubscription/tracking links seems to not work. Resend a test neswletter
                                         to check the effect, old newsletters are not affacted.
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <?php $controls->label(__('Tracking links', 'newsletter'), '') ?>
+                                </th>
+                                <td>
+                                    <?php $controls->select('tracking_links', ['' => 'Standard', 'rest' => 'WP REST']); ?>
+                                    <span class="description">
+
                                     </span>
                                 </td>
                             </tr>

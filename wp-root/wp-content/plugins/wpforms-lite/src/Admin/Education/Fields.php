@@ -63,7 +63,7 @@ class Fields {
 				'name_en' => 'Date / Time',
 				'type'    => 'date-time',
 				'group'   => 'fancy',
-				'order'   => '80',
+				'order'   => '60',
 			],
 			[
 				'icon'    => 'fa-link',
@@ -175,7 +175,7 @@ class Fields {
 				'name_en' => 'Hidden Field',
 				'type'    => 'hidden',
 				'group'   => 'fancy',
-				'order'   => '98',
+				'order'   => '305',
 			],
 			[
 				'icon'     => 'fa-question-circle',
@@ -216,16 +216,6 @@ class Fields {
 				'group'    => 'fancy',
 				'addon'    => 'wpforms-surveys-polls',
 				'order'    => '410',
-			],
-			[
-				'icon'     => 'fa-credit-card',
-				'name'     => esc_html__( 'PayPal Commerce', 'wpforms-lite' ),
-				'keywords' => esc_html__( 'store, ecommerce, credit card, pay, payment, debit card', 'wpforms-lite' ),
-				'name_en'  => 'PayPal Commerce',
-				'type'     => 'paypal-commerce',
-				'group'    => 'payment',
-				'addon'    => 'wpforms-paypal-commerce',
-				'order'    => '89',
 			],
 			[
 				'icon'     => 'fa-credit-card',

@@ -23,7 +23,9 @@ class WooCommerce_Archives {
 		$woocommerce_archives = Models_WooCommerceArchives::instance()->get();
 		$position             = (string) $woocommerce_archives['position'];
 		$position_priority    = (int) $woocommerce_archives['position_priority'];
-		if ( 'none' === $position ) {
+		$devices              = (string) $woocommerce_archives['devices'];
+
+		if ( 'none' === $position || 'hide' === $devices ) {
 			return;
 		}
 

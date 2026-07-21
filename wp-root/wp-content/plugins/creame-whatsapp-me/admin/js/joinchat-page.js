@@ -1,10 +1,6 @@
 (function ($, window, document) {
   'use strict';
 
-  function textarea_autoheight() {
-    $(this).height(0).height(this.scrollHeight);
-  }
-
   // View Joinchat_Util::clean_whatsapp() for regex clean info
   function phone_to_whatsapp(phone) {
     return phone.replace(/^0+|\D/, '')
@@ -23,46 +19,14 @@
 
   $(function () {
     var media_frame;
-    var has_iti = typeof intlTelInput === 'function' && window.intl_tel_l10n;
+    var has_iti = window.joinchat_iti?.hasITI();
     var $phone = $('#joinchat_phone');
 
-    if (has_iti) {
-      // Set intlTelInput config (make global)
-      var country_request = JSON.parse(localStorage.joinchat_country_code || '{}');
-      var country_code = (country_request.code && country_request.date == new Date().toDateString()) ? country_request.code : false;
-
-      window.joinchat_intl_tel_config = {
-        hiddenInput: () => ({ phone: $phone.data('name') || 'joinchat[telephone]' }),
-        strictMode: true,
-        separateDialCode: true,
-        initialCountry: country_code || 'auto',
-        geoIpLookup: country_code ? null : (success, failure) => {
-          fetch("https://ipapi.co/json")
-            .then((res) => res.json())
-            .then((data) => {
-              localStorage.joinchat_country_code = JSON.stringify({ code: data.country_code, date: new Date().toDateString() });
-              success(data.country_code);
-            }).catch(() => failure());
-        },
-        customPlaceholder: (country_ph) => `${intl_tel_l10n.placeholder} ${country_ph}`,
-        i18n: intl_tel_l10n,
-      };
-
-      // Apply intlTelInput to phone input
-      if ($phone.length) {
-        var iti = intlTelInput($phone[0], joinchat_intl_tel_config);
-        iti.promise.then(() => { $phone.trigger('input'); });
-
-        $phone.on('input countrychange', function () {
-          var is_valid = iti.isValidNumber(true); // check for mobile
-
-          $(this).css('color', this.value.trim() && !is_valid ? '#ca4a1f' : '');
-          // Ensures number it's updated
-          iti.ui.hiddenInput.value = iti.getNumber();
-          // Enable/disable phone test
-          $('#joinchat_phone_test').attr('disabled', !is_valid);
-        });
-      }
+    // Apply intlTelInput to phone input
+    if (has_iti && $phone.length) {
+      window.joinchat_iti.init($phone[0], null, {
+        onChange: function (_, is_valid) { $('#joinchat_phone_test').attr('disabled', !is_valid); } // Enable/disable phone test
+      });
     }
 
     // Tabs
@@ -84,19 +48,15 @@
       $(document).trigger('navtabchange', [$(href), href]);
     });
 
-    $(document).on('navtabchange', function (e, $tab) { $tab.find('textarea').each(textarea_autoheight); });
-
     // Test phone number
     if ($phone.length) {
       // Enable/disable phone test
       if (!has_iti) {
-        $phone.on('input change', function () {
-          $('#joinchat_phone_test').attr('disabled', this.value.length < 7);
-        });
+        $phone.on('input change', function () { $('#joinchat_phone_test').attr('disabled', this.value.length < 7); });
       }
 
       $('#joinchat_phone_test').on('click', function () {
-        var phone = has_iti ? intlTelInput.getInstance($phone[0]).getNumber() : $phone.val();
+        var phone = has_iti ? window.joinchat_iti.getNumber($phone[0]) : $phone.val();
         window.open('https://wa.me/' + encodeURIComponent(phone_to_whatsapp(phone)), 'joinchat', 'noopener');
       });
     }
@@ -131,9 +91,7 @@
     // Texarea focus and auto height
     $('textarea', '#joinchat_form')
       .on('focus', function () { $(this).closest('tr').addClass('joinchat--focus'); })
-      .on('blur', function () { $(this).closest('tr').removeClass('joinchat--focus'); })
-      .on('input', textarea_autoheight)
-      .each(textarea_autoheight);
+      .on('blur', function () { $(this).closest('tr').removeClass('joinchat--focus'); });
 
     // Show title when placeholder
     $('#joinchat_form').find('.autofill')
@@ -248,7 +206,7 @@
 
     // Toggle Woo Product Button text
     $('#joinchat_woo_btn_position').on('change', function () {
-      $('#joinchat_woo_btn_text').closest('tr').toggleClass('joinchat-hidden', $(this).val() == 'none');
+      $('#joinchat_woo_btn_text').closest('tr').toggleClass('joinchat-dimmed', $(this).val() == 'none');
     }).trigger('change');
 
     // Custom CSS
@@ -305,7 +263,7 @@
           <div id="joinchatprev">
             <div id="joinchatprev__resize"></div>
             <div id="joinchatprev__devices">
-              <div class="button-group">
+              <div class="button-group button-compact">
                 <button class="button desktop" title="Desktop"><span class="dashicons dashicons-desktop"></span></button>
                 <button class="button active mobile" title="Mobile"><span class="dashicons dashicons-smartphone"></span></button>
               </div>
@@ -357,7 +315,7 @@
 
       // Contact
       $phone.on('change', function () {
-        prev_jc.settings.telephone = phone_to_whatsapp(has_iti ? intlTelInput.getInstance(this).getNumber() : $(this).val());
+        prev_jc.settings.telephone = phone_to_whatsapp(has_iti ? window.joinchat_iti.getNumber(this) : $(this).val());
         prev_jc.$div.classList.toggle('joinchat--disabled', prev_jc.settings.telephone == '');
       });
       $('#joinchat_message_send').on('change', function () { prev_jc.settings.message_send = $(this).val(); });
@@ -403,7 +361,7 @@
       });
 
       // Chatbox show (if available)
-      $('#joinchat_message_text,#joinchat_message_start,input[name="joinchat[color][text]"],input[name="joinchat[dark_mode]"],input[name="joinchat[header]"],#joinchat_header_custom').on('focus', view_chatbox);
+      $('#joinchat_message_text,#joinchat_message_start,input[name="joinchat[color][text]"],input[name="joinchat[dark_mode]"],input[name="joinchat[header]"],#joinchat_header_custom,#joinchat_show_brand').on('focus', view_chatbox);
 
       function change_message_text(e) {
         prev_jc.has_cta = $(e.target).val().trim() != '';
@@ -439,7 +397,6 @@
         view_chatbox();
       });
       $('input[name="joinchat[header]"]').on('change', function () {
-        prev_jc.$('#joinchat__label a').classList.toggle('joinchat--hidden', this.value != '__jc__');
         prev_jc.$('#joinchat__label span').classList.toggle('joinchat--hidden', this.value != '__custom__');
         prev_jc.$('#joinchat__label .joinchat__wa').classList.toggle('joinchat--hidden', this.value != '__wa__');
         view_chatbox();
@@ -465,6 +422,12 @@
       // Custom CSS (strip tags)
       custom_css_editor.codemirror.on('change', function (ed) {
         $('#joinchat_preview')[0].contentDocument.getElementById('joinchat-inline-css').innerHTML = ed.getValue().replace(/(<([^>]+)>)/gi, "");
+      });
+
+      // Powered label
+      $('#joinchat_show_brand').on('change', function () {
+        prev_jc.$('.joinchat__powered').classList.toggle('joinchat--hidden', !this.checked);
+        view_chatbox();
       });
 
       // Trigger change to force updated settings on preview

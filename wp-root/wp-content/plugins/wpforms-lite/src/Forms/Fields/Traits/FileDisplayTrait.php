@@ -222,20 +222,43 @@ trait FileDisplayTrait {
 		$files = array_filter( array_map( 'sanitize_file_name', $files ) );
 
 		if ( ! empty( $files ) ) {
-			$field['value_raw'] = array_map(
-				static function ( $file ) {
+			$value_raw = [];
 
-					return [
-						'value'         => '', // No public URL available.
-						'file_original' => $file,
-						'ext'           => strtolower( pathinfo( $file, PATHINFO_EXTENSION ) ),
-					];
-				},
-				$files
-			);
+			foreach ( $files as $index => $file ) {
+				$ext = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
+
+				$value_raw[] = [
+					'value'         => $this->get_entry_preview_classic_file_src( $input_name, $index, $ext ),
+					'file_original' => $file,
+					'ext'           => $ext,
+				];
+			}
+
+			$field['value_raw'] = $value_raw;
 		}
 
 		return $field;
+	}
+
+	/**
+	 * Get the inline image source for a classic-uploaded file in the entry preview.
+	 *
+	 * Classic uploads have no public URL before submission, so the base
+	 * implementation returns an empty string and the file renders as text.
+	 * Field types that can safely inline a preview ( Camera ) override this.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string     $input_name Field input name.
+	 * @param int|string $index      File index within the upload.
+	 * @param string     $ext        Lowercased file extension.
+	 *
+	 * @return string
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	protected function get_entry_preview_classic_file_src( string $input_name, $index, string $ext ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+
+		return '';
 	}
 
 	/**
@@ -312,11 +335,11 @@ trait FileDisplayTrait {
 	 */
 	private function entry_preview_file_link_html( array $file, string $src ): string {
 
-		$filename = esc_html( $this->get_file_name( $file ) );
+		$filename = esc_html( $file['file_original'] ?? $this->get_file_name( $file ) );
 		$is_image = in_array( $file['ext'] ?? '', wp_get_ext_types()['image'], true );
 
-		// If we have a URL, display an inline thumbnail preview.
-		if ( $is_image && ! empty( $src ) ) {
+		// Render an inline thumbnail only for non-protected images.
+		if ( $is_image && ! empty( $src ) && ! $this->is_file_protected( $file ) ) {
 			return sprintf(
 				'<span class="wpforms-entry-preview-file is-image"><img src="%1$s" alt="%2$s"/><span class="wpforms-entry-preview-filename">%2$s</span></span>',
 				esc_url( $src ),
@@ -352,5 +375,77 @@ trait FileDisplayTrait {
 	public function get_input_name(): string {
 
 		return sprintf( 'wpforms_%d_%d', $this->form_id, $this->field_id );
+	}
+
+	/**
+	 * Format the field value for smart tags.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @param string $value     The field value.
+	 * @param int    $field_id  The field ID.
+	 * @param array  $fields    The form fields.
+	 * @param string $field_key The field key.
+	 *
+	 * @return string
+	 * @noinspection PhpMissingParamTypeInspection
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function smart_tags_formatted_field_value( $value, $field_id, $fields, $field_key ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+
+		$value = (string) $value;
+		$field = $fields[ $field_id ] ?? [];
+
+		return $this->get_formatted_value( $value, $field );
+	}
+
+	/**
+	 * Get file URLs.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @param array $values Field values.
+	 *
+	 * @return array
+	 */
+	private function get_file_urls( array $values ): array {
+
+		$urls = [];
+
+		foreach ( $values as $file ) {
+			$urls[] = $this->get_file_url( $file );
+		}
+
+		return $urls;
+	}
+
+	/**
+	 * Get formatted value.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @param string $value Field value.
+	 * @param array  $field Field settings.
+	 *
+	 * @return string
+	 */
+	private function get_formatted_value( string $value, array $field ): string {
+
+		$type = $field['type'] ?? '';
+
+		if ( $type !== $this->type ) {
+			return $value;
+		}
+
+		if ( empty( $field['style'] ) ) {
+			return $this->get_file_url( $field );
+		}
+
+		$values = (array) $field['value_raw'];
+		$values = array_filter( $values );
+
+		$urls = $this->get_file_urls( $values );
+
+		return empty( $urls ) ? $value : implode( "\n", $urls );
 	}
 }

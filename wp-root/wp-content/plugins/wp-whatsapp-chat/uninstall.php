@@ -14,4 +14,5 @@ if ( ! is_multisite() ) {
 	delete_option( 'qlwapp_scheme' );
 	delete_option( 'qlwapp_settings' );
 	delete_option( 'qlwapp_woocommerce' );
+	delete_option( 'qlwapp_ab_upgrade_group' );
 }

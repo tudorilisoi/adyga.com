@@ -5,6 +5,12 @@
  * which makes it higher in priority.
  */
 
+.epytblock__modal {
+    .components-modal__children-container {
+        height: 100%;
+    }
+}
+
 .components-modal__frame.epytblock__modal {
     position: absolute;
     top: 25px;
@@ -21,11 +27,16 @@
 
     .components-modal__content {
         padding: 0;
-        > div:not([class]) {
+
+        >div:not([class]) {
             height: 100%;
             width: 100%;
             display: block;
         }
+    }
+
+    .components-modal__children-container {
+        height: 100%;
     }
 
     iframe {
@@ -50,7 +61,7 @@
 */
 .wp-block {
     &[data-type="epyt/youtube"] {
-        > div {
+        >div {
             &::after {
                 content: "";
                 position: absolute;
@@ -62,8 +73,9 @@
                 cursor: pointer;
             }
         }
-        &.is-selected > div,
-        > div.components-placeholder {
+
+        &.is-selected>div,
+        >div.components-placeholder {
             &::after {
                 display: none;
             }

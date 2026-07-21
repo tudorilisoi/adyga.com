@@ -4,12 +4,12 @@ Donate link: https://quadlayers.com/products/whatsapp-chat/
 Tags: whatsapp, whatsapp business, whatsapp chat, woocommerce whatsapp, click to chat
 Requires at least: 4.7
 Requires PHP: 5.6
-Tested up to: 6.9
-Stable tag: 8.2.0
+Tested up to: 7.0
+Stable tag: 8.6.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 4.0
-WC tested up to: 10.5
+WC tested up to: 10.9
 
 WhatsApp Chat🔥 allows you to enhance customer engagement! Integrate "WhatsApp" or "WhatsApp Business" with a single click.
 
@@ -48,6 +48,9 @@ Social Chat also allows you to include a box to show some contact information an
 > * Vertical and horizontal position
 > * Custom button text
 > * Custom user message
+> * WooCommerce product page integration
+> * WooCommerce archive pages integration
+> * Dynamic message variables
 
 == WhatsApp Message Dynamic Variables ==
 Synce version 5.0.6 you're able use variables in your WhatsApp Button or contact messages.
@@ -92,6 +95,36 @@ Since version 8.1.9 you can display a customizable WhatsApp button on WooCommerc
 
 You can configure a custom message, button style, and position for each archive type. The button supports all WooCommerce product variables, making it easy for customers to inquire about products directly from archive pages.
 
+== 🎁 New!! WooCommerce WhatsApp Payment Gateway (Premium) ==
+
+Since version 8.3.0 you can enable WhatsApp as a payment method in WooCommerce checkout! This powerful **premium** feature allows customers to:
+
+> * Select WhatsApp Order as a payment method at checkout
+> * Automatically send order details to your WhatsApp number
+> * Customize order messages with dynamic variables (ORDER_ID, ORDER_TOTAL, CUSTOMER_NAME, ORDER_PRODUCTS, etc.)
+> * Auto-redirect customers to WhatsApp after placing an order
+> * Configure custom order status, redirect delay, and visibility settings
+> * Support for both individual phone numbers and WhatsApp groups
+> * Full compatibility with WooCommerce Blocks checkout
+
+Perfect for businesses that want to confirm payments via WhatsApp or provide a more personal checkout experience. All order information is automatically formatted and sent to your WhatsApp, making order management seamless.
+
+**WooCommerce Order Message Variables:**
+{ORDER_ID} ➡ Order ID
+{ORDER_NUMBER} ➡ Order Number
+{ORDER_TOTAL} ➡ Order Total Amount
+{ORDER_DATE} ➡ Order Date
+{ORDER_TIME} ➡ Order Time
+{ORDER_STATUS} ➡ Order Status
+{ORDER_URL} ➡ View Order URL
+{ORDER_PRODUCTS} ➡ List of ordered products
+{CUSTOMER_NAME} ➡ Customer Full Name
+{CUSTOMER_EMAIL} ➡ Customer Email
+{CUSTOMER_PHONE} ➡ Customer Phone
+{BILLING_ADDRESS} ➡ Billing Address
+{SHIPPING_ADDRESS} ➡ Shipping Address
+{PAYMENT_METHOD} ➡ Payment Method Title
+
 == WhatsApp Premium ==
 The premium version of the Social Chat plugin allows you to include multiple team member agents, distinguishing their names and labels inside. The contact box helps to provide direct contacts to the different support areas of your site.
 A new option to display a chatbox for each agent is included. This box will be displayed when the user clicks on the WhatsApp contact, and you can define custom message to be shown from each contact. Your users will be able to type the message that will be sent to the WhatsApp contact phone.
@@ -114,6 +147,9 @@ Build intelligent chatbots with our visual flow builder - no coding required! Cr
 > * Google Analytics v3 events
 > * Google Analytics v4 events
 > * WhatsApp group support
+> * WooCommerce WhatsApp Payment Gateway
+> * Auto-redirect to WhatsApp after order placement
+> * WooCommerce Blocks checkout compatibility
 
 == WhatsApp Button Installation ==
 1. Go to the Plugins Menu in WordPress
@@ -163,6 +199,130 @@ Don't use: +001-(555)1234567
 * Brazilian Portuguese (thanks to [Dionizio Bach](@djio))
 
 == Changelog ==
+
+= 8.6.1 =
+* Fix: Harden quick.bot auth popup handshake (normalized origin validation and centralized message contract)
+
+= 8.6.0 =
+* Improvement: Replace bots API integration with embedded quick.bot iframe
+
+= 8.5.9 =
+* Fix: Contact preview click target now reflects unsaved number changes
+
+= 8.5.8 =
+* Improvement: move contact data from Button to Contacts and add migration
+
+= 8.5.7 =
+* Fix: Timezone selector
+
+= 8.5.6 =
+* Improvement: Replace support chat iframe with quick.bot bubble
+
+= 8.5.5 =
+* Fix: Bot template edge connections
+
+= 8.5.4 =
+* Improvement: Add optional phone number field to plugin sign-up form
+
+= 8.5.3 =
+* Fix: Migrate rich text to markdown for [Quick.Bot](https://quick.bot/) compatibility
+
+= 8.5.2 =
+* Fix: WP editor compatibility with WordPress 7
+* Improvement: Responsive bots and contacts tables with unified status tags
+
+= 8.5.1 =
+* WordPress 7.0 compatibility
+
+= 8.5.0 =
+* Feat: Add onboarding modal for [Quick.Bot](https://quick.bot/) integration
+
+= 8.4.9 =
+* Feat: Add support chat button for in-app assistance
+* Improvement: Improve Alert components responsive layout for mobile devices
+* Fix: Add chevron icon to all Alert action buttons
+
+= 8.4.8 =
+* Fix: Email verification link not verifying account due to token lost before modal render
+* Fix: Token persisting after verification causing stale verification view on popover reopen
+
+= 8.4.7 =
+* Fix: Clear token from URL after email verification to prevent re-showing verification form
+
+= 8.4.6 =
+* Feat: Add bots tab
+
+= 8.4.5 =
+* Feat: Add secondary color
+* Fix: Add customize default colors
+
+= 8.4.4 =
+* Feat: Add toggle contact button
+
+= 8.4.3 =
+* Fix: Update welcome page
+
+= 8.4.2 =
+* Fix: WooCommerce compatibility
+
+= 8.4.1 =
+* Fix: Phone and date input blocks in chatbot flows
+* Feat: Add country dial code support for phone inputs
+
+= 8.4.0 =
+* Fix: Bot message color
+
+= 8.3.9 =
+* Fix: Reset button in bot chat is now always visible instead of only at conversation end
+* Fix: Add debug logs for clientSideAction redirect to diagnose open-in-new-tab issues
+* Fix: Admin menu layout height and sticky header
+* Fix: Preview panel device frame for mobile and desktop
+* Fix: Sidebar collapse toggle button repositioned to sidebar edge
+
+= 8.3.8 =
+* Fix: Enqueue frontend assets
+* Fix: Move Call to action and WhatsApp Link Type settings to Contact tab
+* Fix: Footer textarea text color now respects scheme settings
+* Fix: PHP errors
+
+= 8.3.7 =
+* Feat: Unified global Save/Reset footer across all settings tabs
+* Fix: Settings changes no longer lost when navigating between tabs
+* Fix: Rename Cancel button to Reset to better reflect revert-to-saved behavior
+
+= 8.3.6 =
+* Fix: LiteSpeed Cache compatibility for frontend bundle
+
+= 8.3.5 =
+* Fix: Improve admin dashboard menu navigation
+
+= 8.3.4 =
+* Fix: WooCommerce checkout gateway is now disabled by default
+
+= 8.3.3 =
+* Fix: Prevent WooCommerce button hooks from loading when devices visibility is set to hide
+
+= 8.3.2 =
+* Feat: Add contact type icon badge on avatar (phone, group, bot)
+* Fix: Prevent user first message in contact bots
+* Fix: Prevent page scroll when scrolling the chat message list
+* Fix: Unify Button and Visibility settings save/cancel into a single explicit action
+* Fix: Prevent UI from getting stuck in loading state on save error
+
+= 8.3.1 =
+* Feat: Unify welcome and premium page
+
+= 8.3.0 =
+* Feat: Add WooCommerce WhatsApp Payment Gateway
+* Feat: Allow customers to select WhatsApp as payment method at checkout
+* Feat: Auto-send order details to WhatsApp with customizable messages
+* Feat: Support for WooCommerce order dynamic variables (ORDER_ID, ORDER_TOTAL, CUSTOMER_NAME, etc.)
+* Feat: Auto-redirect to WhatsApp after order placement with configurable delay
+* Feat: Full WooCommerce Blocks checkout compatibility
+* Feat: Gateway configuration UI in admin settings panel
+
+= 8.2.1 =
+* Fix: Update Bot API endpoints
 
 = 8.2.0 =
 * Improve: WooCommerce product pages now use dynamic product variables by default

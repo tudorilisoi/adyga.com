@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -12,6 +13,13 @@ namespace CookieYes\Lite\Admin;
 
 use CookieYes\Lite\Includes\Notice;
 use CookieYes\Lite\Includes\Connect_Notice;
+use CookieYes\Lite\Includes\Review_Request;
+use CookieYes\Lite\Admin\Modules\Settings\Includes\Controller;
+use CookieYes\Lite\Admin\Modules\Settings\Includes\Settings;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * The admin-specific functionality of the plugin.
@@ -122,17 +130,14 @@ class Admin {
 				'type'        => 'info',
 			)
 		);
-		$notice->add( 'pageviews_overage_notice' );
 	}
 
 	/**
-	 * Add review notice
-	 *
-	 * @return void
+	 * Add review notice if the plugin has been installed long enough.
 	 */
-	public function add_review_notice() {		
-		$expiry    = 60 * DAY_IN_SECONDS;
-		$settings  = new \CookieYes\Lite\Admin\Modules\Settings\Includes\Settings();
+	public function add_review_notice() {
+		$expiry   = 60 * DAY_IN_SECONDS;
+		$settings = new \CookieYes\Lite\Admin\Modules\Settings\Includes\Settings();
 		$installed = $settings->get_installed_date();
 		if ( $installed && ( $installed + $expiry > time() ) ) {
 			return;
@@ -153,32 +158,23 @@ class Admin {
 	 */
 	public function get_default_modules() {
 		$modules = array(
-			'settings',
-			'gcm',
-			'languages',
-			'dashboard',
-			'banners',
 			'cookies',
-			'consentlogs',
-			'scanner',
-			'policies',
 			'cache',
+			'banners',
+			'settings',
+			'dashboard',
+			'consentlogs',
 			'uninstall_feedback',
 			'review_feedback',
 			'upgrade',
 			'pageviews',
+			'languages',
+			'gcm',
+			'affiliate_banner',
 			'dashboard_widget',
 			'connect_banner',
 		);
 		return $modules;
-	}
-
-	/**
-	 * Get the active admin modules
-	 *
-	 * @return void
-	 */
-	public function get_active_modules() {
 	}
 
 	/**
@@ -212,7 +208,7 @@ class Admin {
 		if ( false === cky_is_admin_page() ) {
 			return;
 		}
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'dist/css/app' . $this->suffix . '.css', array(), $this->version );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'dist/css/style' . $this->suffix . '.css', array(), $this->version );
 	}
 
 	/**
@@ -264,7 +260,8 @@ class Admin {
 				$shortcodes = new \CookieYes\Lite\Frontend\Modules\Shortcodes\Shortcodes( $banner, $version_id );
 			}
 		}
-		$notice = Notice::get_instance();
+
+		$notice         = Notice::get_instance();
 		$connect_notice = Connect_Notice::get_instance();
 
 		$global_script  = $this->plugin_name . '-app';
@@ -275,8 +272,7 @@ class Admin {
 			wp_enqueue_editor();
 		}
 
-		wp_enqueue_script( $this->plugin_name . '-vendors', plugin_dir_url( __FILE__ ) . 'dist/js/chunk-vendors' . $this->suffix . '.js', array(), $this->version, true );
-		wp_enqueue_script( $this->plugin_name . '-app', plugin_dir_url( __FILE__ ) . 'dist/js/app' . $this->suffix . '.js', array(), $this->version, true );
+		wp_enqueue_script( $this->plugin_name . '-app', plugin_dir_url( __FILE__ ) . 'dist/js/index' . $this->suffix . '.js', array(), $this->version, true );
 
 		wp_localize_script(
 			$global_script,
@@ -341,11 +337,6 @@ class Admin {
 		);
 		wp_localize_script(
 			$global_script,
-			'ckyScanner',
-			apply_filters( 'cky_admin_scripts_scanner_config', array(), $global_script )
-		);
-		wp_localize_script(
-			$global_script,
 			'ckyLanguages',
 			apply_filters( 'cky_admin_scripts_languages', array(), $global_script )
 		);
@@ -379,6 +370,11 @@ class Admin {
 			$global_script,
 			'ckyConnectNotice',
 			$connect_notice->get_connect_notice_state()
+		);
+		wp_localize_script(
+			$global_script,
+			'ckyReviewRequest',
+			Review_Request::get_for_app()
 		);
 
 	}
@@ -480,7 +476,7 @@ class Admin {
 	 * @return void
 	 */
 	public function menu_page_template() {
-		echo '<div id="cky-app"></div>';
+		echo '<div id="cky-app" class="cky-app-wrap"></div>';
 	}
 
 	/**
@@ -492,6 +488,12 @@ class Admin {
 	public function admin_body_classes( $classes ) {
 		if ( true === cky_is_admin_page() ) {
 			$classes .= ' cky-app-admin';
+			global $wp_version;
+			if ( version_compare( $wp_version, '6.9.4', '<=' ) ) {
+				$classes .= ' cky-wp-core-radio-checked';
+			} else {
+				$classes .= ' cky-wp-core-radio-fill';
+			}
 		}
 		return $classes;
 	}
@@ -514,7 +516,7 @@ class Admin {
 
 		// Load translations from JSON files instead of PHP domain
 		$json_translations = $this->load_json_translations();
-		
+
 		// Convert flat translations to JED format
 		// JED format expects: key => [translation] for singular strings
 		foreach ( $json_translations as $key => $value ) {
@@ -549,50 +551,50 @@ class Admin {
 	 */
 	private function load_json_translations() {
 		$translations = array();
-		
+
 		// Get current language code
 		$current_lang = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
-		$lang_code = substr( $current_lang, 0, 2 ); // Get first 2 characters (e.g., 'en' from 'en_US')
-		
+		$lang_code    = substr( $current_lang, 0, 2 ); // Get first 2 characters (e.g., 'en' from 'en_US')
+
 		// Get WordPress languages directory path
 		$languages_dir = WP_CONTENT_DIR . '/languages/';
-		
+
 		// Define JSON file paths for JavaScript translations
 		$json_paths = array();
-		
+
 		// Look for JavaScript translation files with the pattern: cookie-law-info-{locale}-{hash}.json
 		$plugins_dir = $languages_dir . 'plugins/';
-		
+
 		if ( is_dir( $plugins_dir ) ) {
 			$files = glob( $plugins_dir . 'cookie-law-info-' . $current_lang . '-*.json' );
 			if ( ! empty( $files ) ) {
 				$json_paths = array_merge( $json_paths, $files );
 			}
-			
+
 			// Fallback to language code without country
 			$files = glob( $plugins_dir . 'cookie-law-info-' . $lang_code . '-*.json' );
 			if ( ! empty( $files ) ) {
 				$json_paths = array_merge( $json_paths, $files );
 			}
-			
+
 			// Fallback to English
 			$files = glob( $plugins_dir . 'cookie-law-info-en-*.json' );
 			if ( ! empty( $files ) ) {
 				$json_paths = array_merge( $json_paths, $files );
 			}
 		}
-		
+
 		// Load and merge translations from JSON files
 		foreach ( $json_paths as $path ) {
 			if ( file_exists( $path ) ) {
 				$json_content = file_get_contents( $path );
-				$json_data = json_decode( $json_content, true );
-				
+				$json_data    = json_decode( $json_content, true );
+
 				if ( $json_data && is_array( $json_data ) ) {
 					// Extract translations from the nested structure
 					if ( isset( $json_data['locale_data']['messages'] ) ) {
 						$message_translations = $json_data['locale_data']['messages'];
-						
+
 						// Convert the nested structure to flat key-value pairs
 						foreach ( $message_translations as $key => $value ) {
 							if ( is_array( $value ) && isset( $value[0] ) ) {
@@ -606,10 +608,9 @@ class Admin {
 				}
 			}
 		}
-		
+
 		return $translations;
 	}
-
 
 	/**
 	 * Hide all the unrelated notices from plugin page.
@@ -655,25 +656,6 @@ class Admin {
 	}
 
 	/**
-	 * Handle redirect after plugin activation.
-	 *
-	 * @param string $plugin Plugin basename.
-	 * @return void
-	 */
-	public function handle_activation_redirect( $plugin ) {
-		if ( CLI_PLUGIN_BASENAME !== $plugin ) {
-			return;
-		}
-		// Prevent redirect during AJAX, network admin, or if user doesn't have permission.
-		if ( wp_doing_ajax() || is_network_admin() || ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		// Redirect to dashboard.
-		wp_safe_redirect( admin_url( 'admin.php?page=cookie-law-info' ) );
-		exit;
-	}
-
-	/**
 	 * Load plugin for the first time.
 	 *
 	 * @return void
@@ -683,6 +665,23 @@ class Admin {
 			do_action( 'cky_after_first_time_install' );
 			delete_option( 'cky_first_time_activated_plugin' );
 		}
+	}
+
+	/**
+	 * Redirect to the plugin dashboard after activation.
+	 *
+	 * @param string $plugin Plugin basename.
+	 * @return void
+	 */
+	public function handle_activation_redirect( $plugin ) {
+		if ( CLI_PLUGIN_BASENAME !== $plugin ) {
+			return;
+		}
+		if ( wp_doing_ajax() || is_network_admin() || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		wp_safe_redirect( admin_url( 'admin.php?page=cookie-law-info' ) );
+		exit;
 	}
 
 	/**
@@ -701,8 +700,21 @@ class Admin {
 	 * @return array
 	 */
 	public function plugin_action_links( $links ) {
+		$settings = Settings::get_instance();
+		$notice   = Notice::get_instance();
+		if ( $settings->is_connected() && ! $notice->is_dismissed( 'affiliate_banner' ) ) {
+			$info = Controller::get_instance()->get_info();
+			if ( ! is_wp_error( $info ) && is_array( $info ) ) {
+				$plan = isset( $info['plan'] ) && is_array( $info['plan'] ) ? $info['plan'] : array();
+				$name = isset( $plan['name'] ) ? $plan['name'] : '';
+				if ( 'Agency' !== $name ) {
+					$links[] = '<a href="https://www.cookieyes.com/partners/affiliates/onboarding/?ref=aiaflwp" target="_blank">' . esc_html__( 'Affiliate Program', 'cookie-law-info' ) . '</a>';
+				}
+			}
+		}
 		$links[] = '<a href="https://www.cookieyes.com/support/" target="_blank">' . esc_html__( 'Support', 'cookie-law-info' ) . '</a>';
 		$links[] = '<a href="' . get_admin_url( null, 'admin.php?page=cookie-law-info' ) . '">' . esc_html__( 'Settings', 'cookie-law-info' ) . '</a>';
 		return array_reverse( $links );
 	}
+
 }

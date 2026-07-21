@@ -28,6 +28,9 @@ use QuadLayers\QLWAPP\Api\Rest\Admin_Menu\WooCommerce\Post as WooCommerce_Post;
 use QuadLayers\QLWAPP\Api\Rest\Admin_Menu\WooCommerce_Archives\Get as WooCommerceArchives_Get;
 use QuadLayers\QLWAPP\Api\Rest\Admin_Menu\WooCommerce_Archives\Post as WooCommerceArchives_Post;
 
+use QuadLayers\QLWAPP\Api\Rest\Admin_Menu\WooCommerce_Gateway\Get as WooCommerceGateway_Get;
+use QuadLayers\QLWAPP\Api\Rest\Admin_Menu\WooCommerce_Gateway\Post as WooCommerceGateway_Post;
+
 use QuadLayers\QLWAPP\Api\Rest\Route as Route_Interface;
 
 class Admin_Menu_Routes_Library {
@@ -83,6 +86,9 @@ class Admin_Menu_Routes_Library {
 
 		new WooCommerceArchives_Get();
 		new WooCommerceArchives_Post();
+
+		new WooCommerceGateway_Get();
+		new WooCommerceGateway_Post();
 	}
 
 	public static function instance() {

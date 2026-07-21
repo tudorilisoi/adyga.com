@@ -5,7 +5,7 @@ if(!function_exists('add_action')){
 	exit;
 }
 
-define('LOGINIZER_VERSION', '2.0.5');
+define('LOGINIZER_VERSION', '2.0.8');
 define('LOGINIZER_DIR', dirname(LOGINIZER_FILE));
 define('LOGINIZER_URL', plugins_url('', LOGINIZER_FILE));
 define('LOGINIZER_PRO_URL', 'https://loginizer.com/features#compare');
@@ -333,7 +333,8 @@ function loginizer_load_plugin(){
 		// Update Error message
 		add_action('wp_login_errors', 'loginizer_error_handler', 10001, 2);
 		add_action('woocommerce_login_failed', 'loginizer_woocommerce_error_handler', 10001);
-		add_action('wp_login', 'loginizer_login_success', 10, 2);
+		add_action('wp_login', 'loginizer_login_success', 11, 2);
+		add_action('rsssl_two_factor_user_authenticated', 'loginizer_rsssl_2fa_success');
 		
 		if(!empty($loginizer['ultimate-member-active'])){
 			add_action('wp_login_failed', 'loginizer_ultimatemember_error_handler', 10001);
@@ -635,6 +636,10 @@ Loginizer';
 		$loginizer['retries_left'] = $loginizer['retries_left'] == $loginizer['max_retries'] ? 0 : $loginizer['retries_left'];
 		
 	}
+}
+
+function loginizer_rsssl_2fa_success($user){
+	loginizer_login_success('', $user);
 }
 
 function loginizer_login_success($user_login, $user) {

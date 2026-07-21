@@ -1,0 +1,32 @@
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.3 MB/256 MB - gabriel > Start upgrade from 9.2.7
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Array
+(
+)
+
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Deleting settings backup newsletter_backup_8.8.5
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.2 MB/256 MB - gabriel > Backing up options of 9.2.7
+20-07-2026 20:06:47 - INFO  - 9.3.0 - 4647 - 11.5 MB/256 MB - gabriel > End

@@ -11,7 +11,7 @@ final class Plugin {
 	private function __construct() {
 		global $wp_version;
 
-		add_action( 'init', array( $this, 'load_textdomain' ) );
+		add_action( 'init', array( $this, 'load_textdomain' ), 1 );
 
 		Admin_Menu_Routes_Library::instance();
 		Controllers\Helpers::instance();
@@ -19,19 +19,20 @@ final class Plugin {
 		Controllers\WooCommerce::instance();
 		Controllers\WooCommerce_Archives::instance();
 		Controllers\Components::instance();
+		Controllers\Auth_Token_API::instance();
 		if ( version_compare( $wp_version, '6.2', '<' ) ) {
 			Controllers\Admin_Menu::instance();
+			Controllers\Admin_Menu_WooCommerce::instance();
 		} else {
 			Controllers\New_Admin_Menu::instance();
 		}
-		Controllers\Admin_Menu_WooCommerce::instance();
 		add_action( 'admin_footer', array( __CLASS__, 'add_premium_style' ) );
 		add_action( 'admin_head', array( __CLASS__, 'add_premium_js' ) );
 		do_action( 'qlwapp_init' );
 	}
 
 	public function load_textdomain() {
-		load_plugin_textdomain( 'wp-whatsapp-chat', false, QLWAPP_PLUGIN_DIR . '/languages/' );
+		load_plugin_textdomain( 'wp-whatsapp-chat', false, dirname( QLWAPP_PLUGIN_BASENAME ) . '/languages' );
 	}
 
 	public static function add_premium_style() {

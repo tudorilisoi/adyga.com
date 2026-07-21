@@ -13,21 +13,20 @@ class Contacts {
 	protected static $instance;
 	protected $repository;
 
+	/**
+	 * Per-request memo for get_all(). The ORM caches the option lookup, but
+	 * the model still iterates entities and runs qlwapp_replacements_vars on
+	 * each message — repeated for every caller (add_app + get_primary + the
+	 * shortcode all hit this). Invalidate on every write below.
+	 */
+	protected $cached_all = null;
+
 	public function __construct() {
 		add_filter( 'sanitize_option_qlwapp_contacts', 'wp_unslash' );
-		$models_button = Button::instance();
-		$button        = $models_button->get();
-		$builder       = ( new CollectionRepositoryBuilder() )
+		$builder = ( new CollectionRepositoryBuilder() )
 		->setTable( 'qlwapp_contacts' )
 		->setEntity( Contact_Entity::class )
-		->setDefaultEntities(
-			array(
-				array(
-					'phone'   => qlwapp_format_phone( $button['phone'] ),
-					'message' => qlwapp_replacements_vars( $button['message'] ),
-				),
-			)
-		)
+		->setDefaultEntities( array( array( 'id' => 1 ) ) )
 		->setAutoIncrement( true );
 
 		$this->repository = $builder->getRepository();
@@ -58,6 +57,7 @@ class Contacts {
 			return false;
 		}
 
+		$this->cached_all = null;
 		return $this->repository->delete( $id );
 	}
 
@@ -71,7 +71,8 @@ class Contacts {
 	}
 
 	public function update( int $id, array $contact ) {
-		$entity = $this->repository->update( $id, $this->sanitize_value_data( $contact ) );
+		$entity           = $this->repository->update( $id, $this->sanitize_value_data( $contact ) );
+		$this->cached_all = null;
 		if ( $entity ) {
 			return $entity->getProperties();
 		}
@@ -82,7 +83,8 @@ class Contacts {
 			unset( $contact['id'] );
 		}
 
-		$entity = $this->repository->create( $this->sanitize_value_data( $contact ) );
+		$entity           = $this->repository->create( $this->sanitize_value_data( $contact ) );
+		$this->cached_all = null;
 
 		if ( $entity ) {
 			return $entity->getProperties();
@@ -98,54 +100,84 @@ class Contacts {
 	}
 
 	public function get_all() {
-		$models_button = Button::instance();
-		$button        = $models_button->get();
-		$entities      = $this->repository->findAll();
-
-		if ( ! $entities ) {
-			return array();
+		if ( null !== $this->cached_all ) {
+			return $this->cached_all;
 		}
 
-		// TODO: Replace with a default contact from ORM
-		// if ( ! $entities ) {
-		// $defaults_contacts               = array();
-		// $defaults_contacts[0]            = $this->get_args();
-		// $defaults_contacts[0]['order']   = 1;
-		// $defaults_contacts[0]['message'] = $button['message'];
-		// $defaults_contacts[0]['phone']   = qlwapp_format_phone( $button['phone'] );
-		// $entity                          = $this->create( $defaults_contacts[0] );
-		// $defaults_contacts[0]['id']      = $entity['id'];
+		$entities = $this->repository->findAll();
 
-		// if ( ! is_admin() ) {
-		// $defaults_contacts[0]['message'] = qlwapp_replacements_vars( $defaults_contacts[0]['message'] );
-		// }
+		// The ORM injects its default entity only when the stored option is
+		// strictly null; a persisted empty array ([]) slips through findAll()
+		// as "no contacts", which would leave the frontend with no primary
+		// contact and hide the button entirely. Fall back to the same entity
+		// default the ORM would seed (id => 1) so get_all()/get_primary() never
+		// depend on that null-vs-[] distinction at the storage layer.
+		if ( ! $entities ) {
+			$default_entity     = new Contact_Entity();
+			$default_entity->id = 1;
+			$entities           = array( $default_entity );
+		}
 
-		// return $defaults_contacts;
-		// }
+		// Only replace variables on frontend (not in admin or REST API admin requests).
+		$is_rest_admin = defined( 'REST_REQUEST' ) && REST_REQUEST && is_user_logged_in();
+		$is_frontend   = ! is_admin() && ! $is_rest_admin;
 
 		$contacts = array();
 
 		foreach ( $entities as $entity ) {
 			$contact = $entity->getProperties();
 
-			if ( ! $contact['phone'] ) {
-				$contact['phone'] = qlwapp_format_phone( $button['phone'] );
-			}
-
-			// Only replace variables on frontend (not in admin or REST API admin requests).
-			$is_rest_admin = defined( 'REST_REQUEST' ) && REST_REQUEST && is_user_logged_in();
-			if ( ! is_admin() && ! $is_rest_admin ) {
+			if ( $is_frontend ) {
 				$contact['message'] = qlwapp_replacements_vars( $contact['message'] );
 			}
 
-			// Add the contact to the array without specifying a key.
 			$contacts[] = $contact;
 		}
 
-		return $contacts;
+		$this->cached_all = $contacts;
+		return $this->cached_all;
+	}
+
+	/**
+	 * Invariant: the primary contact (toggle target) is the contact with the
+	 * lowest `order`, resolved before any display filtering. Do not move this
+	 * responsibility to controllers — the frontend filters by device and would
+	 * reindex the array, silently moving the toggle target.
+	 *
+	 * We sort by `order` rather than trusting the stored array position: a
+	 * drag-and-drop reorder only rewrites the per-contact `order` field (via
+	 * update_all -> in-place ORM updates), it never reorders the physical
+	 * array. Reading position[0] would therefore return a stale contact that
+	 * disagrees with both the admin editor and the frontend list, which both
+	 * order by `order` (see filterVisibleContacts.js for the matching JS rule:
+	 * missing/null order sorts last, ties keep their relative position).
+	 *
+	 * Returns null when no contacts exist (template guards).
+	 */
+	public function get_primary() {
+		$contacts = $this->get_all();
+
+		if ( empty( $contacts ) ) {
+			return null;
+		}
+
+		$primary       = $contacts[0];
+		$primary_order = isset( $primary['order'] ) && null !== $primary['order'] ? $primary['order'] : PHP_INT_MAX;
+
+		foreach ( $contacts as $contact ) {
+			$order = isset( $contact['order'] ) && null !== $contact['order'] ? $contact['order'] : PHP_INT_MAX;
+
+			if ( $order < $primary_order ) {
+				$primary       = $contact;
+				$primary_order = $order;
+			}
+		}
+
+		return $primary;
 	}
 
 	public function delete_all() {
+		$this->cached_all = null;
 		return $this->repository->deleteAll();
 	}
 
@@ -168,6 +200,10 @@ class Contacts {
 			} else {
 				unset( $value_data[ $key ] );
 			}
+		}
+
+		if ( isset( $value_data['whatsapp_link_type'] ) && ! in_array( $value_data['whatsapp_link_type'], array( 'api', 'web' ), true ) ) {
+			$value_data['whatsapp_link_type'] = 'web';
 		}
 
 		return $value_data;

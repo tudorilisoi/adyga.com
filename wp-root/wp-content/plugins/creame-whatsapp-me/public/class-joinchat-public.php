@@ -5,6 +5,8 @@
  * @package    Joinchat
  */
 
+defined( 'WPINC' ) || exit;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -80,6 +82,16 @@ class Joinchat_Public {
 		$settings['qr']            = 'yes' === $settings['qr'];
 		$settings['message_badge'] = 'yes' === $settings['message_badge'] && '' !== $settings['message_text'];
 		$settings['optin_check']   = 'yes' === $settings['optin_check'];
+		$settings['show_brand']    = 'yes' === $settings['show_brand'];
+		$settings['tracking']      = 'yes' === $settings['tracking'];
+
+		if ( $settings['tracking'] ) {
+			$settings['tracking_url'] = Joinchat_Tracking::rest_url();
+
+			if ( Joinchat_Tracking::requires_nonce() ) {
+				$settings['tracking_nonce'] = wp_create_nonce( Joinchat_Tracking::NONCE_ACTION );
+			}
+		}
 
 		if ( empty( $settings['gads'] ) ) {
 			unset( $settings['gads'] );
@@ -132,9 +144,6 @@ class Joinchat_Public {
 		$file = JOINCHAT_SLUG;
 		$min  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		// Defer styles by default.
-		$defer = apply_filters( 'joinchat_defer_styles', true );
-
 		// If not chatbox use lighter only button styles.
 		if ( empty( $this->chatbox_content ) ) {
 			$file .= '-btn';
@@ -142,7 +151,8 @@ class Joinchat_Public {
 
 		wp_register_style( JOINCHAT_SLUG, plugins_url( "public/css/{$file}{$min}.css", JOINCHAT_FILE ), array(), JOINCHAT_VERSION );
 
-		if ( ! $defer || jc_common()->preview ) {
+		// Enqueue styles if is preview or not defer styles.
+		if ( jc_common()->preview || ! apply_filters( 'joinchat_defer_styles', true ) ) {
 			$this->enqueue_styles();
 		}
 	}
@@ -150,20 +160,20 @@ class Joinchat_Public {
 	/**
 	 * Inline header styles.
 	 *
-	 * If button appears directly (delay < 0) inline on <head> min required styles.
+	 * If button appears directly (delay <= 0) inline on <head> min required styles.
 	 *
 	 * @since    6.0.0
 	 * @return   void
 	 */
-	public function header_styles() {
+	public function above_the_fold_styles() {
 
-		if ( ! $this->show || jc_common()->settings['button_delay'] >= 0 || did_filter( 'joinchat_inline_style' ) ) {
+		if ( ! $this->show || jc_common()->settings['button_delay'] > 0 || did_filter( 'joinchat_inline_style' ) ) {
 			return;
 		}
 
 		$handle = JOINCHAT_SLUG . '-head';
-		$css    = $this->get_inline_styles();
-		$css   .= file_get_contents( JOINCHAT_DIR . 'public/css/joinchat-head.css' );
+		$css    = file_get_contents( JOINCHAT_DIR . 'public/css/joinchat-head.css' );
+		$css   .= $this->get_inline_styles();
 
 		wp_register_style( $handle, false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_style( $handle );
@@ -182,12 +192,65 @@ class Joinchat_Public {
 	 */
 	public function enqueue_styles() {
 
-		if ( ! $this->show || wp_style_is( JOINCHAT_SLUG, 'done' ) ) {
+		// On WP 6.9+ classic themes, avoid queueing Joinchat in the footer capture pass that hoists styles to HEAD.
+		if ( ! $this->can_enqueue_joinchat_style() || $this->should_avoid_wp69_style_hoist() ) {
 			return;
 		}
 
 		wp_enqueue_style( JOINCHAT_SLUG );
 		wp_add_inline_style( JOINCHAT_SLUG, Joinchat_Util::min_css( $this->get_inline_styles() ) );
+
+	}
+
+	/**
+	 * Enqueue and print Joinchat styles late in footer, after core footer styles capture.
+	 *
+	 * This keeps Joinchat CSS in footer on WP 6.9+ classic themes while leaving
+	 * wp_hoist_late_printed_styles() active for the rest of styles.
+	 *
+	 * @since 6.3.1
+	 * @return void
+	 */
+	public function late_enqueue_styles() {
+
+		if ( ! $this->can_enqueue_joinchat_style() || ! $this->should_avoid_wp69_style_hoist() ) {
+			return;
+		}
+
+		wp_enqueue_style( JOINCHAT_SLUG );
+		wp_add_inline_style( JOINCHAT_SLUG, Joinchat_Util::min_css( $this->get_inline_styles() ) );
+		wp_print_styles( array( JOINCHAT_SLUG ) );
+
+	}
+
+	/**
+	 * Determine whether Joinchat style can still be enqueued.
+	 *
+	 * @since 6.3.1
+	 * @return bool
+	 */
+	private function can_enqueue_joinchat_style() {
+
+		return $this->show && ! wp_style_is( JOINCHAT_SLUG, 'done' );
+
+	}
+
+	/**
+	 * Determine whether Joinchat styles should avoid WordPress 6.9 style hoisting.
+	 *
+	 * From WP 6.9, classic themes can hoist late footer styles to HEAD.
+	 * view: https://make.wordpress.org/core/2025/11/18/wordpress-6-9-frontend-performance-field-guide/#introduce-the-template-enhancement-output-buffer
+	 * view: https://wordpress.org/support/topic/wordpress-6-9-broke-site-layout-crewbloom/.
+	 *
+	 * @since 6.3.1
+	 * @return bool
+	 */
+	private function should_avoid_wp69_style_hoist() {
+
+		$is_wp69_classic_theme = is_wp_version_compatible( '6.9' ) && ! wp_is_block_theme();
+		$is_footer_styles      = doing_action( 'wp_footer' );
+
+		return (bool) apply_filters( 'joinchat_avoid_wp69_style_hoist', $is_wp69_classic_theme && $is_footer_styles );
 
 	}
 
@@ -257,6 +320,8 @@ class Joinchat_Public {
 				'whatsapp_web',
 				'message_send',
 				'gads',
+				'tracking_url', // Tracking settings.
+				'tracking_nonce',
 				'ga_tracker',   // Event customize.
 				'ga_event',
 				'data_layer',
@@ -372,6 +437,8 @@ class Joinchat_Public {
 				'qr_text',
 				'custom_css',
 				'clear',
+				'show_brand',
+				'tracking',
 			)
 		);
 
@@ -379,10 +446,10 @@ class Joinchat_Public {
 
 		$data['message_send'] = Joinchat_Util::replace_variables( $data['message_send'] );
 
-		if ( '__jc__' === $settings['header'] || $is_preview ) {
+		if ( $settings['show_brand'] || $is_preview ) {
 			$powered_args = array(
-				'site' => rawurlencode( get_bloginfo( 'name' ) ),
-				'url'  => rawurlencode( home_url( $wp->request ) ),
+				'utm_medium' => 'widget',
+				'utm_source' => rawurlencode( wp_parse_url( home_url(), PHP_URL_HOST ) ),
 			);
 			$powered_lang = false !== strpos( strtolower( get_locale() ), 'es' ) ? 'es' : 'en';
 			$powered_link = add_query_arg( $powered_args, "https://join.chat/$powered_lang/powered/" );
@@ -445,7 +512,7 @@ class Joinchat_Public {
 			$joinchat_classes[] = 'joinchat--btn';
 		}
 
-		$button_label = empty( $box_content ) ? __( 'WhatsApp contact', 'creame-whatsapp-me' ) : __( 'Open chat', 'creame-whatsapp-me' );
+		$button_label = empty( $box_content ) ? __( 'WhatsApp Contact', 'creame-whatsapp-me' ) : __( 'Open Chat', 'creame-whatsapp-me' );
 		if ( $settings['button_tip'] ) {
 			$button_label = sprintf( '%s %s', $settings['button_tip'], $button_label );
 		}

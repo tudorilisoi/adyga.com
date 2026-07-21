@@ -335,6 +335,11 @@ if (isset($email['options']['status']) && $email['options']['status'] === 'S') {
 
 if (TNP_Email::STATUS_ERROR === $email['status'] && isset($email['options']['error_message'])) {
     $controls->errors .= sprintf(__('Stopped by fatal error: %s', 'newsletter'), esc_html($email['options']['error_message']));
+    $recovery_time = wp_next_scheduled('newsletter_send_error_recover', ['id' => (int)$email['id']]);
+    if ($recovery_time) {
+        $controls->errors .= '<br>Autorecover on ' . esc_html($controls->print_date($recovery_time, false, true));
+    }
+    $controls->errors .= '<br>Press "Continue" to continue the delivery';
 }
 
 if ($email['status'] != 'sent') {
@@ -342,6 +347,7 @@ if ($email['status'] != 'sent') {
 } else {
     $subscriber_count = $email['sent'];
 }
+
 ?>
 <style>
 <?php readfile(__DIR__ . '/assets/edit.css') ?>
@@ -354,12 +360,14 @@ if ($email['status'] != 'sent') {
     <div id="tnp-heading">
         <?php $controls->title_help('/newsletter-targeting'); ?>
 
-        <h2><?php echo esc_html($email['subject']); ?></h2>
+
         <?php include __DIR__ . '/edit-nav.php'; ?>
+
 
     </div>
 
     <div id="tnp-body">
+        <h2><?php echo esc_html($email['subject']); ?></h2>
         <?php $controls->show() ?>
 
         <form method="post" action="" id="newsletter-form">
@@ -385,7 +393,7 @@ if ($email['status'] != 'sent') {
                     <?php if ($email['status'] == 'paused' || $email['status'] == 'error') $controls->button_confirm('continue', __('Continue', 'newsletter'), 'Continue the delivery?'); ?>
                     <?php if ($email['status'] == 'paused') $controls->button_confirm('abort', __('Stop', 'newsletter'), __('This will stop the delivery. Proceed?', 'newsletter')); ?>
                     <?php if ($email['status'] == 'new' || ( $email['status'] == 'paused' && $email['send_on'] > time() )) { ?>
-                        <a id="tnp-schedule-button" class="button-secondary" href="javascript:tnp_toggle_schedule()"><i class="far fa-clock"></i> <?php _e("Schedule") ?></a>
+                        <a id="tnp-schedule-button" class="button button-secondary tnpc-button" href="javascript:tnp_toggle_schedule()"><i class="far fa-clock"></i> <?php _e("Schedule") ?></a>
                         <span id="tnp-schedule" style="display: none;">
                             <?php $controls->datetime('send_on') ?>
                             <?php $controls->button_confirm('schedule', __('Schedule', 'newsletter'), __('Schedule delivery?', 'newsletter')); ?>

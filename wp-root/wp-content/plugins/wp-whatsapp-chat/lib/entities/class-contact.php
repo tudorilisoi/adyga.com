@@ -22,8 +22,9 @@ class Contact extends CollectionEntity {
 	public $timefrom = '00:00';
 	public $timeto   = '00:00';
 	public $timezone;
-	public $visibility = 'readonly';
-	public $timedays   = array();
+	public $visibility         = 'readonly';
+	public $timedays           = array();
+	public $whatsapp_link_type = 'web';
 	public $display;
 
 	public function __construct() {

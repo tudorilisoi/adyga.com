@@ -5,6 +5,8 @@
  * @package    Joinchat
  */
 
+defined( 'WPINC' ) || exit;
+
 /**
  * The core plugin class.
  *
@@ -46,6 +48,7 @@ class Joinchat {
 		$this->set_locale();
 		$this->load_integrations();
 
+		$this->define_tracking_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_premium_hooks();
@@ -63,9 +66,11 @@ class Joinchat {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Joinchat_Loader. Orchestrates the hooks of the plugin.
+	 * - Joinchat_Common. Defines all common functionality for the plugin.
 	 * - Joinchat_i18n. Defines internationalization functionality.
 	 * - Joinchat_Integrations. Defines thrid party integrations.
 	 * - Joinchat_Util. Defines common utilities.
+	 * - Joinchat_Abilities. Manages plugin abilities API.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -81,9 +86,11 @@ class Joinchat {
 		require_once JOINCHAT_DIR . 'includes/class-joinchat-i18n.php';
 		require_once JOINCHAT_DIR . 'includes/class-joinchat-integrations.php';
 		require_once JOINCHAT_DIR . 'includes/class-joinchat-util.php';
+		require_once JOINCHAT_DIR . 'includes/class-joinchat-abilities.php';
 
 		$this->loader = new Joinchat_Loader();
 		jc_common(); // Instance Joinchat_Common.
+		Joinchat_Abilities::init(); // Initialize Abilities API registration.
 
 	}
 
@@ -119,6 +126,28 @@ class Joinchat {
 		// No delegate to $this->loader, use WordPress add_action.
 		// At 'plugins_loaded' hook can determine if other plugins are present.
 		add_action( 'plugins_loaded', array( $plugin_integrations, 'load_integrations' ) );
+
+	}
+
+	/**
+	 * Register all hooks related to click tracking.
+	 *
+	 * @since    6.2.0
+	 * @access   private
+	 * @return   void
+	 */
+	private function define_tracking_hooks() {
+
+		require_once JOINCHAT_DIR . 'includes/class-joinchat-tracking.php';
+
+		$plugin_tracking = new Joinchat_Tracking();
+
+		if ( ! $plugin_tracking->is_enabled() ) {
+			return;
+		}
+
+		$this->loader->add_action( 'rest_api_init', $plugin_tracking, 'register_rest_routes' );
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_tracking, 'register_dashboard_widget' );
 
 	}
 
@@ -177,6 +206,7 @@ class Joinchat {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'register_scripts' );
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'notices' );
 		$this->loader->add_action( 'wp_ajax_joinchat_notice_dismiss', $plugin_admin, 'ajax_notice_dismiss' );
+		$this->loader->add_action( 'in_admin_header', $plugin_admin, 'admin_header' );
 		// Post meta.
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_meta_boxes' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'save_meta', 10, 2 );
@@ -189,6 +219,9 @@ class Joinchat {
 		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_links', 10, 2 );
 		// Privacy Policy Guide.
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_privacy_message' );
+		// Compatibility for legacy Joinchat Premium versions.
+		$this->loader->add_filter( 'joinchat_enhanced_phone', $plugin_admin, 'compat_enhanced_phone', 5 );
+		$this->loader->add_action( 'admin_notices', $plugin_admin, 'notice_enhanced_phone' );
 
 		$plugin_page = new Joinchat_Admin_Page();
 
@@ -230,9 +263,10 @@ class Joinchat {
 		$this->loader->add_action( 'wp', $plugin_public, 'set_chatbox_content', 100 );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'header_styles' );
+		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'above_the_fold_styles' );
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'footer_html' );
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_footer', $plugin_public, 'late_enqueue_styles', 30 );
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'enqueue_qr_script' );
 
 		// Actions (only) for preview.
@@ -339,6 +373,6 @@ class Joinchat {
 	 * @return   bool    True if is login page, false otherwise.
 	 */
 	private function is_login() {
-		return function_exists( 'is_login' ) ? is_login() : false !== stripos( wp_login_url(), $_SERVER['SCRIPT_NAME'] );
+		return function_exists( 'is_login' ) ? is_login() : false !== stripos( wp_login_url(), $_SERVER['SCRIPT_NAME'] ?? '' );
 	}
 }

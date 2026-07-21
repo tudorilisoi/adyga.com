@@ -19,6 +19,7 @@ class NewsletterMailer {
     private $delta;
     protected $batch_size = 1;
     protected $speed = 0;
+    protected $sender_email = '';
 
     public function __construct($name, $options = []) {
         $this->name = $name;
@@ -27,7 +28,10 @@ class NewsletterMailer {
             $this->speed = max(12, (int) $this->options['speed']);
         }
         if (!empty($this->options['turbo'])) {
-            $this->batch_size = max(1, (int) $this->options['turbo']);
+            $this->batch_size = min(max(1, (int) $this->options['turbo']), 10);
+        }
+        if (!empty($this->options['sender_email'])) {
+            $this->sender_email = $this->options['sender_email'];
         }
     }
 
@@ -45,6 +49,10 @@ class NewsletterMailer {
 
     public function get_speed() {
         return $this->speed;
+    }
+
+    public function get_sender_email() {
+        return $this->sender_email;
     }
 
     /**

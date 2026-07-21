@@ -378,7 +378,13 @@ if ($mailer->get_name() === 'default') {
                                         &nbsp;
                                     </td>
                                     <td>
-                                        <?php echo esc_html(get_option('newsletter_lock_engine')) ?>
+                                        <?php
+                                        // Always directly from the database!
+                                        $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->options WHERE option_name = %s LIMIT 1", 'newsletter_engine_lock'));
+                                        $value = $row ? (int) $row->option_value : 0;
+                                        ?>
+                                        <?php echo esc_html($value) ?>
+                                        - <?php $controls->echo_date($value, false, true) ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -390,6 +396,17 @@ if ($mailer->get_name() === 'default') {
                                     </td>
                                     <td>
                                         <?php echo esc_html(NewsletterEngine::instance()->get_send_delay()) ?> ms
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        NEWSLETTER_REAL_CRON_INTERVAL
+                                    </td>
+                                    <td>
+                                        &nbsp;
+                                    </td>
+                                    <td>
+                                        <?php echo esc_html(NEWSLETTER_REAL_CRON_INTERVAL) ?> seconds
                                     </td>
                                 </tr>
                                 <tr>
@@ -688,6 +705,7 @@ if ($mailer->get_name() === 'default') {
                                                 ?>
 
                                             </td>
+
                                         </tr>
                                     <?php } ?>
                                 </tbody>

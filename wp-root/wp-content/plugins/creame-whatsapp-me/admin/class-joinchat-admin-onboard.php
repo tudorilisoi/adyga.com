@@ -5,6 +5,8 @@
  * @package    Joinchat
  */
 
+defined( 'WPINC' ) || exit;
+
 /**
  * Onboard page of the plugin.
  *
@@ -70,7 +72,6 @@ class Joinchat_Admin_Onboard {
 	public function page_hooks() {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'in_admin_header', array( $this, 'admin_header' ) );
 
 		add_filter( 'admin_title', array( $this, 'admin_title' ) );
 		add_filter( 'submenu_file', array( $this, 'submenu_file' ) );
@@ -132,22 +133,6 @@ class Joinchat_Admin_Onboard {
 	}
 
 	/**
-	 * Custom admin header with Joinchat logo
-	 *
-	 * @since    5.0.0
-	 * @return   void
-	 */
-	public function admin_header() {
-		?>
-		<div id="jcadminbar">
-			<div class="joinchat-header">
-				<h1><img src="<?php echo esc_url( plugin_dir_url( JOINCHAT_FILE ) . '/admin/img/joinchat.svg' ); ?>" width="159" height="40" alt="Joinchat"></h1>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Enqueue styles & scripts for onboard page
 	 *
 	 * @since    5.0.0
@@ -162,9 +147,9 @@ class Joinchat_Admin_Onboard {
 		$css_deps = array();
 
 		// Enqueue IntlTelInput assets.
-		if ( jc_common()->get_intltel() ) {
-			$js_deps[]  = 'intl-tel-input';
-			$css_deps[] = 'intl-tel-input';
+		if ( jc_common()->get_iti_version() ) {
+			$js_deps[]  = 'joinchat-iti';
+			$css_deps[] = 'joinchat-iti';
 		}
 
 		// Enqueue styles.
@@ -178,6 +163,9 @@ class Joinchat_Admin_Onboard {
 			'user_email'   => '',
 			'nonce'        => wp_create_nonce( 'joinchat_onboard' ),
 		);
+
+		$cta_img   = plugin_dir_url( JOINCHAT_FILE ) . 'public/img/joinchat-ok.webm';
+		$cta_value = __( "Hello 👋, welcome to *{SITE}*\n===\nCan we help you?", 'creame-whatsapp-me' ) . "\n===\n{IMG " . $cta_img . ' 180}';
 
 		$l10n = array(
 			'step_hi'         => sprintf(
@@ -195,12 +183,12 @@ class Joinchat_Admin_Onboard {
 			'step_phone_next' => _x( "Done, let's continue", 'onboard', 'creame-whatsapp-me' ),
 			'step_msg'        => _x( 'Add the text for the first message that users will send you via WhatsApp.', 'onboard', 'creame-whatsapp-me' ),
 			'step_msg_field'  => __( 'Message', 'creame-whatsapp-me' ),
-			'step_msg_value'  => esc_textarea( __( 'Hi *{SITE}*! I need more info about {TITLE} {URL}', 'creame-whatsapp-me' ) ),
+			'step_msg_value'  => esc_textarea( __( "Hi *{SITE}*! I need more info about {TITLE} {URL}\n\n_Sent with Joinchat_", 'creame-whatsapp-me' ) ),
 			'step_msg_yes'    => _x( 'Continue with this text', 'onboard', 'creame-whatsapp-me' ),
 			'step_msg_no'     => _x( "I don't want a message", 'onboard', 'creame-whatsapp-me' ),
 			'step_cta'        => _x( 'Define a Call to Action message to prompt users to interact.', 'onboard', 'creame-whatsapp-me' ),
 			'step_cta_field'  => __( 'Call to Action', 'creame-whatsapp-me' ),
-			'step_cta_value'  => esc_textarea( __( "{RAND Hi||Hello} 👋, welcome to *{SITE}*\n===\nCan we help you?", 'creame-whatsapp-me' ) ),
+			'step_cta_value'  => esc_textarea( $cta_value ),
 			'step_cta_yes'    => _x( 'Continue with this text', 'onboard', 'creame-whatsapp-me' ),
 			'step_cta_no'     => _x( "I don't want a CTA", 'onboard', 'creame-whatsapp-me' ),
 			'step_news'       => _x( 'Finally, do you want us to send you tips to improve conversion with <strong>Joinchat</strong>?', 'onboard', 'creame-whatsapp-me' ),
@@ -249,6 +237,7 @@ class Joinchat_Admin_Onboard {
 			$body = array(
 				'email' => $data['newsletter'],
 				'site'  => get_site_url(),
+				'lang'  => get_bloginfo( 'language' ),
 			);
 
 			$response = wp_remote_post(
@@ -256,7 +245,7 @@ class Joinchat_Admin_Onboard {
 				array(
 					'headers' => array( 'Content-Type' => 'application/json' ),
 					'body'    => wp_json_encode( $body ),
-					'timeout' => 15,
+					'timeout' => 10,
 				)
 			);
 

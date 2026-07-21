@@ -15,6 +15,7 @@ require_once 'class-contact.php';
 require_once 'class-display-services.php';
 require_once 'class-frontend.php';
 require_once 'class-woocommerce.php';
+require_once 'migration-button-to-contact.php';
 
 if ( class_exists( 'QLWAPP_PRO' ) ) {
 	$old = QLWAPP_PRO::instance();
@@ -36,11 +37,9 @@ add_filter(
 	'option_qlwapp',
 	function ( $qlwapp ) {
 
-		// Replace old phone number with new phone
-		if ( isset( $qlwapp['button']['phone'] ) && '12019713894' == $qlwapp['button']['phone'] ) {
-			$qlwapp['button']['phone'] = QLWAPP_PHONE_NUMBER;
-		}
-
+		// Replace the old default phone number with the current default. Only
+		// touches contacts now; the same field on Button was removed when the
+		// contact-data cluster was consolidated into Contact.
 		if ( isset( $qlwapp['contacts'] ) ) {
 			foreach ( $qlwapp['contacts'] as $id => $contact ) {
 				if ( isset( $contact['phone'] ) && '12019713894' == $contact['phone'] ) {
@@ -76,9 +75,12 @@ class QLWAPP_Compatibility {
 	}
 
 	public function previous_author( $qlwapp ) {
-		// button
+		// button (legacy upgrade path from the very first plugin author). The
+		// contact-data fields (phone, message) now live on the first contact;
+		// seed contacts[0] when the legacy options exist so the upgrade is
+		// lossless. Button only keeps presentation-level fields.
 		if ( $phone = get_option( 'whatsapp_chat_page' ) ) {
-			$qlwapp['button']['phone'] = $phone;
+			$qlwapp['contacts'][0]['phone'] = $phone;
 		}
 		if ( $text = get_option( 'whatsapp_chat_button' ) ) {
 			$qlwapp['button']['text'] = $text;
@@ -95,7 +97,7 @@ class QLWAPP_Compatibility {
 			$qlwapp['button']['position'] = "{$vposition}-{$hposition}";
 		}
 		if ( $message = get_option( 'whatsapp_chat_msg' ) ) {
-			$qlwapp['button']['message'] = $message;
+			$qlwapp['contacts'][0]['message'] = $message;
 		}
 		// display
 		if ( $mobile = get_option( 'whatsapp_chat_mobile' ) ) {
@@ -132,11 +134,14 @@ class QLWAPP_Compatibility {
 		if ( isset( $qlwapp['box']['enable'] ) && ! isset( $qlwapp['button']['box'] ) ) {
 			$qlwapp['button']['box'] = $qlwapp['box']['enable'];
 		}
-		if ( isset( $qlwapp['user']['message'] ) && ! isset( $qlwapp['button']['message'] ) ) {
-			$qlwapp['button']['message'] = $qlwapp['user']['message'];
+		if ( isset( $qlwapp['user']['message'] ) && ! isset( $qlwapp['contacts'][0]['message'] ) ) {
+			$qlwapp['contacts'][0]['message'] = $qlwapp['user']['message'];
 		}
 		if ( isset( $qlwapp['button']['rounded'] ) && $qlwapp['button']['rounded'] == 1 ) {
 			$qlwapp['button']['rounded'] = 'yes';
+		}
+		if ( isset( $qlwapp['button']['layout'] ) && ! in_array( $qlwapp['button']['layout'], array( 'button', 'bubble' ), true ) ) {
+			$qlwapp['button']['layout'] = 'button';
 		}
 		if ( isset( $qlwapp['button']['developer'] ) && $qlwapp['button']['developer'] == 1 ) {
 			$qlwapp['button']['developer'] = 'yes';
@@ -220,15 +225,6 @@ class QLWAPP_Compatibility {
 		$qlwapp['contacts'] = $models_contacts->get_all();
 		$qlwapp['display']  = $models_display->get();
 		$qlwapp['scheme']   = $models_scheme->get();
-
-		if ( ! is_admin() ) {
-			if ( isset( $qlwapp['button']['phone'] ) ) {
-				$qlwapp['button']['phone'] = qlwapp_format_phone( $qlwapp['button']['phone'] );
-			}
-			if ( isset( $qlwapp['button']['timezone'] ) ) {
-				$qlwapp['button']['timezone'] = qlwapp_get_timezone_offset( $qlwapp['button']['timezone'] );
-			}
-		}
 
 		if ( isset( $qlwapp['contacts'] ) ) {
 			if ( count( $qlwapp['contacts'] ) ) {

@@ -23,7 +23,7 @@ class NewsletterEngine {
         }
         return self::$instance;
     }
-    
+
     function __construct() {
         $this->logger = new NewsletterLogger('engine');
         $this->options = Newsletter::instance()->get_main_options(); // Language indipendent main options
@@ -32,7 +32,7 @@ class NewsletterEngine {
     function run() {
         $this->logger->debug('START');
 
-        if (!$this->set_lock(NEWSLETTER_CRON_INTERVAL * 1.2)) {
+        if (!$this->set_lock(NEWSLETTER_REAL_CRON_INTERVAL)) {
             $this->logger->fatal('Delivery engine lock already set: can be due to concurrent executions or fatal error during delivery');
             return;
         }
@@ -91,11 +91,6 @@ class NewsletterEngine {
         $this->logger->info('Starting newsletter ' . $email->id);
 
         $this->send_setup();
-
-        if ($this->max_emails <= 0) {
-            $this->logger->error('No more capacity');
-            return false;
-        }
 
         $this->fix_email($email);
 
@@ -161,6 +156,8 @@ class NewsletterEngine {
 
         foreach ($chunks as $index => $chunk) {
 
+            $this->update_lock();
+
             $this->logger->debug('Processing chunk #' . $index);
 
             $messages = [];
@@ -218,7 +215,13 @@ class NewsletterEngine {
                 }
             }
 
-            if (!$supplied_users && !$test && $this->time_exceeded()) {
+            if (!$test && $this->max_emails <= 0) {
+                $this->logger->error('No more capacity');
+                $result = false;
+                break;
+            }
+
+            if (!$test && $this->time_exceeded()) {
                 $this->logger->error('Time excedeed');
                 $result = false;
                 break;
@@ -257,11 +260,11 @@ class NewsletterEngine {
             $this->logger->debug('Max emails: ' . $this->max_emails);
             ignore_user_abort(true);
 
-            @set_time_limit(NEWSLETTER_CRON_INTERVAL + 30);
+            @set_time_limit(NEWSLETTER_REAL_CRON_INTERVAL + 30);
 
             $max_time = (int) (@ini_get('max_execution_time') * 0.95);
-            if ($max_time == 0 || $max_time > NEWSLETTER_CRON_INTERVAL) {
-                $max_time = (int) (NEWSLETTER_CRON_INTERVAL * 0.95);
+            if ($max_time == 0 || $max_time > NEWSLETTER_REAL_CRON_INTERVAL) {
+                $max_time = intval(NEWSLETTER_REAL_CRON_INTERVAL * 0.95);
             }
 
             // time_start is when the plugin has been loaded, but other task could have been executed and
@@ -367,6 +370,12 @@ class NewsletterEngine {
 
         Newsletter::instance()->save_email($edited_email);
 
+        $delay = (int)Newsletter::instance()->get_main_option('autorecovery_delay');
+
+        if ($delay && $delay > 0) {
+            wp_schedule_single_event(time() + $delay*60, 'newsletter_send_error_recover', ['id' => (int) $email->id]);
+        }
+
         Newsletter\Logs::add('newsletter-' . $email->id, 'Error: ' . $message);
     }
 
@@ -430,13 +439,11 @@ class NewsletterEngine {
      */
     function get_send_delay() {
         if (defined('NEWSLETTER_SEND_DELAY')) {
-            return (int) NEWSLETTER_SEND_DELAY;
+            $delay = intval(NEWSLETTER_SEND_DELAY);
+        } else {
+            $delay = intval($this->options['send_delay']);
         }
-        $max = (float) $this->options['max_per_second'];
-        if ($max > 0) {
-            return (int) (1000 / $max);
-        }
-        return 0;
+        return max(0, min($delay, 5000));
     }
 
     function time_exceeded() {
@@ -494,30 +501,63 @@ class NewsletterEngine {
         return $r;
     }
 
+    /**
+     * Move forward the lock since the engine is still active.
+     */
+    function update_lock() {
+        global $wpdb;
+        $this->logger->debug('Updating engine lock ' . time());
+        $wpdb->query($wpdb->prepare("update $wpdb->options set option_value=%s where option_name=%s limit 1", '' . time(), 'newsletter_engine_lock'));
+        if ($wpdb->last_error) {
+            $this->logger->fatal($wpdb->last_error);
+        }
+    }
+
     function set_lock($duration) {
         global $wpdb;
 
-        $duration = (int) $duration;
+        $this->logger->debug('Setting engine lock ' . $duration);
 
         $wpdb->flush();
-        $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->options WHERE option_name = %s LIMIT 1", 'newsletter_lock_engine'));
-        if ($row) {
-            $value = (int) $row->option_value;
-            if ($value < time()) {
-                $wpdb->query($wpdb->prepare("update $wpdb->options set option_value=%s where option_id=%d limit 1", '' . (time() + $duration), $row->option_id));
-                $wpdb->flush();
-                return true;
-            }
+
+        $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->options WHERE option_name = %s LIMIT 1", 'newsletter_engine_lock'));
+
+        // If the option does not exists
+        if (!$row) {
+            $this->logger->debug('Missing lock');
+            $wpdb->insert($wpdb->options, ['option_name' => 'newsletter_engine_lock', 'option_value' => '' . time()]);
+            return true;
+        }
+
+        // If the lock is recent
+        $value = (int) $row->option_value;
+        if ($value + $duration > time()) {
+            $this->logger->debug('Already locked: ' . $value);
             return false;
         }
-        $wpdb->insert($wpdb->options, ['option_name' => 'newsletter_lock_engine', 'option_value' => '' . (time() + $duration)]);
-        $wpdb->flush();
+
+        if ($value) {
+            $this->logger->debug('Old lock, ignoring');
+        } else {
+            $this->logger->debug('Lock set to zero');
+        }
+
+        // Set the lock
+        $wpdb->query($wpdb->prepare("update $wpdb->options set option_value=%s where option_id=%d limit 1", '' . time(), $row->option_id));
+        if ($wpdb->last_error) {
+            $this->logger->fatal($wpdb->last_error);
+        }
+
         return true;
     }
 
     function reset_lock() {
         global $wpdb;
-        $wpdb->query($wpdb->prepare("update $wpdb->options set option_value=%s where option_name=%s limit 1", '0', 'newsletter_lock_engine'));
-        $wpdb->flush();
+        $this->logger->debug('Reset engine lock');
+
+        $wpdb->query($wpdb->prepare("update $wpdb->options set option_value=%s where option_name=%s limit 1", '0', 'newsletter_engine_lock'));
+        if ($wpdb->last_error) {
+            $this->logger->fatal($wpdb->last_error);
+        }
     }
 }

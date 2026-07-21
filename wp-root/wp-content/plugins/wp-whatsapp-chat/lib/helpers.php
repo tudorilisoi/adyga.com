@@ -25,11 +25,17 @@ function qlwapp_get_replacements() {
 	$title = wp_get_document_title();
 	remove_filter( 'document_title_separator', $remove );
 
+	// Verificar que $wp esté inicializado antes de acceder a sus propiedades
+	$current_url = home_url( '/' );
+	if ( isset( $wp ) && is_object( $wp ) && isset( $wp->request ) ) {
+		$current_url = home_url( $wp->request );
+	}
+
 	return array(
 		'{SITE_TITLE}'    => get_bloginfo( 'name' ),
 		'{SITE_URL}'      => home_url( '/' ),
 		'{SITE_EMAIL}'    => get_bloginfo( 'admin_email' ),
-		'{CURRENT_URL}'   => home_url( $wp->request ),
+		'{CURRENT_URL}'   => $current_url,
 		'{CURRENT_TITLE}' => $title,
 	);
 }
@@ -68,6 +74,28 @@ function qlwapp_get_woocommerce_replacements_text() {
 		'{PRODUCT_PRICE}',
 		'{PRODUCT_SKU}',
 		'{PRODUCT_ID}',
+	);
+
+	return implode( ' ', $replacements );
+}
+
+function qlwapp_get_woocommerce_order_replacements_text() {
+
+	$replacements = array(
+		'{ORDER_ID}',
+		'{ORDER_NUMBER}',
+		'{ORDER_TOTAL}',
+		'{ORDER_DATE}',
+		'{ORDER_TIME}',
+		'{ORDER_STATUS}',
+		'{ORDER_URL}',
+		'{ORDER_PRODUCTS}',
+		'{CUSTOMER_NAME}',
+		'{CUSTOMER_EMAIL}',
+		'{CUSTOMER_PHONE}',
+		'{BILLING_ADDRESS}',
+		'{SHIPPING_ADDRESS}',
+		'{PAYMENT_METHOD}',
 	);
 
 	return implode( ' ', $replacements );
@@ -143,19 +171,36 @@ function qlwapp_get_timezone_options() {
 
 	$timezone_html = wp_timezone_choice( null, get_user_locale() );
 
-	// Parsear el HTML para convertirlo en un array de objetos
-	preg_match_all( '/<option value="([^"]*)"( selected="selected")?>([^<]*)<\/option>/', $timezone_html, $matches, PREG_SET_ORDER );
+	/*
+	 * Parse the <option> tags into an array of objects.
+	 *
+	 * The attributes inside each <option> can appear in any order and WordPress
+	 * may add extra attributes (e.g. dir="auto"), so we capture the whole tag
+	 * and extract the value/selected attributes individually instead of relying
+	 * on a fixed attribute order.
+	 */
+	preg_match_all( '/<option\b([^>]*)>([^<]*)<\/option>/', $timezone_html, $matches, PREG_SET_ORDER );
 
-	$timezones = array_map(
-		function ( $match ) {
-			return array(
-				'value'    => $match[1],
-				'label'    => $match[3],
-				'selected' => ! empty( $match[2] ), // true si la opción está seleccionada
-			);
-		},
-		$matches
-	);
+	$timezones = array();
+
+	foreach ( $matches as $match ) {
+		$attributes = $match[1];
+		$label      = $match[2];
+
+		preg_match( '/value="([^"]*)"/', $attributes, $value_match );
+		$value = isset( $value_match[1] ) ? $value_match[1] : '';
+
+		// Skip the placeholder "Select a city" option (empty value).
+		if ( '' === $value ) {
+			continue;
+		}
+
+		$timezones[] = array(
+			'value'    => $value,
+			'label'    => $label,
+			'selected' => false !== strpos( $attributes, 'selected' ),
+		);
+	}
 
 	return $timezones;
 }

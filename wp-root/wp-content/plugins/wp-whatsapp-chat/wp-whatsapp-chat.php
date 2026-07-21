@@ -4,17 +4,17 @@
  * Plugin Name:             Social Chat
  * Description:             Social Chat allows your visitors to contact you or your team through WhatsApp with a single click.
  * Plugin URI:              https://quadlayers.com/products/whatsapp-chat/
- * Version:                 8.2.0
+ * Version:                 8.6.1
  * Text Domain:             wp-whatsapp-chat
  * Author:                  QuadLayers
  * Author URI:              https://quadlayers.com
  * License:                 GPLv3
  * Domain Path:             /languages
  * Request at least:        4.7
- * Tested up to:            6.9
+ * Tested up to:            7.0
  * Requires PHP:            5.6
  * WC requires at least:    4.0
- * WC tested up to:         10.5
+ * WC tested up to:         10.9
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'QLWAPP_PLUGIN_NAME', 'Social Chat' );
-define( 'QLWAPP_PLUGIN_VERSION', '8.2.0' );
+define( 'QLWAPP_PLUGIN_VERSION', '8.5.9' );
 define( 'QLWAPP_PLUGIN_FILE', __FILE__ );
 define( 'QLWAPP_PLUGIN_DIR', __DIR__ . DIRECTORY_SEPARATOR );
 define( 'QLWAPP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -64,6 +64,7 @@ register_activation_hook(
 	__FILE__,
 	function () {
 		do_action( 'qlwapp_activation' );
+		do_action( 'litespeed_purge_all' );
 	}
 );
 

@@ -5,6 +5,8 @@
  * @package    Joinchat
  */
 
+defined( 'WPINC' ) || exit;
+
 /**
  * Front and Back Common class.
  *
@@ -20,7 +22,7 @@ class Joinchat_Common {
 	 *
 	 * @since    4.5.10
 	 */
-	const INTL_TEL_INPUT_VERSION = '25.13.3';
+	const INTL_TEL_INPUT_VERSION = '29.1.1';
 
 	/**
 	 * Singleton instance.
@@ -113,12 +115,14 @@ class Joinchat_Common {
 			'visibility'    => array( 'all' => 'yes' ),
 			'color'         => '#25d366/1', // hexcolor/0|1 (black or white text).
 			'dark_mode'     => 'no',     // values: 'no', 'yes' or 'auto'.
-			'header'        => '__jc__', // values: '__jc__', '__wa__' or other custom text.
+			'header'        => '__wa__', // values: '__wa__' or other custom text.
 			'optin_text'    => '',
 			'optin_check'   => 'no',
 			'gads'          => '',
+			'tracking'      => 'yes',
 			'custom_css'    => '',
 			'clear'         => 'no',
+			'show_brand'    => 'yes',
 		);
 
 		$defaults = array_merge( $defaults, apply_filters( 'joinchat_extra_settings', array() ) );
@@ -145,16 +149,22 @@ class Joinchat_Common {
 			return $this->settings;
 		}
 
-		$default_settings = $this->defaults();
+		$defaults = $this->defaults();
 
 		// Can hook 'option_joinchat' and 'default_option_joinchat' filters.
-		$settings = array_merge( $default_settings, (array) get_option( JOINCHAT_SLUG, $default_settings ) );
+		$settings = (array) get_option( JOINCHAT_SLUG, $defaults );
 
-		// Migrate addons 'remove_brand' setting to 'header' (v. < 4.1).
-		if ( isset( $settings['remove_brand'] ) ) {
-			$remove             = $settings['remove_brand'];
-			$settings['header'] = 'wa' === $remove ? '__wa__' : ( 'no' === $remove ? '__jc__' : '' );
+		// Since v6.2.0 use "show_brand" setting.
+		if ( ! isset( $settings['show_brand'] ) && isset( $settings['header'] ) ) {
+			if ( '__jc__' === $settings['header'] ) {
+				$settings['header']     = '__wa__';
+				$settings['show_brand'] = 'yes';
+			} else {
+				$settings['show_brand'] = 'no';
+			}
 		}
+
+		$settings = array_merge( $defaults, $settings );
 
 		// Since v5.1 use negative values for disabled.
 		if ( 0 === $settings['message_delay'] ) {
@@ -168,7 +178,7 @@ class Joinchat_Common {
 		$settings['color'] = str_replace( '/100', '/1', $settings['color'] );
 
 		// Clean unused saved settings.
-		$settings = array_intersect_key( $settings, $default_settings );
+		$settings = array_intersect_key( $settings, $defaults );
 
 		$this->settings = apply_filters( 'joinchat_settings', $settings );
 
@@ -182,9 +192,10 @@ class Joinchat_Common {
 	 * Return IntlTelInput library version or false to disable.
 	 *
 	 * @since    4.5.10
+	 * @since    6.3.0 renamed from get_intltel() to get_iti_version()
 	 * @return string|false
 	 */
-	public function get_intltel() {
+	public function get_iti_version() {
 
 		return apply_filters( 'joinchat_enhanced_phone', self::INTL_TEL_INPUT_VERSION );
 

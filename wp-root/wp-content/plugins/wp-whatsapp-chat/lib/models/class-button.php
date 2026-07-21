@@ -37,8 +37,7 @@ class Button {
 		// Only replace variables on frontend (not in admin or REST API admin requests).
 		$is_rest_admin = defined( 'REST_REQUEST' ) && REST_REQUEST && is_user_logged_in();
 		if ( ! is_admin() && ! $is_rest_admin ) {
-			$result['text']    = qlwapp_replacements_vars( $result['text'] );
-			$result['message'] = qlwapp_replacements_vars( $result['message'] );
+			$result['text'] = qlwapp_replacements_vars( $result['text'] );
 		}
 
 		return $result;
@@ -66,11 +65,6 @@ class Button {
 		if ( isset( $settings['text'] ) ) {
 			$settings['text'] = sanitize_text_field( $settings['text'] );
 		}
-		if ( isset( $settings['message'] ) ) {
-			// Preserve line breaks while sanitizing the message
-			$settings['message'] = wp_kses( $settings['message'], array() );
-			$settings['message'] = wp_unslash( $settings['message'] );
-		}
 		if ( isset( $settings['icon'] ) ) {
 			// Check if it's a URL (for custom images) or a CSS class (for font icons)
 			if ( filter_var( $settings['icon'], FILTER_VALIDATE_URL ) ||
@@ -83,16 +77,36 @@ class Button {
 				$settings['icon'] = sanitize_html_class( $settings['icon'] );
 			}
 		}
-		if ( isset( $settings['phone'] ) ) {
-			$settings['phone'] = qlwapp_format_phone( $settings['phone'] );
+		if ( isset( $settings['timefrom'] ) ) {
+			$settings['timefrom'] = preg_match( '/^\d{2}:\d{2}$/', $settings['timefrom'] )
+				? $settings['timefrom']
+				: '00:00';
 		}
-		if ( isset( $settings['group'] ) ) {
-			$settings['group'] = sanitize_url( $settings['group'] );
+		if ( isset( $settings['timeto'] ) ) {
+			$settings['timeto'] = preg_match( '/^\d{2}:\d{2}$/', $settings['timeto'] )
+				? $settings['timeto']
+				: '00:00';
 		}
-		if ( isset( $settings['whatsapp_link_type'] ) ) {
-			$settings['whatsapp_link_type'] = in_array( $settings['whatsapp_link_type'], array( 'api', 'web' ) ) ? $settings['whatsapp_link_type'] : 'web';
+		if ( isset( $settings['timedays'] ) && is_array( $settings['timedays'] ) ) {
+			$settings['timedays'] = array_values(
+				array_filter(
+					array_map( 'sanitize_text_field', $settings['timedays'] ),
+					function ( $day ) {
+						return in_array( $day, array( '0', '1', '2', '3', '4', '5', '6' ), true );
+					}
+				)
+			);
 		}
-
+		if ( isset( $settings['timezone'] ) ) {
+			$settings['timezone'] = sanitize_text_field( $settings['timezone'] );
+		}
+		if ( isset( $settings['visibility'] ) ) {
+			// hidden|readonly only — with_status is a per-contact status bubble,
+			// not a button-level concept.
+			$settings['visibility'] = in_array( $settings['visibility'], array( 'hidden', 'readonly' ), true )
+				? $settings['visibility']
+				: 'readonly';
+		}
 		return $settings;
 	}
 

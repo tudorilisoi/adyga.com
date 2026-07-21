@@ -587,7 +587,7 @@ class NewsletterComposer extends NewsletterModule {
         $global_button_font_size = $composer['button_font_size'];
         $global_button_font_color = $composer['button_font_color'];
         $global_button_font_weight = $composer['button_font_weight'];
-        $global_button_background_color = $composer['button_background_color'];
+        $global_button_background_color = $composer['button_background_color'] ?? '#000';
 
         $global_block_background = sanitize_hex_color($composer['block_background']);
 
@@ -668,6 +668,8 @@ class NewsletterComposer extends NewsletterModule {
             $background_style .= 'background: linear-gradient(' . $angle . 'deg, ' . $block_background . ' 0%, ' . $options['block_background_2'] . '  100%);';
         }
 
+        $block_class = $options['block_class'] ?? '';
+
         $data = $this->options_encode($options);
         // First time block creation wrapper
         if ($wrapper) {
@@ -695,7 +697,7 @@ class NewsletterComposer extends NewsletterModule {
 
         echo "<tr>";
         //echo '<td align="', esc_attr($options['block_align']), '" style="', esc_attr($style), '" bgcolor="', esc_attr($block_background), '" width="100%">';
-        echo '<td align="', esc_attr($options['block_align']), '" style="', esc_attr($style), '" bgcolor="', esc_attr($block_background), '">';
+        echo '<td align="', esc_attr($options['block_align']), '" style="', esc_attr($style), '" bgcolor="', esc_attr($block_background), '" class="', esc_attr($block_class), '">';
 
         //echo "<!-- block generated content -->\n";
         echo trim($content);
@@ -728,6 +730,8 @@ class NewsletterComposer extends NewsletterModule {
     static function hook_safe_style_css($rules) {
         $rules[] = 'display';
         $rules[] = 'mso-*';
+        $rules[] = 'background';
+        $rules[] = 'background-*';
         return $rules;
     }
 
@@ -934,19 +938,20 @@ class NewsletterComposer extends NewsletterModule {
 
             // Extra data used when testing
             $controls->data['track'] = $email->track;
+            $controls->data['email_id'] = $email->id;
 
         }
 
         if (!empty($email->options['sender_email'])) {
             $controls->data['sender_email'] = $email->options['sender_email'];
         } else {
-            $controls->data['sender_email'] = Newsletter::instance()->get_sender_email();
+            $controls->data['sender_email'] = '';
         }
 
         if (!empty($email->options['sender_name'])) {
             $controls->data['sender_name'] = $email->options['sender_name'];
         } else {
-            $controls->data['sender_name'] = Newsletter::instance()->get_sender_name();
+            $controls->data['sender_name'] = '';
         }
 
         $controls->data = array_merge(TNP_Composer::get_global_style_defaults(), $controls->data);

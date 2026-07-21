@@ -38,6 +38,8 @@ function loginizer_page_2fa(){
 		$option['question'] = (int) lz_optpost('question');
 		$option['2fa_email_force'] = (int) lz_optpost('2fa_email_force');
 		
+		$option['2fa_enforce'] = !empty($_POST['lz_2fa_enforce']) ? map_deep(wp_unslash($_POST['lz_2fa_enforce']), 'sanitize_text_field') : [];
+		
 		// Any roles to apply to ?
 		foreach($lz_roles as $k => $v){
 			
@@ -274,7 +276,15 @@ function loginizer_page_2fa(){
 function loginizer_page_2fa_T(){
 	
 	global $loginizer, $lz_error, $lz_env, $lz_roles, $lz_options, $saved_msgs;
+
+	$enforce_reg = get_option('loginizer_2fa', [
+		'2fa_enforce' => []
+	]);
+
+	$enforce_type = !empty($enforce_reg['2fa_enforce']['type']) ? sanitize_text_field(wp_unslash($enforce_reg['2fa_enforce']['type'])) : 'none';
+	$force_email_2fa = lz_POSTchecked('2fa_email_force', (empty($loginizer['2fa_email_force']) ? false : true), 'save_lz');
 	
+
 	// Universal header
 	loginizer_page_header('Two Factor Authentication');
 	
@@ -360,7 +370,7 @@ input[type="text"], textarea, select {
 					<span class="exp"><?php echo __('If the user does not have any 2FA method selected, this will enforce the OTP via Email for the users.', 'loginizer'); ?></span>
 				</td>
 				<td>
-					<input type="checkbox" value="1" name="2fa_email_force" <?php echo lz_POSTchecked('2fa_email_force', (empty($loginizer['2fa_email_force']) ? false : true), 'save_lz'); ?> />
+					<input type="checkbox" value="1" name="2fa_email_force" id="lz_email_2fa_enforce" <?php echo lz_POSTchecked('2fa_email_force', (empty($loginizer['2fa_email_force']) ? false : true), 'save_lz'); ?> />
 				</td>
 			</tr>
 			<tr>
@@ -369,7 +379,7 @@ input[type="text"], textarea, select {
 					<span class="exp"><?php echo __('Select the Roles to which 2FA should be applied.', 'loginizer'); ?></span>
 				</td>
 				<td>
-					<input type="checkbox" value="1" onchange="lz_roles_handle()" name="2fa_roles_all" id="2fa_roles_all" <?php echo lz_POSTchecked('2fa_roles_all', (empty($loginizer['2fa_roles']) ? true : false), 'save_lz'); ?> /> All<br />
+					<input type="checkbox" value="1" onchange="lz_roles_handle()" name="2fa_roles_all" id="2fa_roles_all" <?php echo lz_POSTchecked('2fa_roles_all', (empty($loginizer['2fa_roles']) ? true : false), 'save_lz'); ?> /><?php esc_html__('All', 'loginizer'); ?><br />
 					<?php
 					
 					foreach($lz_roles as $k => $v){
@@ -380,7 +390,50 @@ input[type="text"], textarea, select {
 				</td>
 			</tr>
 		</table><br />
-		<center><input name="save_lz" class="button button-primary action" value="<?php echo __('Save Settings', 'loginizer'); ?>" type="submit" /></center>
+		<?php if(empty($force_email_2fa)){ ?>
+		<table class="form-table lz_2fa_enforce_block">
+			<tr>
+				<td scope="row" valign="top" style="width:50% !important;">
+					<label><?php echo esc_html__('Enforcement Type', 'loginizer'); ?></label><br />
+					<span class="description"><?php echo esc_html__('1. Choose Strict Setup to require users to setup 2FA immediately. OR', 'loginizer'); ?></span><br />
+					<span class="description"><?php echo esc_html__('2. Choose Grace Timed Setup to give users time to complete 2FA', 'loginizer'); ?></span><br />
+				</td>
+				<td>
+					<select name="lz_2fa_enforce[type]" id="lz_2fa_enforce_type">
+						<option value="none">
+							<?php echo esc_html__('None', 'loginizer'); ?>
+						</option>
+						<option value="strict_enforce" <?php echo (($enforce_type === 'strict_enforce')) ? 'selected' : ''; ?>>
+							<?php echo esc_html__('Strict (Requires 2FA setup immediately)', 'loginizer'); ?>
+						</option>
+						<option value="grace_enforce" <?php echo (($enforce_type === 'grace_enforce')) ? 'selected' : ''; ?>>
+							<?php echo esc_html__('Grace Period (Give some time to setup)', 'loginizer'); ?>
+						</option>
+					</select>
+				</td>
+			</tr>
+			<tr class="lz_2fa_grace_time" <?php echo (($enforce_type !== 'grace_enforce') ? 'style="display:none;"' : ''); ?>>
+				<td scope="row" valign="top" style="width:50% !important;"></td>
+				<td>
+					<input type="number" name="lz_2fa_enforce[time]" min="1" value="<?php echo !empty($enforce_reg['2fa_enforce']['time']) ? esc_attr($enforce_reg['2fa_enforce']['time']) : '1'; ?>" id="" style="width:15% !important;margin-right:15px;">
+					<input type="radio" name="lz_2fa_enforce[time_unit]" id="lz_2fa_time_d" value="days" <?php checked(!empty($enforce_reg['2fa_enforce']['time_unit']) && ($enforce_reg['2fa_enforce']['time_unit'] == 'days')); ?> checked>
+					<label for="lz_2fa_time_d"><?php echo esc_html__('days', 'loginizer'); ?></label>
+					<input type="radio" name="lz_2fa_enforce[time_unit]" id="lz_2fa_time_h" value="hours" <?php checked(!empty($enforce_reg['2fa_enforce']['time_unit']) && ($enforce_reg['2fa_enforce']['time_unit'] == 'hours')); ?>>
+					<label for="lz_2fa_time_h"><?php echo esc_html__('hours', 'loginizer'); ?></label>
+				</td>
+			</tr>
+			<tr class="lz_2fa_grace_time" <?php echo (($enforce_type !== 'grace_enforce') ? 'style="display:none;"' : ''); ?>>
+				<td scope="row" valign="top" style="width:50% !important;"></td>
+				<td>
+					<label><?php echo esc_html__('What action should be taken if user does not completes the 2FA setup within the grace time.', 'loginizer'); ?></label><br /><br />
+					<input type="radio" name="lz_2fa_enforce[action]" id="" value="mandatory_setup" <?php checked(!empty($enforce_reg['2fa_enforce']['action']) && ($enforce_reg['2fa_enforce']['action'] == 'mandatory_setup')); ?> checked>
+					<span><?php echo esc_html__('Make the 2FA setup mandatory for the user.', 'loginizer'); ?></span><br /><br />
+					<input type="radio" name="lz_2fa_enforce[action]" id="" value="show_notice" <?php checked(!empty($enforce_reg['2fa_enforce']['action']) && ($enforce_reg['2fa_enforce']['action'] == 'show_notice')); ?>>
+					<span><?php echo esc_html__('Show a notice on login untill 2FA setup is completed.', 'loginizer'); ?></span>
+				</td>
+			</tr>
+		</table><br /><?php } ?>
+		<center><input name="save_lz" class="button button-primary action" value="<?php echo esc_html__('Save Settings', 'loginizer'); ?>" type="submit" /></center>
 		</form>
 	
 		</div>

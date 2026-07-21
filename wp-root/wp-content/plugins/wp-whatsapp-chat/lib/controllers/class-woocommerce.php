@@ -26,7 +26,9 @@ class WooCommerce {
 		$position          = (string) $woocommerce['position'];
 		$position_priority = (int) $woocommerce['position_priority'];
 
-		if ( ! is_product() || 'none' === $position ) {
+		$devices = (string) $woocommerce['devices'];
+
+		if ( ! is_product() || 'none' === $position || 'hide' === $devices ) {
 			return;
 		}
 

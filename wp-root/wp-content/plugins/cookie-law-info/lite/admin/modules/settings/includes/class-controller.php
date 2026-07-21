@@ -8,6 +8,7 @@
 namespace CookieYes\Lite\Admin\Modules\Settings\Includes;
 
 use CookieYes\Lite\Admin\Modules\Settings\Includes\Settings;
+use CookieYes\Lite\Includes\Notice;
 use CookieYes\Lite\Integrations\Cookieyes\Includes\Cloud;
 use WP_Error;
 
@@ -108,6 +109,7 @@ class Controller extends Cloud {
 		}
 		$options['api']['token'] = '';
 		$settings->update( $options );
+		Notice::get_instance()->undismiss( 'affiliate_banner' );
 		do_action( 'cky_after_connect' );
 		return true;
 	}
@@ -223,17 +225,25 @@ class Controller extends Cloud {
 	/**
 	 *  Fetch site info from either locally or from API.
 	 *
+	 * When the request is not a REST (cloud) call but the site is connected,
+	 * load plan data from the web app so admin contexts (e.g. plugin action links)
+	 * match behaviour that relies on `get_info()` (see Vue admin).
+	 *
 	 * @param array $args Array of arguments.
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function get_info( $args = array() ) {
-		$data = array();
-		if ( false === cky_is_cloud_request() ) {
-			$data = $this->get_site_info( $args );
-		} else {
-			$data = $this->get_app_info( $args );
+		if ( cky_is_cloud_request() ) {
+			return $this->get_app_info( $args );
 		}
-		return $data;
+		$settings = new Settings();
+		if ( $settings->is_connected() && $this->get_website_id() ) {
+			$data = $this->get_app_info( $args );
+			if ( ! is_wp_error( $data ) ) {
+				return $data;
+			}
+		}
+		return $this->get_site_info( $args );
 	}
 
 	/**
@@ -253,7 +263,6 @@ class Controller extends Cloud {
 	 */
 	public function get_default() {
 		$settings = new Settings();
-		$scan     = \CookieYes\Lite\Admin\Modules\Scanner\Includes\Controller::get_instance()->get_info();
 		return array(
 			'id'             => '',
 			'url'            => get_site_url(),
@@ -281,8 +290,8 @@ class Controller extends Cloud {
 				'status' => $settings->get_consent_log_status(),
 			),
 			'scans'          => array(
-				'date'   => isset( $scan['date'] ) ? $scan['date'] : '',
-				'status' => isset( $scan['status'] ) ? $scan['status'] : false,
+				'date'   => '',
+				'status' => false,
 			),
 			'languages'      => array(
 				'default' => $settings->get_default_language(),

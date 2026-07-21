@@ -1,7 +1,9 @@
 <?php namespace CheckEmail\Core\UI\list_table;
 
 use CheckEmail\Util;
-
+// Exit if accessed directly
+if( !defined( 'ABSPATH' ) )
+    exit;
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . WPINC . '/class-wp-list-table.php';
 }
@@ -35,7 +37,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 		foreach ($other_columns  as $column ) {
 			$columns[ $column ] = Util\wp_chill_check_email_get_column_label( $column );
 		}
-
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return apply_filters( 'check_email_manage_log_columns', $columns );
 	}
 
@@ -51,7 +53,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 	}
 
 	protected function column_default( $item, $column_name ) {
-
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'check_email_display_log_columns', $column_name, $item );
 	}
 
@@ -68,12 +70,13 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 
 		$content_ajax_url = add_query_arg(
 			array(
-				'action' => 'check-email-log-list-view-message',
-				'log_id' => $item->id,
-				'width'  => '800',
-				'height' => '550',
+				'action'   => 'check-email-log-list-view-message',
+				'log_id'   => $item->id,
+				'width'    => '800',
+				'height'   => '550',
+				'security' => wp_create_nonce('check_email_log_nonce')
 			),
-			'admin-ajax.php'
+			admin_url('admin-ajax.php')
 		);
 
 		$actions['view-content'] = sprintf( '<a href="%1$s" class="thickbox" title="%2$s">%3$s</a>',
@@ -114,7 +117,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 			esc_js( __( 'Are you sure you want to delete this log?', 'check-email' ) ),
 			esc_html__( 'Delete', 'check-email' )
 		);
-
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$actions = apply_filters( 'check_email_row_actions', $actions, $item );
 
 		return sprintf( '%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
@@ -125,7 +128,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 	}
 
 	protected function column_to_email( $item ) {
-
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$email = apply_filters( 'check_email_log_list_column_to_email', esc_html( $item->to_email ) );
 
 		return $email;
@@ -148,6 +151,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 
 			}
 		}
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$email = apply_filters( 'check_email_log_list_column_from_email', esc_html( $from ) );
 		return $email;
 	}
@@ -195,6 +199,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 			'check-email-log-list-delete-all' => esc_html__( 'Delete All Logs', 'check-email' ),
 			'check-email-log-list-resend'     => esc_html__( 'Resend Email', 'check-email' )			
 		);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$actions = apply_filters( 'el_bulk_actions', $actions );
 
 		return $actions;
@@ -203,6 +208,14 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 	public function prepare_items() {
 		$this->process_bulk_action();
 		$this->_column_headers = $this->get_column_info();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified explicitly below
+	    if ( ( ! empty( $_REQUEST['s'] ) || ! empty( $_REQUEST['d'] ) )
+	        && ( ! isset( $_REQUEST['check_email_log_search_nonce'] )
+	            || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['check_email_log_search_nonce'] ) ), 'check_email_log_search' ) )
+	    ) {
+	        wp_die( esc_html__( 'Security check failed. Please refresh the page and try your search again.', 'check-email' ) );
+	    }
 
 		// Get current page number.
 		$current_page_no = $this->get_pagenum();
@@ -248,6 +261,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 			echo '<input type="hidden" name="detached" value="' . esc_attr( sanitize_text_field( wp_unslash($_REQUEST['detached']) ) ) . '" />';
 		?>
 		<p class="search-box">
+			<?php wp_nonce_field( 'check_email_log_search', 'check_email_log_search_nonce' ); ?>
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_html( $text ); ?>:</label>
 			<input type="search" id="<?php echo esc_attr( $input_date_id ); ?>" name="d" value="<?php echo esc_attr( $input_date_val ); ?>" placeholder="<?php esc_attr_e( 'Search by date', 'check-email' ); ?>" />
 			<input type="search" id="<?php echo esc_attr( $input_text_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" placeholder="<?php esc_attr_e( 'Search by term or email', 'check-email' ); ?>" />
@@ -281,6 +295,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 
 	public function views() {
         $views = $this->get_views(); 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $views = apply_filters( "views_{$this->screen->id}", $views );
 
         if ( empty( $views ) )
@@ -354,7 +369,7 @@ class Check_Email_Log_List_Table extends \WP_List_Table {
 					$this->resend_email_log($log_id);
 				}
 				$redirect_url = add_query_arg('bulk_resend_success', count($log_ids), $this->get_page_base_url());
-				wp_redirect($redirect_url);
+				wp_safe_redirect($redirect_url);
 				exit;
 			}
 		}

@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Gallery, Livestream and Lazy Loading with Facades
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx?ref=plugin
   Description: A multi-featured plugin to embed YouTube in WordPress. Embed a video, YouTube channel gallery, playlist, or YouTube livestream. Defer JavaScript too!
-  Version: 14.2.6
+  Version: 14.2.6.1
   Author: Embed Plus for YouTube Plugin Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -35,7 +35,7 @@ class YouTubePrefs
 
     public static $folder_name = 'youtube-embed-plus';
     public static $curltimeout = 30;
-    public static $version = '14.2.6';
+    public static $version = '14.2.6.1';
     public static $opt_version = 'version';
     public static $optembedwidth = null;
     public static $optembedheight = null;
@@ -3172,7 +3172,7 @@ class YouTubePrefs
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= 'This version is tested for compatibility with WordPress 7.0 and PHP 8.4 for both Free and <a target=_blank href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">Pro</a> plugins.';
+        $new_pointer_content .= 'This version improves compatibility with WordPress 7.1 for both free and <a target=_blank href="' . self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=frompointer">Pro</a> plugins, and optimizes the caching feature for the Pro plugin.';
         if (!empty(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
             $new_pointer_content .= ' <strong>Important message to Pro users</strong>: From version 11.7 onward, you must <a href="https://www.embedplus.com/youtube-pro/download/?prokey=' . esc_attr(self::$alloptions[self::$opt_pro]) . '" target="_blank">download the separate plugin here</a> to regain your Pro features. All your settings will automatically migrate after installing the separate Pro download. Thank you for your support and patience during this transition.';
@@ -6061,6 +6061,21 @@ class YouTubePrefs
         ?>
         <svg style="height: 0 !important; width: 0 !important; display: absolute !important; top: 0 !important; left: 0 !important;"><defs><style>.epytcls-1{fill:red;}.epytcls-2{fill-rule:evenodd;fill:url(#radial-gradient);}.epytcls-3{fill:#31aaff;}.epytcls-4{fill:#fff;}</style><radialGradient id="radial-gradient" cx="193" cy="85.85" r="77.53" gradientUnits="userSpaceOnUse"><stop offset="0.17" stop-color="#fff"/><stop offset="0.68" stop-color="#31aaff"/></radialGradient></defs></svg>
         <?php
+    }
+
+    public static function gb_canvas_svg_styles()
+    {
+        // The block editor canvas is an iframe, so the gradient and class rules that
+        // gb_svg_defs() prints into the admin document are out of scope for the icon
+        // rendered inside it. Restate them for the canvas only.
+        if (!is_admin())
+        {
+            return;
+        }
+
+        wp_register_style('epytgb-canvas-svg-css', false, array(), self::$version);
+        wp_enqueue_style('epytgb-canvas-svg-css');
+        wp_add_inline_style('epytgb-canvas-svg-css', '.editor-styles-wrapper .epytcls-1{fill:red;}.editor-styles-wrapper .epytcls-2{fill-rule:evenodd;fill:#31aaff;}.editor-styles-wrapper .epytcls-3{fill:#31aaff;}.editor-styles-wrapper .epytcls-4{fill:#fff;}');
     }
 
     public static function gb_register_block_types()

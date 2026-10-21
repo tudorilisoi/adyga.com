@@ -2,10 +2,12 @@
 
 namespace WPForms\Integrations\UsageTracking;
 
+use WPForms\Admin\Builder\Settings\QrCode;
 use WPForms\Admin\Builder\Templates;
 use WPForms\Integrations\AI\Helpers as AIHelpers;
 use WPForms\Integrations\IntegrationInterface;
 use WPForms\Integrations\LiteConnect\Integration;
+use WPForms\Lite\Reports\EntriesWindow;
 use WPForms\SetupChecklist\Checklist;
 use WPForms\SetupChecklist\CompletionDetector;
 use WPForms\SetupChecklist\Config;
@@ -26,6 +28,20 @@ class UsageTracking implements IntegrationInterface {
 	 * @since 1.6.1
 	 */
 	const SETTINGS_SLUG = 'usage-tracking-enabled';
+
+	/**
+	 * The 7-day entries period.
+	 *
+	 * @since 2.0.2.2
+	 */
+	private const PERIOD_7DAYS = '7days';
+
+	/**
+	 * The 30-day entries period.
+	 *
+	 * @since 2.0.2.2
+	 */
+	private const PERIOD_30DAYS = '30days';
 
 	/**
 	 * Indicate if current integration is allowed to load.
@@ -162,7 +178,7 @@ class UsageTracking implements IntegrationInterface {
 		$forms                = $this->get_all_forms();
 		$forms_total          = count( $forms );
 		$form_templates_total = count( $this->get_all_forms( 'wpforms-template' ) );
-		$entries_total        = $this->get_entries_total();
+		$entries_total        = (int) $this->get_entries_total();
 		$form_fields_count    = $this->get_form_fields_count( $forms );
 
 		$data = [
@@ -195,12 +211,11 @@ class UsageTracking implements IntegrationInterface {
 			'wpforms_entries_avg'            => $this->get_entries_avg( $forms_total, $entries_total ),
 			'wpforms_entries_median'         => $this->get_entries_median( $forms ),
 			'wpforms_entries_total'          => $entries_total,
-			'wpforms_entries_last_7days'     => $this->get_entries_total( '7days' ),
-			'wpforms_entries_last_30days'    => $this->get_entries_total( '30days' ),
 			'wpforms_forms_total'            => $forms_total,
 			'wpforms_form_fields_count'      => $form_fields_count,
 			'wpforms_form_templates_total'   => $form_templates_total,
 			'wpforms_form_antispam_stat'     => $this->get_form_antispam_stat( $forms ),
+			'wpforms_qr_code_stat'           => $this->get_qr_code_stat( $forms ),
 			'wpforms_challenge_stats'        => get_option( 'wpforms_challenge', [] ),
 			'wpforms_lite_installed_date'    => $this->get_installed( $activated_dates, 'lite' ),
 			'wpforms_pro_installed_date'     => $this->get_installed( $activated_dates, 'pro' ),
@@ -223,10 +238,24 @@ class UsageTracking implements IntegrationInterface {
 			'wpforms_ai_killswitch'          => AIHelpers::is_disabled(),
 			'wpforms_disabled_entries_count' => count( $this->get_forms_with_disabled_entries( $forms ) ),
 			'wpforms_addons_dates'           => $this->get_addons_dates_data(),
+			'wpforms_adoption_tooltips'      => $this->get_adoption_tooltips_data(),
 			'wpforms_setup_checklist'        => $this->get_setup_checklist_data(),
 		];
 
 		$data = $this->add_promotion_plugin_data( $data );
+
+		$entries_last_7days  = $this->get_entries_total( self::PERIOD_7DAYS );
+		$entries_last_30days = $this->get_entries_total( self::PERIOD_30DAYS );
+
+		// Lite counts these from a rolling window that only becomes meaningful once it is old
+		// enough to cover the period, so an unknown count omits the key instead of sending zero.
+		if ( $entries_last_7days !== null ) {
+			$data['wpforms_entries_last_7days'] = $entries_last_7days;
+		}
+
+		if ( $entries_last_30days !== null ) {
+			$data['wpforms_entries_last_30days'] = $entries_last_30days;
+		}
 
 		if ( ! empty( $first_form_date ) ) {
 			$data['wpforms_forms_first_created'] = $first_form_date;
@@ -399,6 +428,14 @@ class UsageTracking implements IntegrationInterface {
 					'authorize_net-test-transaction-key',
 					'authorize_net-live-api-login-id',
 					'authorize_net-live-transaction-key',
+					'mercado_pago-test-access-token',
+					'mercado_pago-test-public-key',
+					'mercado_pago-live-access-token',
+					'mercado_pago-live-public-key',
+					'paystack-test-secret-key',
+					'paystack-test-public-key',
+					'paystack-live-secret-key',
+					'paystack-live-public-key',
 					'square-location-id-sandbox',
 					'square-location-id-production',
 					'geolocation-google-places-api-key',
@@ -550,15 +587,7 @@ class UsageTracking implements IntegrationInterface {
 					return false;
 				}
 
-				$active_integrations = [];
-
-				foreach ( $form->post_content['providers'] as $provider_slug => $connections ) {
-					if ( ! empty( $connections ) ) {
-						$active_integrations[] = $provider_slug;
-					}
-				}
-
-				return $active_integrations;
+				return self::get_connected_providers( (array) $form->post_content['providers'] );
 			},
 			$forms
 		);
@@ -570,6 +599,28 @@ class UsageTracking implements IntegrationInterface {
 		}
 
 		return array_count_values( $integrations );
+	}
+
+	/**
+	 * The providers a form actually uses: those with at least one connection.
+	 *
+	 * @since 2.0.2.1
+	 *
+	 * @param array $providers The form's `providers` data, keyed by provider slug.
+	 *
+	 * @return array Provider slugs, in the form's order.
+	 */
+	public static function get_connected_providers( array $providers ): array {
+
+		$connected = [];
+
+		foreach ( $providers as $slug => $connections ) {
+			if ( ! empty( $connections ) ) {
+				$connected[] = (string) $slug;
+			}
+		}
+
+		return $connected;
 	}
 
 	/**
@@ -659,7 +710,7 @@ class UsageTracking implements IntegrationInterface {
 	/**
 	 * Forms with field-level conditional logic.
 	 *
-	 * @since 2.0.0.2
+	 * @since 2.0.1
 	 *
 	 * @param array $forms List of forms to check.
 	 *
@@ -669,12 +720,12 @@ class UsageTracking implements IntegrationInterface {
 
 		return array_filter(
 			$forms,
-			static function ( $form ) {
+			function ( $form ) {
 
 				$fields = $form->post_content['fields'] ?? [];
 
 				foreach ( (array) $fields as $field ) {
-					if ( ! empty( $field['conditional_logic'] ) && ! empty( $field['conditionals'] ) ) {
+					if ( $this->field_has_configured_conditional_logic( (array) $field ) ) {
 						return true;
 					}
 				}
@@ -682,6 +733,41 @@ class UsageTracking implements IntegrationInterface {
 				return false;
 			}
 		);
+	}
+
+	/**
+	 * Whether a field has Conditional Logic enabled with at least one complete rule.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $field Field data.
+	 *
+	 * @return bool
+	 */
+	private function field_has_configured_conditional_logic( array $field ): bool {
+
+		if ( empty( $field['conditional_logic'] ) || empty( $field['conditionals'] ) ) {
+			return false;
+		}
+
+		foreach ( (array) $field['conditionals'] as $group ) {
+			foreach ( (array) $group as $rule ) {
+				$rule = (array) $rule;
+
+				if ( empty( $rule['operator'] ) || ! isset( $rule['field'] ) || trim( (string) $rule['field'] ) === '' ) {
+					continue;
+				}
+
+				if (
+					in_array( $rule['operator'], [ 'e', '!e' ], true ) ||
+					( isset( $rule['value'] ) && trim( (string) $rule['value'] ) !== '' )
+				) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -744,9 +830,9 @@ class UsageTracking implements IntegrationInterface {
 	 * @param string $period Which period should be counted? Possible values: 7days, 30days.
 	 *                       Everything else will mean "all" entries.
 	 *
-	 * @return int
+	 * @return int|null Null when the count for the requested period is unknown.
 	 */
-	private function get_entries_total( string $period = 'all' ): int {
+	public function get_entries_total( string $period = 'all' ): ?int {
 
 		if ( ! wpforms()->is_pro() ) {
 			return $this->get_entries_total_lite( $period );
@@ -762,7 +848,7 @@ class UsageTracking implements IntegrationInterface {
 		}
 
 		switch ( $period ) {
-			case '7days':
+			case self::PERIOD_7DAYS:
 				$args = [
 					'date' => [
 						gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
@@ -771,7 +857,7 @@ class UsageTracking implements IntegrationInterface {
 				];
 				break;
 
-			case '30days':
+			case self::PERIOD_30DAYS:
 				$args = [
 					'date' => [
 						gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
@@ -794,24 +880,19 @@ class UsageTracking implements IntegrationInterface {
 	 * @param string $period Which period should be counted? Possible values: 7days, 30days.
 	 *                       Everything else will mean "all" entries.
 	 *
-	 * @return int
+	 * @return int|null Null when the rolling window is younger than the requested period.
 	 */
-	private function get_entries_total_lite( string $period = 'all' ): int {
+	private function get_entries_total_lite( string $period = 'all' ): ?int {
 
-		if ( $period === '7days' || $period === '30days' ) {
-			return 0;
+		if ( $period === self::PERIOD_7DAYS ) {
+			return ( new EntriesWindow() )->get_total( 7 );
 		}
 
-		global $wpdb;
+		if ( $period === self::PERIOD_30DAYS ) {
+			return ( new EntriesWindow() )->get_total( 30 );
+		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$count = $wpdb->get_var(
-			"SELECT SUM(meta_value)
-				FROM $wpdb->postmeta
-				WHERE meta_key = 'wpforms_entries_count';"
-		);
-
-		return (int) $count;
+		return EntriesWindow::get_lifetime_total();
 	}
 
 	/**
@@ -1256,6 +1337,55 @@ class UsageTracking implements IntegrationInterface {
 	}
 
 	/**
+	 * Get the QR Code setting adoption stat: counts only, no URLs or page IDs leave the site.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $forms Published forms.
+	 *
+	 * @return array
+	 */
+	private function get_qr_code_stat( array $forms ): array {
+
+		$stat = [
+			'forms_with_qr'    => 0,
+			'forms_generated'  => 0,
+			'destination_page' => 0,
+			'destination_url'  => 0,
+			'logo_none'        => 0,
+			'logo_wpforms'     => 0,
+			'logo_custom'      => 0,
+		];
+
+		foreach ( $forms as $form ) {
+			$settings    = $form->post_content['settings'] ?? [];
+			$destination = $settings['qr_code'] ?? 'none';
+
+			// Skip forms with the QR Code setting off.
+			if ( ! in_array( $destination, [ 'page', 'url' ], true ) ) {
+				continue;
+			}
+
+			$logo = $settings['qr_code_logo'] ?? 'wpforms';
+
+			// Guard the dynamic stat key against values saved in bypass of the builder sanitization.
+			if ( ! in_array( $logo, QrCode::LOGOS, true ) ) {
+				$logo = 'wpforms';
+			}
+
+			++$stat['forms_with_qr'];
+
+			$stat['forms_generated']              += empty( $settings['qr_code_generated'] ) ? 0 : 1;
+			$stat[ 'destination_' . $destination ] = ( $stat[ 'destination_' . $destination ] ?? 0 ) + 1;
+			$stat[ 'logo_' . $logo ]               = ( $stat[ 'logo_' . $logo ] ?? 0 ) + 1;
+		}
+
+		$stat['logo_upsell'] = QrCode::get_logo_upsell_events();
+
+		return $stat;
+	}
+
+	/**
 	 * Count how many field have a specific setting enabled.
 	 *
 	 * @since 1.9.0.3
@@ -1313,5 +1443,24 @@ class UsageTracking implements IntegrationInterface {
 		 * @param array $addons_dates Addons dates data.
 		 */
 		return (array) apply_filters( 'wpforms_integrations_usage_tracking_usage_tracking_get_addons_dates', [] );
+	}
+
+	/**
+	 * Get adoption tooltips data.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @return array
+	 */
+	private function get_adoption_tooltips_data(): array {
+
+		/**
+		 * Filter adoption tooltips data for usage tracking.
+		 *
+		 * @since 2.0.1
+		 *
+		 * @param array $events Adoption tooltip event counters.
+		 */
+		return (array) apply_filters( 'wpforms_integrations_usage_tracking_usage_tracking_get_adoption_tooltips_data', [] );
 	}
 }

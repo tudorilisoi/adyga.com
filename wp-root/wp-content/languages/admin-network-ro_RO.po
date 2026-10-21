@@ -1,15 +1,19 @@
-# Translation of WordPress - 7.0.x - Development - Administration - Network Admin in Romanian
-# This file is distributed under the same license as the WordPress - 7.0.x - Development - Administration - Network Admin package.
+# Translation of WordPress - 7.1.x - Development - Administration - Network Admin in Romanian
+# This file is distributed under the same license as the WordPress - 7.1.x - Development - Administration - Network Admin package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-11-15 17:57:45+0000\n"
+"PO-Revision-Date: 2026-08-14 05:56:23+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n == 0 || n % 100 >= 2 && n % 100 <= 19) ? 1 : 2);\n"
-"X-Generator: GlotPress/4.0.3\n"
+"X-Generator: GlotPress/4.1.0\n"
 "Language: ro\n"
-"Project-Id-Version: WordPress - 7.0.x - Development - Administration - Network Admin\n"
+"Project-Id-Version: WordPress - 7.1.x - Development - Administration - Network Admin\n"
+
+#: wp-admin/network/users.php:343
+msgid "No users were deleted because no user was selected for content reassignment."
+msgstr "Nu a fost șters niciun utilizator deoarece nu a fost selectat niciun utilizator pentru reatribuirea conținutului."
 
 #: wp-admin/network/sites.php:361
 msgid "Site flagged for deletion."
@@ -689,7 +693,7 @@ msgstr "Cale"
 msgid "Domain"
 msgstr "domeniu"
 
-#: wp-admin/network/user-new.php:29 wp-admin/network/users.php:270
+#: wp-admin/network/user-new.php:29 wp-admin/network/users.php:297
 msgid "<a href=\"https://codex.wordpress.org/Network_Admin_Users_Screen\">Documentation on Network Users</a>"
 msgstr "<a href=\"https://codex.wordpress.org/Network_Admin_Users_Screen\">Documentație despre utilizatori rețea</a>"
 
@@ -760,7 +764,7 @@ msgstr "Adaugă următoarele reguli în fișierul %1$s din %2$s, <strong>înlocu
 msgid "Confirm your action"
 msgstr "Confirmă acțiunea"
 
-#: wp-admin/network/users.php:260
+#: wp-admin/network/users.php:287
 msgid "Hover over any user on the list to make the edit links appear. The Edit link on the left will take you to their Edit User profile page; the Edit link on the right by any site name goes to an Edit Site screen for that site."
 msgstr "Ca să apară legăturile de editare, treci peste un utilizator din listă. Legătura Editează din stânga te va duce la pagina de editare a profilului utilizatorului; legătura Editează din dreapta (pentru un nume de site) te va duce la ecranul Editează site-ul, pentru site-ul respectiv."
 
@@ -1117,8 +1121,8 @@ msgid "The choice of subdirectory sites is disabled if this setup is more than a
 msgstr "Dacă această inițializare este mai veche de o lună, opțiunea pentru site-uri în sub-directori este dezactivată din cauza problemelor la legăturile permanente cu &#8222;/blog/&#8221; de pe site-ul principal. Această dezactivare va fi abordată într-o versiune viitoare."
 
 #: wp-admin/network.php:65
-msgid "Once you add this code and refresh your browser, multisite should be enabled. This screen, now in the Network Admin navigation menu, will keep an archive of the added code. You can toggle between Network Admin and Site Admin by clicking on the Network Admin or an individual site name under the My Sites dropdown in the Toolbar."
-msgstr "După ce ai adăugat acest cod și ți-ai reîmprospătat navigatorul, ar trebui activată opțiunea multi-site. Acest ecran, acum accesibil din meniul Administrare rețea, va păstra o arhivă a codului adăugat. Poți comuta între Administrare rețea și Administrare site dând clic pe Administrare rețea sau pe un nume de site individual în meniul derulant din Bara de unelte."
+msgid "Once you add this code and refresh your browser, multisite should be enabled. This screen, now in the Network Admin navigation menu, will keep an archive of the added code. You can switch between Network Admin and Site Admin by clicking on the Network Admin or an individual site name under the My Sites dropdown in the Toolbar."
+msgstr "După ce ai adăugat acest cod și ți-ai reîmprospătat navigatorul, ar trebui activată opțiunea multi-site. Acest ecran, acum accesibil din meniul Administrare rețea, va păstra o arhivă a codului adăugat. Poți să comuți între Administrare rețea și Administrare site dând clic pe Administrare rețea sau pe un nume de site individual în meniul derulant din Bara de unelte."
 
 #: wp-admin/network.php:63
 msgid "The next screen for Network Setup will give you individually-generated lines of code to add to your wp-config.php and .htaccess files. Make sure the settings of your FTP client make files starting with a dot visible, so that you can find .htaccess; you may have to create this file if it really is not there. Make backup copies of those two files."
@@ -1141,7 +1145,7 @@ msgid "The Network creation panel is not for WordPress MU networks."
 msgstr "Panoul de creeare a rețelei nu este pentru rețele WordPress MU."
 
 #. translators: %s: User login.
-#: wp-admin/network/users.php:87 wp-admin/network/users.php:126
+#: wp-admin/network/users.php:88 wp-admin/network/users.php:127
 msgid "Warning! User cannot be modified. The user %s is a network administrator."
 msgstr "Avertizare! Utilizatorul nu poate fi modificat. Utilizatorul %s este un administrator de rețea."
 
@@ -1161,11 +1165,11 @@ msgstr "Dacă treci peste un site, vei vedea șapte opțiuni (trei pentru site-u
 msgid "Operational settings has fields for the network&#8217;s name and admin email."
 msgstr "Setările operaționale au câmpuri pentru numele rețelei și adresa de email a administratorului."
 
-#: wp-admin/network/users.php:263
+#: wp-admin/network/users.php:290
 msgid "The bulk action will permanently delete selected users, or mark/unmark those selected as spam. Spam users will have posts removed and will be unable to sign up again with the same email addresses."
 msgstr "Acțiunile în masă vor șterge definitiv utilizatorii selectați sau îi marchează/demarchează pe cei selectați ca fiind utilizatori spam. Articolele utilizatorilor marcați ca spam vor fi șterse și ei nu se mai pot înregistra din nou cu aceeași adresă de email."
 
-#: wp-admin/network/users.php:261
+#: wp-admin/network/users.php:288
 msgid "You can also go to the user&#8217;s profile page by clicking on the individual username."
 msgstr "De asemenea, poți să mergi la pagina de profil a utilizatorului dând clic pe numele lui de utilizator."
 
@@ -1173,7 +1177,7 @@ msgstr "De asemenea, poți să mergi la pagina de profil a utilizatorului dând 
 msgid "Upload settings control the size of the uploaded files and the amount of available upload space for each site. You can change the default value for specific sites when you edit a particular site. Allowed file types are also listed (space separated only)."
 msgstr "Setările pentru încărcare controlează dimensiunea fișierelor încărcate și spațiul de încărcare disponibil pentru fiecare site. Poți schimba valoarea implicită pentru fiecare site în parte când editezi acel site. Sunt listate și tipurile de fișier permise (separate numai cu spațiu)."
 
-#: wp-admin/network/users.php:264
+#: wp-admin/network/users.php:291
 msgid "You can make an existing user an additional super admin by going to the Edit User profile page and checking the box to grant that privilege."
 msgstr "Poți să-l faci pe un utilizator existent super-administrator dacă mergi la pagina de editare a profilului utilizatorului și bifezi acordarea acestui drept."
 
@@ -1181,11 +1185,11 @@ msgstr "Poți să-l faci pe un utilizator existent super-administrator dacă mer
 msgid "Users who are signed up to the network without a site are added as subscribers to the main or primary dashboard site, giving them profile pages to manage their accounts. These users will only see Dashboard and My Sites in the main navigation until a site is created for them."
 msgstr "Utilizatorii care sunt înregistrați în rețea fără un site sunt adăugați ca abonați ai site-ului principal, inclusiv în panoul de control principal și au acces la paginile lor de profil pentru a-și administra conturile. Acești utilizatori vor vedea numai Panou control și Site-urile mele în navigarea principală până când este creat un site pentru ei."
 
-#: wp-admin/network/users.php:262
+#: wp-admin/network/users.php:289
 msgid "You can sort the table by clicking on any of the table headings and switch between list and excerpt views by using the icons above the users list."
 msgstr "Poți să sortezi tabelul dând clic pe oricare dintre titlurile din tabel și poți să comuți între vizualizarea ca listă și vizualizarea ca rezumat folosind iconurile de deasupra listei cu utilizatori."
 
-#: wp-admin/network/users.php:259
+#: wp-admin/network/users.php:286
 msgid "This table shows all users across the network and the sites to which they are assigned."
 msgstr "Acest tabel afișează toți utilizatorii din întreaga rețea și site-urile la care sunt atribuiți."
 
@@ -1242,7 +1246,7 @@ msgstr "Dacă vrei să interzici domenii la înregistrări de site-uri. Un domen
 msgid "If you want to limit site registrations to certain domains. One domain per line."
 msgstr "Dacă vrei să limitezi înregistrările de site-uri pentru anumite domenii. Un domeniu pe fiecare rând."
 
-#: wp-admin/network/users.php:294
+#: wp-admin/network/users.php:321
 msgid "Users removed from spam."
 msgstr "Am înlăturat utilizatorii din spam."
 
@@ -1262,11 +1266,11 @@ msgstr "Am marcat site-urile ca spam."
 msgid "Sites removed from spam."
 msgstr "Am înlăturat site-urile din spam."
 
-#: wp-admin/network/users.php:297
+#: wp-admin/network/users.php:324
 msgid "Users deleted."
 msgstr "Am șters utilizatorii."
 
-#: wp-admin/network/users.php:291
+#: wp-admin/network/users.php:318
 msgid "Users marked as spam."
 msgstr "Utilizatori marcați ca spam."
 

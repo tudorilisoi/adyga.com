@@ -269,6 +269,12 @@ function loginizer_page_security(){
 		$GLOBALS['lz_saved'] = true;
 	}
 	
+	if(isset($_POST['save_lz_user_enum'])){
+		$user_enum = !empty($_POST['user_enum']) && is_array($_POST['user_enum']) ? map_deep($_POST['user_enum'], 'sanitize_text_field') : [];
+		update_option('loginizer_user_enum', $user_enum);
+		$GLOBALS['lz_saved'] = true;
+	}
+	
 	// Call theme
 	loginizer_page_security_T();
 	
@@ -954,7 +960,69 @@ function add_lz_bl_domains(){
 		<center><input name="save_lz_limit_session" class="button button-primary action" value="<?php echo __('Save Settings', 'loginizer'); ?>" type="submit" /></center>
 	
 		</div>
-	</div>	
+	</div>
+</form>
+
+<form action="" method="post" enctype="multipart/form-data" loginizer-premium-only="1">
+	<div id="" class="postbox">
+	
+		<div class="postbox-header">
+		<h2 class="hndle ui-sortable-handle">
+			<span><?php echo __('Username Enumeration Protection', 'loginizer'); ?></span>
+		</h2>
+		</div>
+		
+		<div class="inside">
+		
+		<?php wp_nonce_field('loginizer-options'); ?>
+		<table class="form-table">
+			<tr>
+				<td scope="row" valign="top" colspan="2">
+					<i><?php echo __('WordPress can leak usernames through several channels such as the REST API, author archives, login form errors, lost password form, and oEmbed. Enable the relevant options below to prevent username enumeration via these channels.', 'loginizer'); ?></i>
+				</td>
+			</tr>
+			<?php
+				$lz_user_enum = get_option('loginizer_user_enum', []);
+				$lz_enum_opts = [
+					'disable_rest_users' => [
+						'label' => __('Disable REST API Users endpoint', 'loginizer'),
+						'exp' => __('Blocks the /wp-json/wp/v2/users endpoint for visitors who are not logged in', 'loginizer')
+					],
+					'disable_author_enum' => [
+						'label' => __('Disable Author Archive enumeration', 'loginizer'),
+						'exp' => __('Shows a 404 for ?author=1 and ?author_name= URLs, which reveal usernames via the author archive', 'loginizer')
+					],
+					'hide_login_errors' => [
+						'label' => __('Hide Login form errors', 'loginizer'),
+						'exp' => __('Shows one generic error, so a valid username cannot be told apart from a wrong password', 'loginizer')
+					],
+					'hide_lostpass_errors' => [
+						'label' => __('Hide Lost Password form errors', 'loginizer'),
+						'exp' => __('Always shows the same message, so it does not confirm whether a username or email exists', 'loginizer')
+					],
+					'disable_oembed_author' => [
+						'label' => __('Disable Author info in oEmbed', 'loginizer'),
+						'exp' => __('Removes the author name and URL from the oEmbed data of your posts', 'loginizer')
+					],
+				];
+				foreach($lz_enum_opts as $enum_key => $enum_opt){
+					$enum_checked = !empty($_POST['user_enum'][$enum_key]) || (!empty($lz_user_enum[$enum_key]) && empty($_POST['save_lz_user_enum']));
+			?>
+			<tr>
+				<td scope="row" valign="top" style="width:40% !important">
+					<label><?php echo esc_html($enum_opt['label']); ?></label><br>
+					<span class="exp"><?php echo esc_html($enum_opt['exp']); ?></span>
+				</td>
+				<td>
+					<input type="checkbox" value="1" name="user_enum[<?php echo esc_attr($enum_key); ?>]" <?php echo $enum_checked ? 'checked' : ''; ?> />
+				</td>
+			</tr>
+			<?php } ?>
+		</table><br/>
+		<center><input name="save_lz_user_enum" class="button button-primary action" value="<?php echo __('Save Settings', 'loginizer'); ?>" type="submit" /></center>
+	
+		</div>
+	</div>
 </form>
 
 <?php
@@ -996,7 +1064,7 @@ function loginizer_htaccess_rules($is_csrf = false){
 	$rule .= '<IfModule mod_rewrite.c>' . "\n";
 	$rule .= 'RewriteEngine On' . "\n";
 	$rule .= 'RewriteBase ' . $home_root . "\n\n";
-	$rule .= 'RewriteRule ^(' . preg_quote($admin_slug, '/') . '(-lzs.{20})?)$ $1/ [R=301,L]' . "\n";
+	$rule .= 'RewriteRule ^(' . $admin_slug . '(-lzs.{20})?)$ $1/ [R=301,L]' . "\n";
 	$rule .= 'RewriteRule ^' . $admin_slug . '(-lzs.{20})?(/?)(.*) wp-admin/$3 [L]' . "\n";
 	$rule .= '</IfModule>' . "\n";
 	$rule .= '# END Loginizer' . "\n";

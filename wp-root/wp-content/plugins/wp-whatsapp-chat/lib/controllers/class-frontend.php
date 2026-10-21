@@ -131,6 +131,7 @@ class Frontend {
 		$box_json             = wp_json_encode( $box );
 		$scheme_json          = wp_json_encode( $scheme );
 		$primary_contact_json = wp_json_encode( $primary_contact );
+		$i18n_json            = wp_json_encode( self::get_i18n() );
 
 		?>
 		<div
@@ -142,6 +143,7 @@ class Frontend {
 			data-button="<?php echo esc_attr( $button_json ); ?>"
 			data-box="<?php echo esc_attr( $box_json ); ?>"
 			data-scheme="<?php echo esc_attr( $scheme_json ); ?>"
+			data-i18n="<?php echo esc_attr( $i18n_json ); ?>"
 		>
 			<?php if ( isset( $button['box'], $box['footer'] ) && 'yes' === $button['box'] && ! empty( $box['footer'] ) ) : ?>
 				<div class="qlwapp-footer">
@@ -150,6 +152,38 @@ class Frontend {
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Strings used by the frontend React bundle, keyed by their English original.
+	 *
+	 * The frontend bundle has no wp-i18n dependency (see packages/frontend/helpers/i18n.js),
+	 * so its strings are translated here, where make-pot can extract them for
+	 * translate.wordpress.org and Loco Translate, and passed through `data-i18n`.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function get_i18n() {
+		return array(
+			/* translators: %s: day of the week. */
+			'Available on %s'                      => __( 'Available on %s', 'wp-whatsapp-chat' ),
+			/* translators: 1: opening time, 2: closing time. */
+			'Available from %1$s to %2$s'          => __( 'Available from %1$s to %2$s', 'wp-whatsapp-chat' ),
+			'Online'                               => __( 'Online', 'wp-whatsapp-chat' ),
+			'Offline'                              => __( 'Offline', 'wp-whatsapp-chat' ),
+			'Sunday'                               => __( 'Sunday', 'wp-whatsapp-chat' ),
+			'Monday'                               => __( 'Monday', 'wp-whatsapp-chat' ),
+			'Tuesday'                              => __( 'Tuesday', 'wp-whatsapp-chat' ),
+			'Wednesday'                            => __( 'Wednesday', 'wp-whatsapp-chat' ),
+			'Thursday'                             => __( 'Thursday', 'wp-whatsapp-chat' ),
+			'Friday'                               => __( 'Friday', 'wp-whatsapp-chat' ),
+			'Saturday'                             => __( 'Saturday', 'wp-whatsapp-chat' ),
+			'Send'                                 => __( 'Send', 'wp-whatsapp-chat' ),
+			'No contacts found.'                   => __( 'No contacts found.', 'wp-whatsapp-chat' ),
+			'Chatbot conversation'                 => __( 'Chatbot conversation', 'wp-whatsapp-chat' ),
+			'New message notification'             => __( 'New message notification', 'wp-whatsapp-chat' ),
+			'I accept cookies and privacy policy.' => __( 'I accept cookies and privacy policy.', 'wp-whatsapp-chat' ),
+		);
 	}
 
 	public static function get_button_css_properties( $button ) {
@@ -231,11 +265,12 @@ class Frontend {
 
 		$primary_contact_json = htmlentities( wp_json_encode( $primary_contact ), ENT_QUOTES, 'UTF-8' );
 		$contacts_json        = htmlentities( wp_json_encode( $contacts ), ENT_QUOTES, 'UTF-8' );
+		$i18n_json            = htmlentities( wp_json_encode( self::get_i18n() ), ENT_QUOTES, 'UTF-8' );
 
 		$scheme = Models_Scheme::instance()->get();
 		$style  = self::get_scheme_css_properties( $scheme );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		return '<div style="' . $style . '" class="qlwapp qlwapp--shortcode" data-button="' . $button . '" data-contacts="' . $contacts_json . '" data-primary-contact="' . $primary_contact_json . '"></div>';
+		return '<div style="' . $style . '" class="qlwapp qlwapp--shortcode" data-button="' . $button . '" data-contacts="' . $contacts_json . '" data-primary-contact="' . $primary_contact_json . '" data-i18n="' . $i18n_json . '"></div>';
 	}
 
 	public static function instance() {

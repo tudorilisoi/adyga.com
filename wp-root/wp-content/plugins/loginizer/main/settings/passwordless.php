@@ -33,6 +33,7 @@ function loginizer_page_passwordless(){
 		$option['passwordless_redirect'] = esc_url_raw($_POST['lz_passwordless_redirect']);
 		$option['passwordless_redirect_for'] = !empty($_POST['lz_passwordless_redirect_for']) ? map_deep($_POST['lz_passwordless_redirect_for'], 'sanitize_text_field') : [];
 		$option['passwordless_disabled_for'] = !empty($_POST['lz_passwordless_disabled_for']) ? map_deep(wp_unslash($_POST['lz_passwordless_disabled_for']), 'sanitize_text_field') : [];
+		$option['epl_email_only'] = (int) lz_optpost('epl_email_only');
 
 		// Is there an error ?
 		if(!empty($lz_error)){
@@ -113,9 +114,14 @@ input[type="text"], textarea, select {
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top">
-					<?php echo __('If enabled, the login screen will just ask for the username <b>OR</b> email address of the user. If such a user exists, an email with a <b>One Time Login </b> link will be sent to the email address of the user. The link will be valid for 10 minutes only.', 'loginizer'); ?><br><br>
-					<?php echo __('If a wrong username/email is given, the brute force checker will prevent any brute force attempt !', 'loginizer'); ?>
+				<td scope="row" valign="top" style="width:350px !important">
+					<label for="epl_email_only"><?php echo __('Accept Email Only', 'loginizer'); ?> <span class="exp" style="font-weight:400;"><em><?php esc_html_e('Recommended', 'loginizer'); ?></em></span></label><br>
+					<span class="exp"><?php echo __('When enabled, users must log in with their email address; usernames will not be accepted.', 'loginizer');?></span><br>
+					
+				</td>
+				<td>
+					<input type="checkbox" value="1" name="epl_email_only" id="epl_email_only" <?php echo lz_POSTchecked('epl_email_only', (empty($loginizer['epl_email_only']) ? false : true)); ?> />
+					<p class="description"><?php echo __('If a wrong username/email is given, the brute force checker will prevent any brute force attempt !', 'loginizer'); ?></p>
 				</td>
 			</tr>
 			<tr>

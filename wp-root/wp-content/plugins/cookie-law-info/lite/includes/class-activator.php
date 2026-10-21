@@ -123,6 +123,45 @@ class Activator {
 		self::check_for_upgrade();
 		if ( true === cky_first_time_install() ) {
 			add_option( 'cky_first_time_activated_plugin', 'true' );
+			/**
+			 * Record how this activation was performed, on a genuine first-time install
+			 * only.
+			 *
+			 * The outer guard is not sufficient. cky_first_time_install() also returns
+			 * true whenever cky_first_time_activated_plugin merely exists, and that
+			 * option is deleted only on the first wp-admin page load - so a site
+			 * provisioned over WP-CLI that never opens wp-admin keeps it indefinitely.
+			 * check_version() calls install() on `init`, which fires on front-end
+			 * requests too, so on such a site an upgrade to 3.5.6 would record
+			 * 'wp-admin' for a site that has only ever been driven from the command
+			 * line - the wrong value, and one the docs promise is absent.
+			 *
+			 * check_for_upgrade() above sets this transient only when cky_settings is
+			 * missing, which is true on a fresh install and false on every upgrade.
+			 * add_option() then keeps the first value if this ever runs twice.
+			 */
+			if ( (bool) get_site_transient( '_cky_first_time_install' ) ) {
+				/**
+				 * Three-way, not two. install() can first run on a front-end request:
+				 * tooling that activates by writing active_plugins directly never fires
+				 * register_activation_hook, and the same applies to REST, XML-RPC and
+				 * some hosting auto-installers. Calling those 'wp-admin' would report a
+				 * context that did not happen, so anything that is neither WP-CLI nor an
+				 * admin request is recorded as 'other' rather than guessed at.
+				 *
+				 * is_admin() is true for admin-ajax.php as well, so an activation whose
+				 * first run lands in an AJAX request still records 'wp-admin'. That is a
+				 * known imprecision and is left as is - it is an admin-side request.
+				 */
+				if ( defined( 'WP_CLI' ) && WP_CLI ) {
+					$context = 'wp-cli';
+				} elseif ( is_admin() ) {
+					$context = 'wp-admin';
+				} else {
+					$context = 'other';
+				}
+				add_option( 'cky_activation_context', $context, '', 'no' );
+			}
 		}
 		self::maybe_update_db();
 		update_option( 'wt_cli_version', CLI_VERSION );

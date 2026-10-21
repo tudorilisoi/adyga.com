@@ -132,7 +132,7 @@ class Loginizer_Social_Login extends Loginizer_Social_Base{
 					'email' => $userProfile->email,
 					'first_name' => $userProfile->firstName,
 					'last_name' => $userProfile->lastName,
-					'photoURL' => strtok($userProfile->photoURL, '?'),
+					'photoURL' => !empty($userProfile->photoURL) ? strtok($userProfile->photoURL, '?') : '',
 				];
 
 				$adapter->disconnect();
@@ -223,7 +223,7 @@ class Loginizer_Social_Login extends Loginizer_Social_Base{
 				]
 			];
 			
-			if($key = 'MicrosoftGraph' && !empty($provider['account_type']) && $provider['account_type'] != 'common'){
+			if($key == 'MicrosoftGraph' && !empty($provider['account_type']) && $provider['account_type'] != 'common'){
 				$config[$config_index]['tenant'] = $provider['account_type'];
 			}
 		}

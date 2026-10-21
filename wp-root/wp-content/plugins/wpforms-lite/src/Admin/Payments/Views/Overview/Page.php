@@ -13,6 +13,8 @@ use WPForms\Integrations\Square\Square;
 use WPForms\Integrations\PayPalCommerce\Connection as PayPalCommerceConnection;
 use WPForms\Integrations\PayPalCommerce\PayPalCommerce;
 use WPFormsAuthorizeNet\Helpers as AuthorizeNetHelpers;
+use WPFormsMercadoPago\Helpers as MercadoPagoHelpers;
+use WPFormsPaystack\Helpers as PaystackHelpers;
 
 /**
  * Payments Overview Page class.
@@ -156,14 +158,7 @@ class Page implements PaymentsViewsInterface {
 				'label'                       => esc_html__( 'Payments', 'wpforms-lite' ),
 				'delete_button'               => esc_html__( 'Delete', 'wpforms-lite' ),
 				'subscription_delete_confirm' => $this->get_subscription_delete_confirmation_message(),
-				'no_dataset'                  => [
-					'total_payments'             => esc_html__( 'No payments for selected period', 'wpforms-lite' ),
-					'total_sales'                => esc_html__( 'No sales for selected period', 'wpforms-lite' ),
-					'total_refunded'             => esc_html__( 'No refunds for selected period', 'wpforms-lite' ),
-					'total_subscription'         => esc_html__( 'No new subscriptions for selected period', 'wpforms-lite' ),
-					'total_renewal_subscription' => esc_html__( 'No subscription renewals for the selected period', 'wpforms-lite' ),
-					'total_coupons'              => esc_html__( 'No coupons applied during the selected period', 'wpforms-lite' ),
-				],
+				'no_dataset'                  => Chart::get_no_data_headings(),
 			],
 			'page_uri'    => $this->get_current_uri(),
 		];
@@ -391,15 +386,16 @@ class Page implements PaymentsViewsInterface {
 	 */
 	private function get_started_gateways(): array {
 
-		$gateways = array_filter(
+		return array_filter(
 			[
 				'stripe'          => Stripe::get_started_gateway(),
 				'paypal-commerce' => PayPalCommerce::get_started_gateway(),
 				'square'          => Square::get_started_gateway(),
+				'authorize-net'   => $this->add_authorize_net_gateway(),
+				'mercado-pago'    => $this->add_mercado_pago_gateway(),
+				'paystack'        => $this->add_paystack_gateway(),
 			]
 		);
-
-		return $this->add_authorize_net_gateway( $gateways );
 	}
 
 	/**
@@ -407,44 +403,114 @@ class Page implements PaymentsViewsInterface {
 	 *
 	 * @since 1.10.1.1
 	 *
-	 * @param array $gateways Existing gateway entries.
-	 *
 	 * @return array
 	 */
-	private function add_authorize_net_gateway( array $gateways ): array {
+	private function add_authorize_net_gateway(): array {
 
-		$is_elite_tier           = in_array( wpforms_get_license_type(), [ 'elite', 'agency', 'ultimate' ], true );
-		$is_authorize_net_active = class_exists( '\WPFormsAuthorizeNet\Loader' );
-		$settings_payments_url   = admin_url( 'admin.php?page=wpforms-settings&view=payments' );
-		$addons_url              = admin_url( 'admin.php?page=wpforms-addons' );
-
-		if ( $is_authorize_net_active ) {
-			$url = $settings_payments_url . '#wpforms-setting-row-authorize_net-heading';
-			$cta = __( 'Connect', 'wpforms-lite' );
-		} elseif ( $is_elite_tier ) {
-			$url = $addons_url . '&search=authorize';
-			$cta = __( 'Install', 'wpforms-lite' );
-		} else {
-			$url = wpforms_admin_upgrade_link( 'Payments Dashboard', 'Splash - Authorize.Net Upgrade' );
-			$cta = __( 'Upgrade', 'wpforms-lite' );
-		}
-
-		$gateways['authorize-net'] = [
-			'icon'        => WPFORMS_PLUGIN_URL . 'assets/images/addon-icon-authorize-net.png',
-			'name'        => __( 'Authorize.Net', 'wpforms-lite' ),
-			'description' => __( 'Accept credit cards and eChecks with enterprise-grade fraud protection.', 'wpforms-lite' ),
-			'url'         => $url,
-			'badge'       => $is_elite_tier ? '' : __( 'Elite', 'wpforms-lite' ),
-			'cta'         => $cta,
-			'cta_target'  => $is_elite_tier ? '_self' : '_blank',
-			'cta_class'   => $is_elite_tier ? '' : 'wpforms-upgrade-modal',
-		];
-
-		return $gateways;
+		return $this->get_addon_gateway_tile(
+			[
+				'slug'        => 'authorize_net',
+				'icon'        => 'authorize-net',
+				'loader'      => '\WPFormsAuthorizeNet\Loader',
+				'tiers'       => [ 'elite', 'agency', 'ultimate' ],
+				'search'      => 'authorize',
+				'utm_content' => 'Splash - Authorize.Net Upgrade',
+				'name'        => __( 'Authorize.Net', 'wpforms-lite' ),
+				'description' => __( 'Accept credit cards and eChecks with enterprise-grade fraud protection.', 'wpforms-lite' ),
+				'badge'       => __( 'Elite', 'wpforms-lite' ),
+			]
+		);
 	}
 
 	/**
-	 * Determine whether Stripe or Square payment gateway is configured.
+	 * Append the Mercado Pago tile to the Get Started gateway list.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @return array
+	 */
+	private function add_mercado_pago_gateway(): array {
+
+		return $this->get_addon_gateway_tile(
+			[
+				'slug'        => 'mercado_pago',
+				'icon'        => 'mercado-pago',
+				'loader'      => '\WPFormsMercadoPago\Loader',
+				'tiers'       => [ 'pro', 'elite', 'agency', 'ultimate' ],
+				'search'      => 'mercado',
+				'utm_content' => 'Splash - Mercado Pago Upgrade',
+				'name'        => __( 'Mercado Pago', 'wpforms-lite' ),
+				'description' => __( 'Accept credit and debit cards with installments across Latin America.', 'wpforms-lite' ),
+				'badge'       => __( 'Pro', 'wpforms-lite' ),
+			]
+		);
+	}
+
+	/**
+	 * Append the Paystack tile to the Get Started gateway list.
+	 *
+	 * @since 2.0.2.2
+	 *
+	 * @return array
+	 */
+	private function add_paystack_gateway(): array {
+
+		return $this->get_addon_gateway_tile(
+			[
+				'slug'        => 'paystack',
+				'icon'        => 'paystack',
+				'loader'      => '\WPFormsPaystack\Loader',
+				'tiers'       => [ 'pro', 'elite', 'agency', 'ultimate' ],
+				'search'      => 'paystack',
+				'utm_content' => 'Splash - Paystack Upgrade',
+				'name'        => __( 'Paystack', 'wpforms-lite' ),
+				'description' => __( 'Accept card, bank transfer, and mobile money payments across Africa.', 'wpforms-lite' ),
+				'badge'       => __( 'Pro', 'wpforms-lite' ),
+			]
+		);
+	}
+
+	/**
+	 * Build a Get Started tile for a gateway shipped as an addon.
+	 *
+	 * @since 2.0.2.2
+	 *
+	 * @param array $tile Tile configuration: slug, icon, loader, tiers, search, utm_content, name, description, badge.
+	 *
+	 * @return array
+	 */
+	private function get_addon_gateway_tile( array $tile ): array {
+
+		$is_tier_allowed       = in_array( wpforms_get_license_type(), $tile['tiers'], true );
+		$is_addon_active       = class_exists( $tile['loader'] );
+		$settings_payments_url = admin_url( 'admin.php?page=wpforms-settings&view=payments' );
+		$addons_url            = admin_url( 'admin.php?page=wpforms-addons' );
+
+		if ( $is_addon_active ) {
+			$url = $settings_payments_url . '#wpforms-setting-row-' . $tile['slug'] . '-heading';
+			$cta = __( 'Connect', 'wpforms-lite' );
+		} elseif ( $is_tier_allowed ) {
+			$url = $addons_url . '&search=' . $tile['search'];
+			$cta = __( 'Install', 'wpforms-lite' );
+		} else {
+			$url = wpforms_admin_upgrade_link( 'Payments Dashboard', $tile['utm_content'] );
+			$cta = __( 'Upgrade', 'wpforms-lite' );
+		}
+
+		return [
+			'icon'        => WPFORMS_PLUGIN_URL . 'assets/images/addon-icon-' . $tile['icon'] . '.png',
+			'name'        => $tile['name'],
+			'description' => $tile['description'],
+			'url'         => $url,
+			'badge'       => $is_tier_allowed ? '' : $tile['badge'],
+			'cta'         => $cta,
+			'cta_target'  => $is_tier_allowed ? '_self' : '_blank',
+			'cta_class'   => $is_tier_allowed ? '' : 'wpforms-upgrade-modal',
+		];
+	}
+
+	/**
+	 * Determine whether any supported payment gateway is configured.
 	 *
 	 * @since 1.8.2
 	 *
@@ -455,7 +521,9 @@ class Page implements PaymentsViewsInterface {
 		$is_configured = StripeHelpers::has_stripe_keys()
 			|| SquareHelpers::is_square_configured()
 			|| self::is_paypal_commerce_configured()
-			|| self::is_authorize_net_configured();
+			|| self::is_authorize_net_configured()
+			|| self::is_mercado_pago_configured()
+			|| self::is_paystack_configured();
 
 		/**
 		 * Allow to modify a status whether a payment gateway is configured.
@@ -495,6 +563,38 @@ class Page implements PaymentsViewsInterface {
 		}
 
 		return (bool) AuthorizeNetHelpers::has_authorize_net_keys();
+	}
+
+	/**
+	 * Determine whether the Mercado Pago addon is active and has a valid connection.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @return bool
+	 */
+	private static function is_mercado_pago_configured(): bool {
+
+		if ( ! class_exists( MercadoPagoHelpers::class ) ) {
+			return false;
+		}
+
+		return MercadoPagoHelpers::is_configured();
+	}
+
+	/**
+	 * Determine whether the Paystack gateway has a saved connection.
+	 *
+	 * @since 2.0.2.2
+	 *
+	 * @return bool
+	 */
+	private static function is_paystack_configured(): bool {
+
+		if ( ! class_exists( PaystackHelpers::class ) ) {
+			return false;
+		}
+
+		return PaystackHelpers::is_configured();
 	}
 
 	/**

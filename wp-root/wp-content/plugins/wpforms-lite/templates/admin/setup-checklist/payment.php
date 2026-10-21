@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<?php if ( ! $is_stripe_connected ) : ?>
-			<a class="wpforms-btn wpforms-btn-sm wpforms-setup-checklist-payment__btn" href="<?php echo esc_url( $gateway['url'] ); ?>">
+			<a class="wpforms-btn wpforms-btn-md wpforms-setup-checklist-payment__btn" href="<?php echo esc_url( $gateway['url'] ); ?>">
 				<img class="wpforms-setup-checklist-payment__btn-icon" src="<?php echo esc_url( $gateway['btn_icon'] ); ?>" alt="" width="12" height="16">
 				<span class="wpforms-setup-checklist-payment__btn-divider" aria-hidden="true"></span>
 				<span class="wpforms-setup-checklist-payment__btn-text"><?php echo esc_html( $gateway['btn_text'] ); ?></span>
@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		printf(
 			wp_kses(
 				/* translators: %1$s - PayPal icon, %2$s - Square icon, %3$s - Payment Settings link. */
-				__( 'WPForms also supports other payment gateways, including %1$s PayPal, %2$s Square, and Authorize.net which can be configured from %3$s.', 'wpforms-lite' ),
+				__( 'WPForms also supports other payment gateways, including %1$s PayPal, %2$s Square, Authorize.net, Mercado Pago, and Paystack which can be configured from %3$s.', 'wpforms-lite' ),
 				[
 					'img' => [
 						'class'  => [],

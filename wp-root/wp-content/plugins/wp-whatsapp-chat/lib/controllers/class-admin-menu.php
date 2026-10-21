@@ -33,6 +33,8 @@ class Admin_Menu {
 			true
 		);
 
+		wp_set_script_translations( 'qlwapp-admin-menu', 'wp-whatsapp-chat' );
+
 		wp_register_style(
 			'qlwapp-admin-menu',
 			plugins_url( '/build/admin-menu/css/style.css', QLWAPP_PLUGIN_FILE ),

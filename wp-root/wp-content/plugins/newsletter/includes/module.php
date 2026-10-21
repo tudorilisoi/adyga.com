@@ -1,5 +1,4 @@
 <?php
-
 defined('ABSPATH') || exit;
 
 require_once __DIR__ . '/logger.php';
@@ -50,8 +49,8 @@ class NewsletterModule extends NewsletterModuleBase {
 
         $cache_key = $set . $language;
 
-        if (isset($this->cache[$cache_key])) {
-            return $this->cache[$cache_key];
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
         }
 
         if ($language) {
@@ -296,12 +295,16 @@ class NewsletterModule extends NewsletterModuleBase {
      *
      * DO NOT REMOVE EVEN IF OLD
      *
+     * @deprecated
+     *
      * @return TNP_User
      */
     function check_user($context = '') {
         global $wpdb;
 
         $user = null;
+        $id = 0;
+        $token = '';
 
         if (isset($_REQUEST['nk'])) {
             list($id, $token) = @explode('-', wp_unslash($_REQUEST['nk']), 2);
@@ -309,20 +312,22 @@ class NewsletterModule extends NewsletterModuleBase {
             list($id, $token) = @explode('-', wp_unslash($_COOKIE['newsletter']), 2);
         }
 
-        if (isset($id)) {
-            $user = $this->get_user($id);
-            if ($user) {
-                if ($context === 'preconfirm') {
-                    if ($token !== md5($user->token)) {
-                        $user = null;
-                    }
-                } else {
-                    if ($token !== $user->token) {
-                        $user = null;
-                    }
+        $id = (int) $id;
+        $token = sanitize_key($token);
+
+        $user = $this->get_user($id);
+        if ($user) {
+            if ($context === 'preconfirm') {
+                if ($token !== md5($user->token)) {
+                    $user = null;
+                }
+            } else {
+                if ($token !== $user->token) {
+                    $user = null;
                 }
             }
         }
+
         return apply_filters('newsletter_current_user', $user);
     }
 
@@ -368,53 +373,104 @@ class NewsletterModule extends NewsletterModuleBase {
      * If no user can be found or the token is not matching, returns null.
      * If die_on_fail is true it dies instead of return null.
      *
+     * @deprecated
+     *
      * @param bool $die_on_fail
      * @return TNP_User
      */
     function get_user_from_request($die_on_fail = false, $context = '') {
         $id = 0;
+        $token = '';
         if (isset($_REQUEST['nk'])) {
             list($id, $token) = @explode('-', wp_unslash($_REQUEST['nk']), 2);
         }
         $user = $this->get_user($id);
 
-        if ($user == null) {
+        if (!$user) {
             if ($die_on_fail) {
                 die(esc_html__('No subscriber found.', 'newsletter'));
-            } else {
-                return $this->get_user_from_logged_in_user();
             }
         }
 
         if ($token != $user->token && $token != md5($user->token)) {
             if ($die_on_fail) {
                 die(esc_html__('No subscriber found.', 'newsletter'));
-            } else {
-                return $this->get_user_from_logged_in_user();
             }
         }
         return $user;
     }
 
+    /**
+     * @return string The cookie name to be used to identify a subscriber
+     */
+    function get_user_cookie_name() {
+        return 'newsletter-' . md5(site_url());
+    }
+
+    /**
+     * Returns the cookie value to be used to set a cookie to identify the subscriber.
+     *
+     * @param object $user
+     * @return string
+     */
+    function get_user_cookie_value($user) {
+        return $this->get_user_key($user, 'cookie', 7 * DAY_IN_SECONDS);
+    }
+
+    /**
+     * @return string The cookie value, if present, to identify a subscriber.
+     */
+    function get_user_cookie() {
+        return $_COOKIE[$this->get_user_cookie_name()] ?? '';
+    }
+
+    /**
+     * @todo Get it from the configuration
+     *
+     * @return int
+     */
+    function get_user_cookie_lifespan() {
+        return MONTH_IN_SECONDS;
+    }
+
+    /**
+     * Sets the subscriber cookie, accepts a null value.
+     *
+     * @param type $user
+     */
     function set_user_cookie($user) {
         if (!$user) {
             return;
         }
-        setcookie('newsletter', $this->get_user_key($user), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+
+        setcookie($this->get_user_cookie_name(), $this->get_user_cookie_value($user), time() + $this->get_user_cookie_lifespan(), COOKIEPATH, COOKIE_DOMAIN, is_ssl());
     }
 
     function delete_user_cookie() {
-        setcookie('newsletter', '', time() - YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+        setcookie($this->get_user_cookie_name(), '', time() - YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
+    }
+
+    /**
+     * @deprecated
+     * @param type $email
+     * @return type
+     */
+    function set_email_cookie($email) {
+        if (!$email) {
+            return;
+        }
+        setcookie('tnpe', $email->id . '-' . $email->token, time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl());
     }
 
     function is_current_user_dummy() {
-        if (!current_user_can('administrator'))
+        if (!current_user_can('administrator')) {
             return false;
+        }
 
         if (isset($_REQUEST['nk'])) {
             list($id, $token) = explode('-', wp_unslash($_REQUEST['nk']), 2);
-        } elseif (isset($_COOKIE['newsletter'])) {
-            list ($id, $token) = explode('-', $_COOKIE['newsletter'], 2);
+        } elseif (isset($_COOKIE[$this->get_user_cookie_name()])) {
+            list ($id, $token) = explode('-', $_COOKIE[$this->get_user_cookie_name()], 2);
         } else {
             return false;
         }
@@ -428,49 +484,12 @@ class NewsletterModule extends NewsletterModuleBase {
      */
     function get_current_user() {
 
-        $id = 0;
-        $user = null;
-        $token = '';
-
-        if (isset($_REQUEST['nk'])) {
-            list($id, $token) = explode('-', wp_unslash($_REQUEST['nk']), 2);
-            if (current_user_can('administrator') && $id === '0') {
-                $user = $this->get_dummy_user();
-                if (!empty($token)) {
-                    $user->language = sanitize_key($token);
-                    $user->token = $token; // This keeps the language for the dummy user
-                }
-                return $user;
-            }
-        } elseif (isset($_COOKIE['newsletter'])) {
-            list ($id, $token) = explode('-', $_COOKIE['newsletter'], 2);
+        $user = $this->get_user_by_key($_REQUEST['nk'] ?? ''); // Compatibility
+        if (!$user) {
+            $user = $this->get_user_by_key($_COOKIE[$this->get_user_cookie_name()] ?? '', 'cookie');
         }
 
-        if ($id) {
-            $user = $this->get_user($id);
-            if ($user) {
-                $user->_dummy = false;
-                $token_md5 = md5($user->token);
-                if ($token !== $user->token && $token !== $token_md5) {
-                    $user = null;
-                } else {
-                    $user->_trusted = $token === $user->token;
-                }
-            }
-        }
-
-        $user = apply_filters('newsletter_current_user', $user);
-
-        return $user;
-    }
-
-    /**
-     * Managed by WP Users Addon
-     * @deprecated since version 7.6.7
-     * @return TNP_User
-     */
-    function get_user_from_logged_in_user() {
-        return null;
+        return apply_filters('newsletter_current_user', $user);
     }
 
     function get_user_count($refresh = false) {
@@ -637,24 +656,29 @@ class NewsletterModule extends NewsletterModuleBase {
      * @global wpdb $wpdb
      * @param TNP_User $user
      */
-    function update_user_last_activity($user) {
+    function update_user_last_activity($user_id) {
         global $wpdb;
-        if (!$user) {
+        $user_id = $this->to_int_id($user_id);
+        if (!$user_id) {
             return;
         }
-        $this->query($wpdb->prepare("update " . NEWSLETTER_USERS_TABLE . " set last_activity=%d where id=%d limit 1", time(), $user->id));
+        $this->query($wpdb->prepare("update " . NEWSLETTER_USERS_TABLE . " set last_activity=%d where id=%d limit 1", time(), $user_id));
     }
 
-    function update_user_ip($user, $ip) {
+    function update_user_ip($user_id, $ip) {
         global $wpdb;
-        if (!$user) {
+        $user_id = $this->to_int_id($user_id);
+        if (!$user_id) {
             return;
         }
+        $ip = self::sanitize_ip($ip);
         if (!$ip) {
             return;
         }
-// Only if changed
-        $r = $this->query($wpdb->prepare("update " . NEWSLETTER_USERS_TABLE . " set ip=%s, geo=0 where ip<>%s and id=%d limit 1", $ip, $ip, $user->id));
+
+        // Only if changed
+        $r = $this->query($wpdb->prepare("update " . NEWSLETTER_USERS_TABLE
+                        . " set ip=%s, geo=0 where ip<>%s and id=%d limit 1", $ip, $ip, $user_id));
     }
 
     /**
@@ -708,7 +732,7 @@ class NewsletterModule extends NewsletterModuleBase {
                 $user = $this->get_user($user);
             }
 
-            $params .= '&nk=' . rawurlencode($this->get_user_key($user));
+            $params .= '&nk=' . rawurlencode($this->get_user_key($user, $message_key, 7 * DAY_IN_SECONDS));
 
             $language = $this->get_user_language($user);
         }
@@ -841,12 +865,6 @@ class NewsletterModule extends NewsletterModuleBase {
         $text = str_replace('{key}', $nk, $text);
         $text = str_replace('%7Bkey%7D', $nk, $text);
 
-        // Links
-        $text = $this->replace_url($text, 'subscription_confirm_url', $this->build_action_url('c', $user, $email));
-        $text = $this->replace_url($text, 'activation_url', $this->build_action_url('c', $user, $email));
-        $text = $this->replace_url($text, 'confirmation_url', $this->build_action_url('c', $user, $email));
-        $text = $this->replace_url($text, 'confirm_url', $this->build_action_url('c', $user, $email));
-
         // To be moved to the "content lock" addon
         $text = $this->replace_url($text, 'unlock_url', $this->build_action_url('ul', $user));
 
@@ -857,7 +875,7 @@ class NewsletterModule extends NewsletterModuleBase {
             $text = str_replace('{email_subject}', $email->subject, $text);
             // Deprecated
             $text = str_replace('{subject}', $email->subject, $text);
-            $text = $this->replace_url($text, 'email_url', $this->build_action_url('v', $user) . '&id=' . $email->id);
+            $text = $this->replace_url($text, 'email_url', $this->build_action_url('v', $user) . '&id=' . $email->id, 2 * YEAR_IN_SECONDS);
         } else {
             $text = $this->replace_url($text, 'email_url', '#');
         }
@@ -996,8 +1014,6 @@ class NewsletterModule extends NewsletterModuleBase {
             $text = $this->replace_url($text, 'activation_url', $this->build_action_url('c', $user));
 
 // Obsolete.
-            $text = $this->replace_url($text, 'FOLLOWUP_SUBSCRIPTION_URL', self::add_qs($base, 'nm=fs' . $id_token));
-            $text = $this->replace_url($text, 'FOLLOWUP_UNSUBSCRIPTION_URL', self::add_qs($base, 'nm=fu' . $id_token));
             $text = $this->replace_url($text, 'UNLOCK_URL', $this->build_action_url('ul', $user));
         } else {
             //$this->logger->debug('Replace without user');
@@ -1090,7 +1106,7 @@ class NewsletterModule extends NewsletterModuleBase {
             return false;
         }
 
-        $ts = (int)($_POST['ts'] ?? 0);
+        $ts = (int) ($_POST['ts'] ?? 0);
         if (time() - $ts > 60) {
             return false;
         }
@@ -1169,12 +1185,12 @@ class NewsletterModule extends NewsletterModuleBase {
      */
     static function to_int_id($var) {
         if (is_object($var)) {
-            return (int) $var->id;
+            return (int) ($var->id ?? 0);
         }
         if (is_array($var)) {
-            return (int) $var['id'];
+            return (int) ($var['id'] ?? 0);
         }
-        return (int) $var;
+        return (int) ($var ?? 0);
     }
 
     static function to_array($text) {
@@ -1217,20 +1233,6 @@ class NewsletterModule extends NewsletterModuleBase {
         return self::sanitize_ip($ip);
     }
 
-    static function get_signature($text) {
-        $key = NewsletterStatistics::instance()->get_main_option('key');
-        return md5($text . $key);
-    }
-
-    static function check_signature($text, $signature) {
-        $signature = trim($signature);
-        if (!$signature) {
-            return false;
-        }
-        $key = NewsletterStatistics::instance()->get_main_option('key');
-        return md5($text . $key) === $signature;
-    }
-
     static function clean_eol($text) {
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
@@ -1244,10 +1246,11 @@ class NewsletterModule extends NewsletterModuleBase {
 
     function get_default_language() {
         if (class_exists('SitePress')) {
-            return $current_language = apply_filters('wpml_current_language', '');
-        } elseif (function_exists('pll_default_language')) {
+            $current_language = apply_filters('wpml_current_language', '');
+            return $current_language;
+        } else if (function_exists('pll_default_language')) {
             return pll_default_language();
-        } elseif (class_exists('TRP_Translate_Press')) {
+        } else if (class_exists('TRP_Translate_Press')) {
 // TODO: Find the default language
         }
         return '';
@@ -1280,6 +1283,21 @@ class NewsletterModule extends NewsletterModuleBase {
      */
     function is_admin_page() {
         NewsletterAdmin::instance()->is_admin_page();
+    }
+
+    function show_admin_notice($text) {
+        if (!current_user_can('administrator')) {
+            return;
+        }
+        ?><fieldset style="border: 2px solid #ddd; border-radius: 8px; padding: 16px 20px; max-width: 500px; background-color: #eee; font-family: sans-serif;">
+            <legend style="background-color: #777; color: white; line-height: normal; padding: 3px 10px; font-size: 0.80rem; font-weight: normal; border-radius: 4px; text-transform: uppercase;">
+                Shown only to administrators
+            </legend>
+            <p style="margin: 0; color: #2d3748; font-size: 0.90rem; line-height: normal;">
+                <?= wp_kses_post($text) ?>
+            </p>
+        </fieldset>
+        <?php
     }
 }
 

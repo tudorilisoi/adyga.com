@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Plugins - CookieYes – Cookie Banner for Cookie Consent (Easy to setup GDPR/CCPA Compliant Cookie Notice) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-05-20 11:25:52+0000\n"
+"PO-Revision-Date: 2026-08-21 13:32:52+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n == 0 || n % 100 >= 2 && n % 100 <= 19) ? 1 : 2);\n"
-"X-Generator: GlotPress/4.0.3\n"
+"X-Generator: GlotPress/4.1.0\n"
 "Language: ro\n"
 "Project-Id-Version: Plugins - CookieYes – Cookie Banner for Cookie Consent (Easy to setup GDPR/CCPA Compliant Cookie Notice) - Stable (latest release)\n"
 
@@ -58,6 +58,7 @@ msgstr "Forțează aducerea datelor"
 
 #: lite/admin/modules/languages/class-languages.php:53
 #: lite/admin/modules/languages/class-languages.php:60
+#: lite/admin/dist/js/index.js:65631 lite/admin/dist/js/index.js:80483
 msgid "Languages"
 msgstr "Limbi"
 
@@ -70,6 +71,7 @@ msgid "GDPR (General Data Protection Regulation)"
 msgstr "GDPR (Regulamentul general privind protecția datelor)"
 
 #: lite/admin/modules/cookies/class-cookies.php:64
+#: lite/admin/dist/js/index.js:65630
 msgid "Cookie Manager"
 msgstr "Manager cookie-uri"
 
@@ -205,8 +207,8 @@ msgid "Unique identifier for the resource."
 msgstr "Identificator unic pentru resursă."
 
 #. Author of the plugin
-#: cookie-law-info.php lite/admin/class-admin.php:419
-#: lite/admin/class-admin.php:420
+#: cookie-law-info.php lite/admin/class-admin.php:455
+#: lite/admin/class-admin.php:456
 #: lite/admin/modules/dashboard-widget/class-dashboard-widget.php:85
 msgid "CookieYes"
 msgstr "CookieYes"
@@ -321,6 +323,7 @@ msgid "INFO (Information Display Banner)"
 msgstr "INFO (banner de afișare a informațiilor)"
 
 #: lite/admin/modules/banners/class-banners.php:66
+#: lite/admin/dist/js/index.js:65629
 msgid "Cookie Banner"
 msgstr "Banner pentru cookie-uri"
 
@@ -367,6 +370,7 @@ msgid "Accept All Button"
 msgstr "Buton Acceptă tot"
 
 #: legacy/admin/modules/cookie-scaner/views/scan-results.php:33
+#: lite/admin/dist/js/index.js:67119
 msgid "Total cookies"
 msgstr "Total cookie-uri"
 
@@ -426,7 +430,7 @@ msgid "Failed to insert"
 msgstr "Inserarea a eșuat"
 
 #: legacy/admin/modules/cookie-scaner/cookie-scaner.php:443
-#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1215
+#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1214
 msgid "Connect & scan"
 msgstr "Conectează și scanează"
 
@@ -435,7 +439,7 @@ msgid "Merge"
 msgstr "Îmbină"
 
 #: legacy/admin/modules/cookie-scaner/cookie-scaner.php:307
-#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1210
+#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1209
 msgid "Scan again"
 msgstr "Scanează din nou"
 
@@ -658,6 +662,7 @@ msgstr "Stare implicită categorie"
 #: legacy/includes/class-cookie-law-info-cookieyes.php:273
 #: legacy/includes/class-cookie-law-info-cookieyes.php:287
 #: legacy/includes/class-cookie-law-info-cookieyes.php:1071
+#: lite/admin/dist/js/index.js:82118
 msgid "Email"
 msgstr "Email"
 
@@ -680,6 +685,7 @@ msgstr "SALVEAZĂ ȘI ACCEPTĂ"
 #: legacy/admin/modules/cookie-scaner/views/scan-results.php:73
 #: legacy/admin/modules/cookies/cookies.php:250
 #: legacy/public/modules/script-blocker/views/settings.php:167
+#: lite/admin/dist/js/index.js:69316
 msgid "Category"
 msgstr "Categorie"
 
@@ -724,6 +730,7 @@ msgid "Disconnected from CookieYes"
 msgstr "Deconectat de la CookieYes"
 
 #: legacy/includes/class-cookie-law-info-cookieyes.php:174
+#: lite/admin/dist/js/index.js:81966
 msgid "Disconnect"
 msgstr "Deconectează"
 
@@ -739,11 +746,11 @@ msgstr "Șterge acest site web"
 msgid "You haven't performed a site scan yet."
 msgstr "Nu ai făcut o scanare a site-ului până acum."
 
-#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1164
+#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1163
 msgid "Why scan your website for cookies?"
 msgstr "De ce să-ți scanezi site-ul pentru cookie-uri?"
 
-#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1201
+#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1200
 msgid "Scan website for cookies"
 msgstr "Scanează site-ul pentru cookie-uri"
 
@@ -805,7 +812,8 @@ msgstr "Am șters cu succes!"
 msgid "Invalid request"
 msgstr "Cererea nu este validă"
 
-#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1029
+#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1017
+#: legacy/admin/modules/cookie-scaner/cookie-scaner.php:1030
 msgid "Invalid scan token"
 msgstr "Tokenul pentru scanare nu este valid"
 
@@ -879,11 +887,15 @@ msgstr "Revizuiește consimțământul"
 #: legacy/admin/modules/cookies/views/necessary-settings.php:36
 #: legacy/admin/modules/cookies/views/non-necessary-settings.php:50
 #: legacy/admin/partials/cookie-law-info-privacy_overview.php:34
-#: lite/admin/dist/js/index.js:83996 lite/admin/dist/js/index.js:84094
+#: lite/admin/dist/js/index.js:75959 lite/admin/dist/js/index.js:76089
+#: lite/admin/dist/js/index.js:77055 lite/admin/dist/js/index.js:83773
+#: lite/admin/dist/js/index.js:83871 lite/admin/dist/js/index.js:84296
+#: lite/admin/dist/js/index.js:84581
 msgid "Title"
 msgstr "Titlu"
 
 #: legacy/public/modules/script-blocker/views/settings.php:164
+#: lite/admin/dist/js/index.js:69436
 msgid "Name"
 msgstr "Nume"
 
@@ -898,7 +910,7 @@ msgid "Enable"
 msgstr "Activează"
 
 #: legacy/includes/class-cookie-law-info-review-request.php:63
-#: lite/admin/cross-promotion-banners/class-wbte-accessibility-banner.php:309
+#: lite/admin/cross-promotion-banners/class-wbte-accessibility-banner.php:313
 msgid "Remind me later"
 msgstr "Amintește-mi mai târziu"
 
@@ -909,6 +921,7 @@ msgstr "Instrument de blocare scripturi"
 
 #: legacy/includes/class-cookie-law-info-review-request.php:65
 #: lite/admin/modules/review-feedback/class-review-feedback.php:100
+#: lite/admin/dist/js/index.js:66793
 msgid "Review now"
 msgstr "Lasă o recenzie acum"
 
@@ -958,6 +971,7 @@ msgid "Status updated"
 msgstr "Am actualizat starea"
 
 #: legacy/public/modules/script-blocker/views/settings.php:201
+#: lite/admin/dist/js/index.js:65926
 msgid "Inactive"
 msgstr "Inactivă"
 
@@ -1026,17 +1040,23 @@ msgstr "Închide și acceptă"
 msgid "CCPA"
 msgstr "CCPA"
 
-#: legacy/admin/modules/ccpa/ccpa.php:149
+#: legacy/admin/modules/ccpa/ccpa.php:149 lite/admin/dist/js/index.js:82473
+#: lite/admin/dist/js/index.js:82536
 msgid "GDPR"
 msgstr "GDPR"
 
 #: legacy/admin/modules/ccpa/ccpa.php:105
 #: legacy/admin/modules/cookie-scaner/cookie-scaner.php:317
 #: legacy/admin/modules/uninstall-feedback/uninstall-feedback.php:176
+#: lite/admin/dist/js/index.js:67945 lite/admin/dist/js/index.js:68091
+#: lite/admin/dist/js/index.js:68544 lite/admin/dist/js/index.js:69405
+#: lite/admin/dist/js/index.js:69480 lite/admin/dist/js/index.js:69492
+#: lite/admin/dist/js/index.js:80557 lite/admin/dist/js/index.js:82148
 msgid "Cancel"
 msgstr "Anulează"
 
 #: legacy/admin/views/admin-settings-buttons.php:353
+#: lite/admin/dist/js/index.js:77107 lite/admin/dist/js/index.js:84648
 msgid "Checkbox"
 msgstr "Bifă"
 
@@ -1078,6 +1098,7 @@ msgstr "Scurt-codul va fi reprezentat ca o legătură oriunde este utilizat."
 
 #: legacy/admin/partials/wt-cli-update-modals.php:36
 #: legacy/public/views/cookie-law-info_bar.php:34
+#: lite/admin/dist/js/index.js:30821 lite/admin/dist/js/index.js:66904
 msgid "Close"
 msgstr "Închide"
 
@@ -1093,6 +1114,7 @@ msgstr "Dacă activezi această opțiune, butonul de comutare a categoriilor va 
 
 #: legacy/admin/modules/cookies/cookies.php:412
 #: legacy/admin/modules/cookies/cookies.php:413
+#: lite/admin/dist/js/index.js:67971 lite/admin/dist/js/index.js:79920
 msgid "Necessary"
 msgstr "Necesare"
 
@@ -1264,6 +1286,7 @@ msgid "Error"
 msgstr "Eroare"
 
 #: legacy/admin/modules/cli-policy-generator/views/policy-generator.php:28
+#: lite/admin/dist/js/index.js:79981 lite/admin/dist/js/index.js:80246
 msgid "Delete"
 msgstr "Șterge"
 
@@ -1356,14 +1379,17 @@ msgid "Bottom Right"
 msgstr "Dreapta jos"
 
 #: legacy/admin/views/admin-settings-messagebar.php:73
+#: lite/admin/dist/js/index.js:76373 lite/admin/dist/js/index.js:85031
 msgid "Position"
 msgstr "Poziție"
 
 #: legacy/admin/views/admin-settings-messagebar.php:68
+#: lite/admin/dist/js/index.js:82207
 msgid "Popup"
 msgstr "Popup"
 
 #: legacy/admin/views/admin-settings-messagebar.php:67
+#: lite/admin/dist/js/index.js:82206
 msgid "Banner"
 msgstr "Banner"
 
@@ -1476,7 +1502,7 @@ msgstr "Buton"
 #: legacy/admin/views/admin-settings-buttons.php:279
 #: legacy/admin/views/admin-settings-buttons.php:286
 #: legacy/admin/views/admin-settings-buttons.php:412
-#: lite/admin/dist/js/index.js:84238
+#: lite/admin/dist/js/index.js:76011 lite/admin/dist/js/index.js:84015
 msgid "URL"
 msgstr "URL"
 
@@ -1494,6 +1520,9 @@ msgstr "Culoare text"
 #: legacy/admin/views/admin-settings-buttons.php:190
 #: legacy/admin/views/admin-settings-buttons.php:246
 #: legacy/admin/views/admin-settings-buttons.php:374
+#: lite/admin/dist/js/index.js:75534 lite/admin/dist/js/index.js:76530
+#: lite/admin/dist/js/index.js:77187 lite/admin/dist/js/index.js:84725
+#: lite/admin/dist/js/index.js:85274
 msgid "Text"
 msgstr "Text"
 
@@ -1502,7 +1531,7 @@ msgid "Delete settings and reset"
 msgstr "Șterge setările și resetează"
 
 #: legacy/admin/class-cookie-law-info-admin.php:269
-#: lite/admin/class-admin.php:715
+#: lite/admin/class-admin.php:925 lite/admin/dist/js/index.js:65357
 msgid "Support"
 msgstr "Suport"
 
@@ -1569,6 +1598,7 @@ msgstr "Reîncărcă după ce se dă clic pe butonul de respingere"
 
 #: legacy/admin/partials/cookie-law-info-admin_settings.php:72
 #: legacy/admin/views/admin-settings-general.php:9
+#: lite/admin/dist/js/index.js:82156
 msgid "General"
 msgstr "Generale"
 
@@ -1651,6 +1681,8 @@ msgstr "Reîncărcă după ce se dă clic pe butonul de acceptare"
 #: legacy/admin/modules/cookies/views/non-necessary-settings.php:56
 #: legacy/public/modules/script-blocker/views/settings.php:169
 #: legacy/public/modules/shortcode/shortcode.php:239
+#: lite/admin/dist/js/index.js:68622 lite/admin/dist/js/index.js:69335
+#: lite/admin/dist/js/index.js:69457
 msgid "Description"
 msgstr "Descriere"
 
@@ -1663,6 +1695,8 @@ msgid "This script will be added right after the BODY section if the above setti
 msgstr "Acest script va fi adăugat chiar după secțiunea BODY dacă setările de mai sus sunt activate și utilizatorul și-a dat consimțământul."
 
 #: legacy/admin/modules/cookies/cookies.php:120
+#: lite/admin/dist/js/index.js:69186 lite/admin/dist/js/index.js:76192
+#: lite/admin/dist/js/index.js:78978 lite/admin/dist/js/index.js:84850
 msgid "Cookie List"
 msgstr "Listă cookie-uri"
 
@@ -1674,6 +1708,7 @@ msgstr "Tip"
 #: legacy/admin/modules/cookie-scaner/views/scan-results.php:72
 #: legacy/admin/modules/cookies/cookies.php:251
 #: legacy/public/modules/shortcode/shortcode.php:236
+#: lite/admin/dist/js/index.js:68618 lite/admin/dist/js/index.js:69293
 msgid "Duration"
 msgstr "Durată"
 
@@ -1681,7 +1716,7 @@ msgstr "Durată"
 #: legacy/admin/class-cookie-law-info-admin.php:193
 #: legacy/admin/class-cookie-law-info-admin.php:268
 #: legacy/admin/partials/cookie-law-info-admin_settings.php:33
-#: lite/admin/class-admin.php:716
+#: lite/admin/class-admin.php:926
 msgid "Settings"
 msgstr "Setări"
 
@@ -1699,16 +1734,21 @@ msgstr "La încărcare"
 
 #: legacy/admin/views/admin-settings-messagebar.php:77
 #: legacy/admin/views/admin-settings-messagebar.php:175
+#: lite/admin/dist/js/index.js:76401 lite/admin/dist/js/index.js:82316
+#: lite/admin/dist/js/index.js:85065
 msgid "Left"
 msgstr "Stânga"
 
 #: legacy/admin/views/admin-settings-messagebar.php:78
 #: legacy/admin/views/admin-settings-messagebar.php:174
+#: lite/admin/dist/js/index.js:76418 lite/admin/dist/js/index.js:82317
+#: lite/admin/dist/js/index.js:85082
 msgid "Right"
 msgstr "Dreapta"
 
 #: legacy/admin/views/admin-settings-messagebar.php:25
-#: lite/admin/dist/js/index.js:84040 lite/admin/dist/js/index.js:84103
+#: lite/admin/dist/js/index.js:75971 lite/admin/dist/js/index.js:83817
+#: lite/admin/dist/js/index.js:83880
 msgid "Message"
 msgstr "Mesaj"
 
@@ -1728,6 +1768,7 @@ msgstr "Acțiune"
 
 #: legacy/admin/modules/cookies/cookies.php:121
 #: legacy/public/modules/shortcode/shortcode.php:230
+#: lite/admin/dist/js/index.js:68614
 msgid "Cookie"
 msgstr "Cookie"
 
@@ -1771,6 +1812,7 @@ msgstr "Animație"
 
 #: legacy/admin/modules/cookies/cookies.php:179
 #: legacy/admin/modules/cookies/cookies.php:190
+#: lite/admin/dist/js/index.js:69261
 msgid "Cookie ID"
 msgstr "ID cookie"
 

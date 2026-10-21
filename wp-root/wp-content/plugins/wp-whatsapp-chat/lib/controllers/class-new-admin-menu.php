@@ -37,6 +37,8 @@ class New_Admin_Menu {
 			true
 		);
 
+		wp_set_script_translations( 'qlwapp-new-admin-menu', 'wp-whatsapp-chat' );
+
 		wp_localize_script(
 			'qlwapp-new-admin-menu',
 			'qlwappApiAdminMenu',

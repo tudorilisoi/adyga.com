@@ -458,12 +458,19 @@ function loginizer_social_btn($return = false, $page_type = 'login', $short_atts
 
 	$social_buttons = '<div id="lz-social-login-btns" class="'.($style == 'icon' ? 'lz-social-login-btns-icon' : 'lz-social-login-btns-full').' '.($position == 'above' || $position == 'below' ? 'lz-social-'.$padding[$position].'-padding' : '').'" style="justify-self:'.esc_attr($container_alignment).'; justify-content:'.esc_attr($button_alignment).';">';
 
+	/* translators: %s: This OR is used as a separator for Either login through username OR use social login */
+	$or_translated = __('OR', 'loginizer');
+
 	// HTML of the divider in case the buttons are below the login fields
 	if(!empty($divider_pos) && $divider_pos == 'above'){
-		$social_buttons .= '<div class="loginizer-social-divider">OR</div><br>';
+		$social_buttons .= '<div class="loginizer-social-divider">'.esc_html($or_translated).'</div><br>';
 	}
 
 	include_once LOGINIZER_DIR . '/main/login-providers.php';
+	
+	// This is used to decide weather we will use Login with or Register with
+	$current_hook = current_action();
+	$register_hooks = ['register_form', 'woocommerce_register_form'];
 
 	foreach($providers as $provider => $settings){
 		if(empty($settings['enabled']) || empty($settings['tested'])){
@@ -497,10 +504,18 @@ function loginizer_social_btn($return = false, $page_type = 'login', $short_atts
 		<div class="loginizer-social-btn-logo">
 			<img src="'.esc_url($img_url).'" height="24" alt="'.esc_attr($name).' Icon"/>
 		</div>';
+		
+		if(in_array($current_hook, $register_hooks)){
+			/* translators: %s: This is for social login so the complete text would be Register With [Brand Name], eg Register With Google */
+			$button_text = esc_html__('Register With', 'loginizer');
+		} else {
+			/* translators: %s: This is for social login so the complete text would be Login With [Brand Name], eg Login With Google */
+			$button_text = esc_html__('Login With', 'loginizer');
+		}
 
 		// Button text in case of full button
 		if(!empty($loginizer['social_settings']) && $style === 'full'){
-			$social_buttons .= '<div class="loginizer-social-btn-text">'.esc_html__('Login With', 'loginizer').' <strong>'.esc_html($name).'</strong>
+			$social_buttons .= '<div class="loginizer-social-btn-text">'.esc_html($button_text).' <strong>'.esc_html($name).'</strong>
 		</div>';
 		}
 
@@ -513,7 +528,7 @@ function loginizer_social_btn($return = false, $page_type = 'login', $short_atts
 
 	// HTML of the divider in case the buttons are above the login fields
 	if(!empty($divider_pos) && $divider_pos == 'below'){
-		$social_buttons .= '<br><div class="loginizer-social-divider">OR</div>';
+		$social_buttons .= '<br><div class="loginizer-social-divider">'.esc_html($or_translated).'</div>';
 	}
 
 	$social_buttons .= '</div>';
@@ -641,7 +656,9 @@ function loginizer_add_social_js($page_type){
 }
 
 function loginizer_social_btn_login($return = false, $id = ''){
-	loginizer_social_btn($return, 'login');
+	if(!loginizer_is_blacklisted()){
+		loginizer_social_btn($return, 'login');
+	}
 }
 
 function loginizer_get_social_error(){

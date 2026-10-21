@@ -3,8 +3,8 @@
 /*
   Plugin Name: Newsletter
   Plugin URI: https://www.thenewsletterplugin.com
-  Description: Newsletter is a cool plugin to create your own subscriber list, to send newsletters, to build your business. <strong>Before update give a look to <a href="https://www.thenewsletterplugin.com/category/release">this page</a> to know what's changed.</strong>
-  Version: 9.3.1
+  Description: Newsletter is a cool plugin to create your own subscriber list, to send newsletters, to build your business.
+  Version: 9.4.7
   Author: The Newsletter Team
   Author URI: https://www.thenewsletterplugin.com
   Disclaimer: Use at your own risk. No warranty expressed or implied is provided.
@@ -30,7 +30,7 @@
 
  */
 
-define('NEWSLETTER_VERSION', '9.3.0');
+define('NEWSLETTER_VERSION', '9.4.7');
 
 global $wpdb, $newsletter;
 
@@ -90,6 +90,9 @@ if (!defined('NEWSLETTER_PROFILE_MAX'))
 if (!defined('NEWSLETTER_FORMS_MAX'))
     define('NEWSLETTER_FORMS_MAX', 10);
 
+if (!defined('NEWSLETTER_TEST'))
+    define('NEWSLETTER_TEST', false);
+
 spl_autoload_register(function ($class) {
     static $dir = __DIR__ . '/classes/';
 
@@ -99,7 +102,6 @@ spl_autoload_register(function ($class) {
         if (file_exists($file)) {
 //            if (NEWSLETTER_DEBUG) {
 //                $memory = size_format(memory_get_usage(), 1);
-//                error_log($memory . ' - Loading ' . $class);
 //            }
             require $file;
         }
@@ -306,25 +308,32 @@ class Newsletter extends NewsletterModule {
             $this->dienow('This link is not active on newsletter preview', 'You can send a test message to test subscriber to have the real working link.');
         }
 
-        $user = $this->get_current_user();
-        $email = $this->get_email_from_request();
+        // Get the subscriber from the signed and timed key in the request, if valid.
+        // This way, each action link has a life timespan.
+        $user = $this->get_user_by_key($_REQUEST['nk'] ?? '', $this->action);
 
-        if ($user && isset($user->_dummy) && $user->_dummy) {
-            $this->switch_language($user->language);
-            do_action('newsletter_action_dummy', $this->action, $user, $email);
+        if ($user && $user->id === 0 && current_user_can('administrator')) {
+            $this->switch_language($user);
+            do_action('newsletter_action_dummy', $this->action, $user, null);
             return;
         }
 
-        if ($user && !empty($user->language)) {
-            $this->switch_language($user->language);
+        // Old token temporary management
+        if (!$user) {
+            $user = $this->get_user_by_old_key($_REQUEST['nk'] ?? '');
         }
 
+        $email = $this->get_email_from_request();
+
+        $this->switch_language($user);
+
+        // An action may not require a subscriber (for example the subscription)
         do_action('newsletter_action', $this->action, $user, $email);
     }
 
     function hook_activate() {
-        include_once NEWSLETTER_INCLUDES_DIR . '/upgrade.php';
-        update_option('newsletter_version', NEWSLETTER_VERSION);
+        //include_once NEWSLETTER_INCLUDES_DIR . '/upgrade.php';
+        //update_option('newsletter_version', NEWSLETTER_VERSION);
     }
 
     function first_install() {
@@ -420,9 +429,18 @@ class Newsletter extends NewsletterModule {
         }
     }
 
+    function get_current_dummy_user() {
+        if (isset($_REQUEST['nk'])) {
+            list($id, $token) = explode('-', $_REQUEST['nk']);
+            if ($id === '0') {
+                return $this->get_dummy_user($token);
+            }
+        }
+        return null;
+    }
+
     /**
      * The main shortcode to be used in the reserved page.
-     * @todo This shortcode is not related only to subscription, move it away
      * @todo Separate below the code for the shortcode and the one for the "subscription" content
      *
      * @global wpdb $wpdb
@@ -440,36 +458,34 @@ class Newsletter extends NewsletterModule {
 
         $executing = true;
 
-        $message_key = $this->get_message_key_from_request();
+        $message_key = sanitize_key($_GET['nm'] ?? 'subscription');
 
         $user = $this->get_current_user();
-
-        // When the key is "subscription", the subscription form is shown and we do not use the language
-        // of the current subscriber (maybe identify by the logged in administrator).
-        if ($message_key !== 'subscription' && $user && $user->language) {
-            $this->switch_language($user->language);
+        $this->switch_language($user);
+        if ($user && $user->id === 0) {
+            ob_start();
+            do_action('newsletter_shortcode_dummy', $message_key, $user);
+            $message = ob_get_clean();
+            // Do not replace here so the tags are visible, useful when previewing.
+            $message = do_shortcode($message);
+            $executing = false;
+            return $message;
         }
 
-        // Lets modules to provie its own text
-        $message = apply_filters('newsletter_page_text', '', $message_key, $user);
+        ob_start();
+        do_action('newsletter_shortcode', $message_key, $user);
+        $message = ob_get_clean();
+        $message = $this->replace($message, $user, null, 'page');
         $message = do_shortcode($message);
 
-        $email = $this->get_email_from_request();
-        $message = $this->replace($message, $user, $email, 'page');
-
         $executing = false;
-
         return $message;
     }
 
     function shortcode_newsletter_replace($attrs, $content) {
         $content = do_shortcode($content);
-        $content = $this->replace($content, $this->get_current_user(), $this->get_email_from_request(), 'page');
+        $content = $this->replace($content, $this->get_current_user(), null, 'page');
         return $content;
-    }
-
-    function relink($text, $email_id, $user_id, $email_token = '') {
-        return NewsletterStatistics::instance()->relink($text, $email_id, $user_id, $email_token);
     }
 
     /**
@@ -621,8 +637,6 @@ class Newsletter extends NewsletterModule {
                 $mailer_message->body = $this->clean_eol($message['html']);
             }
         }
-
-        $this->logger->debug($mailer_message);
 
         $mailer = $this->get_mailer();
 

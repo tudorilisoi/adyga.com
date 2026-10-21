@@ -4,8 +4,8 @@ Donate link: https://www.paypal.me/vanderwijk
 Tags: disable updates, updates, plugin update, theme update, core update
 Requires PHP: 5.6
 Requires at least: 4.6
-Tested up to: 7.0
-Stable tag: 1.4.3
+Tested up to: 7.1
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Disables the WordPress update checking and notification system for all core, plu
 
 == Description ==
 
-This plugin disables all WordPress updates (core, plugins and themes). This can be useful if you have multiple environments such as a live and staging server and you don't want your users to use the update functionality.
+This plugin disables all WordPress updates (core, plugins and themes). This can be useful if you have multiple environments such as a live and staging server and you don't want your users to use the update system on your staging site.
 
 This plugin not only disables the update mechanism for the core, plugins and themes, but it also removes the update menu item from the left navigation menu in the admin dashboard.
 
@@ -31,13 +31,16 @@ This plugin not only disables the update mechanism for the core, plugins and the
 
 = I am not sure what this plugin does, should I be using it? =
 
-No, keeping WordPress up-to-date is very important for security reasons. You should only disable WordPress updates if you keep your system up to date using another mechanism such as a staging server or svn.
+No, keeping WordPress up-to-date is very important for security reasons. You should only disable WordPress updates if you keep your system up to date using another mechanism such as a staging server or deployment automation.
 
 = Can I submit a feature request or bug report? =
 
 Yes, please use the [support forum](https://wordpress.org/support/plugin/disable-updates/) to report any issues you may have. You can submit code suggestions in the [GitHub repository](https://github.com/vanderwijk/disable-updates).
 
 == Changelog ==
+
+= 1.4.4 =
+WP 7.1 compatibility tested
 
 = 1.4.3 =
 WP 7.0 compatibility tested
@@ -61,7 +64,7 @@ WP 6.5 compatibility tested
 WP 6.4 compatibility tested
 
 = 1.3.6 =
-Using `add_filter ( 'pre_site_transient_update_core', '__return_null' );` slowed down the admin dashboard because it invalidated the transient. Added `du_last_checked` function to fake last update check which tricks WordPress into thinking the check has happened and nothing needs to be updated.
+Using `add_filter ( 'pre_site_transient_update_core', '__return_null' );` slowed down the admin dashboard because it invalidated the transient. Added `du_last_checked` function to fake last update check instead.
 
 = 1.3.5 =
 Changed minimum WordPress version to 4.6

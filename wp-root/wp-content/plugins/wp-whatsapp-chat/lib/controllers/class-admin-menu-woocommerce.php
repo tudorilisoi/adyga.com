@@ -23,6 +23,8 @@ class Admin_Menu_WooCommerce extends Admin_Menu {
 			$woocommerce['version'],
 			true
 		);
+
+		wp_set_script_translations( 'qlwapp-admin-menu-woocommerce', 'wp-whatsapp-chat' );
 	}
 
 	public function enqueue_scripts() {

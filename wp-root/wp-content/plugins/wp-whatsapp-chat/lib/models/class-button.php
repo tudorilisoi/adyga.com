@@ -78,12 +78,12 @@ class Button {
 			}
 		}
 		if ( isset( $settings['timefrom'] ) ) {
-			$settings['timefrom'] = preg_match( '/^\d{2}:\d{2}$/', $settings['timefrom'] )
+			$settings['timefrom'] = preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', $settings['timefrom'] )
 				? $settings['timefrom']
 				: '00:00';
 		}
 		if ( isset( $settings['timeto'] ) ) {
-			$settings['timeto'] = preg_match( '/^\d{2}:\d{2}$/', $settings['timeto'] )
+			$settings['timeto'] = preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', $settings['timeto'] )
 				? $settings['timeto']
 				: '00:00';
 		}

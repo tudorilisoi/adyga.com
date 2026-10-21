@@ -12,12 +12,12 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$option = get_option( 'joinchat' );
+$joinchat_option = get_option( 'joinchat' );
 
 /**
  * Delete all plugin data if 'clear' is true.
  */
-if ( isset( $option['clear'] ) && 'yes' === $option['clear'] ) {
+if ( isset( $joinchat_option['clear'] ) && 'yes' === $joinchat_option['clear'] ) {
 
 	global $wpdb;
 
@@ -32,6 +32,9 @@ if ( isset( $option['clear'] ) && 'yes' === $option['clear'] ) {
 
 	// Delete term meta '_joinchat' added by plugin.
 	$wpdb->delete( $wpdb->prefix . 'termmeta', array( 'meta_key' => '_joinchat' ) );
+
+	// Delete user meta '_joinchat' added by plugin.
+	$wpdb->delete( $wpdb->prefix . 'usermeta', array( 'meta_key' => '_joinchat' ) );
 
 	// TODO: delete WPML/Polylang translations.
 

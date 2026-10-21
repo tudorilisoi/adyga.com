@@ -206,6 +206,15 @@ class Contacts {
 			$value_data['whatsapp_link_type'] = 'web';
 		}
 
+		// Same HH:MM contract as the button settings. Values such as "24:00" or
+		// "00:00:00" bypass the frontend's timefrom === timeto "always available"
+		// check and break the availability hours parsing.
+		foreach ( array( 'timefrom', 'timeto' ) as $time_key ) {
+			if ( isset( $value_data[ $time_key ] ) && ! preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', $value_data[ $time_key ] ) ) {
+				$value_data[ $time_key ] = '00:00';
+			}
+		}
+
 		return $value_data;
 	}
 

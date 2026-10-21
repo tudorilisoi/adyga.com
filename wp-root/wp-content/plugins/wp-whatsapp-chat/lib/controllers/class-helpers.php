@@ -24,6 +24,8 @@ class Helpers {
 			true
 		);
 
+		wp_set_script_translations( 'qlwapp-helpers', 'wp-whatsapp-chat' );
+
 		global $wp_version;
 
 		$contact_entity  = new \QuadLayers\QLWAPP\Entities\Contact();

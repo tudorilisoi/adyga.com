@@ -155,7 +155,9 @@ class rsssl_firewall_manager {
 			return;
 		}
 
-		$this->update_firewall( $this->rules );
+		if ( ! $this->update_firewall( $this->rules ) ) {
+			return;
+		}
 
 		$this->include_prepend_file_in_wp_config();
 		$should_queue_root_htaccess_sync = $maybe_queue_root_htaccess_update
@@ -278,12 +280,12 @@ class rsssl_firewall_manager {
 	 *
 	 * @param string $rules //rules to add to the firewall.
 	 *
-	 * @return void
+	 * @return bool Whether the firewall file is readable after the update.
 	 */
-	public function update_firewall( string $rules ): void
+	public function update_firewall( string $rules ): bool
 	{
 		if ( ! rsssl_admin_logged_in() ) {
-			return;
+			return false;
 		}
 
 		$contents  = '<?php' . "\n";
@@ -315,6 +317,8 @@ class rsssl_firewall_manager {
 		$contents .= "//RULES START\n" . $rules;
 
 		$this->put_contents( $this->file, $contents );
+
+		return $this->is_readable( $this->file );
 	}
 
 	/**
@@ -368,8 +372,7 @@ class rsssl_firewall_manager {
 	 * @return string
 	 */
 	private function get_contents( string $file ): string {
-		// Validate that file path is not empty
-		if ( empty( $file ) ) {
+		if ( ! $this->is_readable( $file ) ) {
 			return '';
 		}
 
@@ -671,7 +674,7 @@ PHP;
 	}
 
 	/**
-	 * Wrapper function
+	 * Check if a file exists and is readable without triggering filesystem warnings.
 	 *
 	 * @param string $file // filename, including path.
 	 *
@@ -682,6 +685,24 @@ PHP;
 
 		// Use WP Filesystem if available, otherwise fall back to direct operations
 		return $wp_filesystem ? $wp_filesystem->is_writable( $file ) : is_writable( $file );//phpcs:ignore
+	}
+
+	/**
+	 * Wrapper function
+	 *
+	 * @param string $file // filename, including path.
+	 *
+	 * @return bool
+	 */
+	private function is_readable( string $file ): bool {
+		if ( empty( $file ) || ! $this->file_exists( $file ) ) {
+			return false;
+		}
+
+		$wp_filesystem = $this->get_file_system();
+
+		// Readability checks can emit warnings for missing files, so file_exists() is checked first.
+		return $wp_filesystem ? $wp_filesystem->is_readable( $file ) : is_readable( $file );//phpcs:ignore
 	}
 
 	/**
@@ -758,7 +779,7 @@ PHP;
 			'output'            => array(
 				'wpconfig-notwritable'         => array(
 					'title'       => __( 'Firewall', 'really-simple-ssl' ),
-					'msg'         => __( 'A firewall rule was enabled, but the wp-config.php is not writable.', 'really-simple-ssl' ) . ' ' . __( 'Please set the wp-config.php to writable until the rule has been written.', 'really-simple-ssl' ),
+					'msg'         => __( 'A firewall rule was enabled, but the wp-config.php is not writable.', 'really-simple-ssl' ) . ' ' . __( 'Please set the wp-config.php to writable until the rule has been written', 'really-simple-ssl' ),
 					'icon'        => 'open',
 					'dismissible' => true,
 				),
@@ -780,7 +801,7 @@ PHP;
 			'output'            => array(
 				'true' => array(
 					'title'       => __( 'Firewall', 'really-simple-ssl' ),
-					'msg'         => __( 'A firewall rule was enabled, but the firewall does not seem to get loaded correctly.', 'really-simple-ssl' ) . ' ' . __( 'Please check if the advanced-headers.php file is included in the wp-config.php, and exists in the wp-content folder.', 'really-simple-ssl' ),
+					'msg'         => __( 'A firewall rule was enabled, but the firewall does not seem to get loaded correctly.', 'really-simple-ssl' ) . ' ' . __( 'Please check if the advanced-headers.php file is included in the wp-config.php, and exists in the wp-content folder', 'really-simple-ssl' ),
 					'icon'        => 'open',
 					'dismissible' => true,
 				),
@@ -1062,6 +1083,11 @@ auto_prepend_file = '%s'
 		if ( empty( $userIniPath ) ) {
 			return;
 		}
+
+		if ( ! $this->is_readable( $userIniPath ) ) {
+			return;
+		}
+
 		$userIniContent = $this->get_contents( $userIniPath );
 		$updatedUserIniContent = preg_replace(
 			'/; BEGIN Really Simple Auto Prepend File.*?; END Really Simple Auto Prepend File/is',

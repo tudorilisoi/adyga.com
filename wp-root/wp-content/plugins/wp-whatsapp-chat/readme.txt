@@ -4,12 +4,12 @@ Donate link: https://quadlayers.com/products/whatsapp-chat/
 Tags: whatsapp, whatsapp business, whatsapp chat, woocommerce whatsapp, click to chat
 Requires at least: 4.7
 Requires PHP: 5.6
-Tested up to: 7.0
-Stable tag: 8.6.1
+Tested up to: 7.1
+Stable tag: 8.6.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 4.0
-WC tested up to: 10.9
+WC tested up to: 11.1
 
 WhatsApp Chat🔥 allows you to enhance customer engagement! Integrate "WhatsApp" or "WhatsApp Business" with a single click.
 
@@ -199,6 +199,23 @@ Don't use: +001-(555)1234567
 * Brazilian Portuguese (thanks to [Dionizio Bach](@djio))
 
 == Changelog ==
+
+= 8.6.6 =
+* Fix: chat box texts ("Available from %1$s to %2$s", "Available on %s", day names, Online/Offline, etc.) can now be translated through translate.wordpress.org and Loco Translate
+* Fix: admin panel now loads its existing JavaScript translations
+* Fix: validate contact availability hours (HH:MM) to avoid wrong availability messages
+
+= 8.6.5 =
+* WooCommerce 11.1 compatibility
+
+= 8.6.4 =
+* Fix: admin page not rendering because of a broken minified build (pin terser >= 5.51.2 and lock dependencies in CI)
+
+= 8.6.3 =
+* Security: Fix stored XSS through the chat box consent message, header and footer (CVE-2026-18404)
+
+= 8.6.2 =
+* fix: WooCommerce and WordPress compatibility
 
 = 8.6.1 =
 * Fix: Harden quick.bot auth popup handshake (normalized origin validation and centralized message contract)

@@ -4,7 +4,7 @@
 Plugin Name:    Disable Updates
 Plugin URI:     https://wordpress.org/plugins/disable-updates/
 Description:    A simple plugin that prevents updating the WordPress core, plugins and themes.
-Version:        1.4.3
+Version:        1.4.4
 Author:         Johan van der Wijk
 Author URI:     https://vanderwijk.com/
 License:        GPL-2.0+
@@ -18,7 +18,8 @@ Domain Path:    /languages
 function du_plugin_links ( $links, $file ) {
 	$base = plugin_basename( __FILE__ );
 	if ( $file == $base ) {
-		$links[] = '<a href="https://wordpress.org/support/plugin/disable-updates/reviews/#new-post" target="_blank">' . __( 'Review', 'disable-updates' ) . ' <span class="dashicons dashicons-thumbs-up"></span></a> | <a href="https://paypal.me/vanderwijk">' . __( 'Donate', 'disable-updates' ) . ' <span class="dashicons dashicons-money"></span></a>';
+		$links[] = '<a href="https://wordpress.org/support/plugin/disable-updates/reviews/#new-post" target="_blank">' . __( 'Review', 'disable-updates' ) . ' <span class="dashicons dashicons-thumbs-up" aria-hidden="true"></span></a>';
+		$links[] = '<a href="https://www.paypal.me/vanderwijk" target="_blank">' . __( 'Donate', 'disable-updates' ) . '</a>';
 	}
 	return $links;
 }

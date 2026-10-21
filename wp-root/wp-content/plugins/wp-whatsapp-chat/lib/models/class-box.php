@@ -7,6 +7,16 @@ use QuadLayers\WP_Orm\Builder\SingleRepositoryBuilder;
 
 class Box {
 
+	/**
+	 * Box fields the frontend renders as HTML.
+	 */
+	const HTML_FIELDS = array( 'header', 'footer', 'consent_message' );
+
+	/**
+	 * Box fields backed by a yes/no control.
+	 */
+	const TOGGLE_FIELDS = array( 'enable', 'auto_open', 'lazy_load', 'allow_outside_close', 'consent_enabled' );
+
 	protected static $instance;
 	protected $repository;
 
@@ -57,23 +67,31 @@ class Box {
 	}
 
 	public function sanitize( $settings ) {
-		if ( isset( $settings['header'] ) ) {
-			$settings['header'] = wp_kses_post( $settings['header'] );
+		foreach ( self::HTML_FIELDS as $field ) {
+			if ( isset( $settings[ $field ] ) ) {
+				$settings[ $field ] = is_string( $settings[ $field ] ) ? wp_kses_post( $settings[ $field ] ) : '';
+			}
 		}
-		if ( isset( $settings['auto_open'] ) ) {
-			$settings['auto_open'] = wp_kses_post( $settings['auto_open'] );
+
+		foreach ( self::TOGGLE_FIELDS as $field ) {
+			if ( isset( $settings[ $field ] ) ) {
+				/*
+				 * The admin controls post 'yes'/'no', but external callers
+				 * (QLWAPP_PRO, filters) may hand over the boolean equivalents.
+				 * Read those as enabled instead of silently turning the
+				 * setting off.
+				 */
+				$settings[ $field ] = in_array( $settings[ $field ], array( 'yes', true, 1, '1' ), true ) ? 'yes' : 'no';
+			}
 		}
-		if ( isset( $settings['lazy_load'] ) ) {
-			$settings['lazy_load'] = wp_kses_post( $settings['lazy_load'] );
+
+		if ( isset( $settings['response'] ) ) {
+			$settings['response'] = is_string( $settings['response'] ) ? sanitize_text_field( $settings['response'] ) : '';
 		}
-		if ( isset( $settings['allow_outside_close'] ) ) {
-			$settings['allow_outside_close'] = wp_kses_post( $settings['allow_outside_close'] );
-		}
+
 		if ( isset( $settings['auto_delay_open'] ) ) {
-			$settings['auto_delay_open'] = wp_kses_post( $settings['auto_delay_open'] );
-		}
-		if ( isset( $settings['footer'] ) ) {
-			$settings['footer'] = wp_kses_post( $settings['footer'] );
+			// An empty control means "no delay set" — absint() would store it as 0.
+			$settings['auto_delay_open'] = '' === $settings['auto_delay_open'] ? '' : absint( $settings['auto_delay_open'] );
 		}
 
 		return $settings;

@@ -3,7 +3,6 @@
 /** @var NewsletterControls $controls */
 /** @var NewsletterLogger $logger */
 /** @var wpdb $wpdb */
-
 defined('ABSPATH') || exit;
 
 global $wpdb;
@@ -16,7 +15,7 @@ function tnp_prepare_controls($email, $controls) {
     }
 }
 
-$email_id = (int)$_GET['id'];
+$email_id = (int) $_GET['id'];
 
 // Always required
 $email = $this->get_email($email_id, ARRAY_A);
@@ -41,6 +40,10 @@ if ($controls->is_action('continue')) {
     $wpdb->update(NEWSLETTER_EMAILS_TABLE, array('status' => 'sending'), array('id' => $email_id));
     $email = $this->get_email($email_id, ARRAY_A);
     tnp_prepare_controls($email, $controls);
+    $ts = wp_next_scheduled('newsletter_send_error_recover', ['id' => (int) $email_id]);
+    if ($ts) {
+        wp_unschedule_event($ts, 'newsletter_send_error_recover', ['id' => (int) $email_id]);
+    }
 }
 
 if ($controls->is_action('abort')) {
@@ -148,7 +151,7 @@ if ($controls->is_action('test') || $controls->is_action('save') || $controls->i
         }
 
         //$email['subject'] = $controls->data['subject'];
-        $email['track'] = $controls->data['track'];
+        $email['track'] = (int) $controls->data['track'];
         $email['editor'] = $editor_type;
         $email['private'] = $controls->data['private'];
         $email['message_text'] = $controls->data['message_text'];
@@ -335,7 +338,7 @@ if (isset($email['options']['status']) && $email['options']['status'] === 'S') {
 
 if (TNP_Email::STATUS_ERROR === $email['status'] && isset($email['options']['error_message'])) {
     $controls->errors .= sprintf(__('Stopped by fatal error: %s', 'newsletter'), esc_html($email['options']['error_message']));
-    $recovery_time = wp_next_scheduled('newsletter_send_error_recover', ['id' => (int)$email['id']]);
+    $recovery_time = wp_next_scheduled('newsletter_send_error_recover', ['id' => (int) $email['id']]);
     if ($recovery_time) {
         $controls->errors .= '<br>Autorecover on ' . esc_html($controls->print_date($recovery_time, false, true));
     }
@@ -347,7 +350,6 @@ if ($email['status'] != 'sent') {
 } else {
     $subscriber_count = $email['sent'];
 }
-
 ?>
 <style>
 <?php readfile(__DIR__ . '/assets/edit.css') ?>
@@ -515,7 +517,7 @@ if ($email['status'] != 'sent') {
                         <?php } ?>
                     </table>
 
-                    <?php //do_action('newsletter_emails_edit_target', $this->get_email($email_id), $controls)  ?>
+                    <?php //do_action('newsletter_emails_edit_target', $this->get_email($email_id), $controls)   ?>
 
                     <table class="form-table">
                         <tr valign="top">
@@ -690,7 +692,7 @@ if ($email['status'] != 'sent') {
                         <tr>
                             <th><?php esc_html_e('Track clicks and message opening', 'newsletter') ?></th>
                             <td>
-                                <?php $controls->yesno('track'); ?>
+                                <?php $controls->select('track', ['0' => 'Disabled', '1' => 'Enabled', '2' => 'Anonymous']); ?>
                             </td>
                         </tr>
                         <tr>

@@ -379,7 +379,7 @@ input[type="text"], textarea, select {
 					<span class="exp"><?php echo __('Select the Roles to which 2FA should be applied.', 'loginizer'); ?></span>
 				</td>
 				<td>
-					<input type="checkbox" value="1" onchange="lz_roles_handle()" name="2fa_roles_all" id="2fa_roles_all" <?php echo lz_POSTchecked('2fa_roles_all', (empty($loginizer['2fa_roles']) ? true : false), 'save_lz'); ?> /><?php esc_html__('All', 'loginizer'); ?><br />
+					<input type="checkbox" value="1" onchange="lz_roles_handle()" name="2fa_roles_all" id="2fa_roles_all" <?php echo lz_POSTchecked('2fa_roles_all', (empty($loginizer['2fa_roles']) ? true : false), 'save_lz'); ?> /><?php esc_html_e('All', 'loginizer'); ?><br />
 					<?php
 					
 					foreach($lz_roles as $k => $v){

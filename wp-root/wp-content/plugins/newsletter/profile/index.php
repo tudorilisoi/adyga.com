@@ -2,7 +2,6 @@
 /** @var NewsletterProfileAdmin $this */
 /** @var NewsletterControls $controls */
 /** @var string $language */
-
 defined('ABSPATH') || exit;
 
 if ($controls->is_action()) {
@@ -28,6 +27,8 @@ foreach (['text'] as $key) {
         $controls->data[$key . '_custom'] = '1';
     }
 }
+
+update_option('newsletter_dummy_user_language', $language, false);
 ?>
 
 <div class="wrap tnp-profile tnp-profile-index" id="tnp-wrap">
@@ -166,6 +167,14 @@ foreach (['text'] as $key) {
 
                                     <td>
                                         <?php $controls->checkbox2('language') ?>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e('Tracking consent', 'newsletter') ?></th>
+
+                                    <td>
+                                        <?php $controls->checkbox2('track') ?>
                                     </td>
                                     <td></td>
                                 </tr>

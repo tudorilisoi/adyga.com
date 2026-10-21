@@ -88,7 +88,7 @@ class NewsletterEngine {
             $email = (object) $email;
         }
 
-        $this->logger->info('Starting newsletter ' . $email->id);
+        $this->logger->info('Starting email ' . $email->id);
 
         $this->send_setup();
 
@@ -100,20 +100,33 @@ class NewsletterEngine {
 
         if (!$supplied_users) {
 
+            // This is no more related to emails, it should be moved to the run method
             if ($this->skip_run($email)) {
-                $this->logger->info('Out of the sending time window');
+                $this->logger->info('Hour not allowed for sending');
                 return true;
+            }
+
+            // No more capacity. It should not happen here but we saw cases where the "newsletter" job is launched
+            // twice in a single process.
+            if ($this->max_emails <= 0) {
+                return false;
             }
 
             $query = $email->query;
             $query .= " and id>" . ((int) $email->last_id) . " order by id limit " . $this->max_emails;
 
+            if (NEWSLETTER_DEBUG) {
+                //$query .= 'sdkjshskdfhjksf';
+            }
+
             $this->logger->debug('Query: ' . $query);
 
+            // Our get_results() manages error conditions nor managed by the original get_results()
             $users = $this->get_results($query);
 
-            if ($users === false) {
-                $this->set_error_state_of_email($email, 'Database error (see logs)');
+            if (!is_array($users)) {
+                // Something bad happened
+                $this->set_error_state_of_email($email, 'Database error: ' . $wpdb->last_error . '. Query: ' . $wpdb->last_query);
                 return true; // Continue with the next newsletter
             }
 
@@ -156,7 +169,9 @@ class NewsletterEngine {
 
         foreach ($chunks as $index => $chunk) {
 
-            $this->update_lock();
+            if (!$supplied_users) {
+                $this->update_lock();
+            }
 
             $this->logger->debug('Processing chunk #' . $index);
 
@@ -204,6 +219,10 @@ class NewsletterEngine {
                 }
             }
 
+
+//            if (NEWSLETTER_DEBUG) {
+//                $r = new WP_Error(NewsletterMailer::ERROR_FATAL, 'test fatal error');
+//            }
             // The batch went in error
             if (is_wp_error($r)) {
                 $this->logger->error($r);
@@ -296,6 +315,10 @@ class NewsletterEngine {
             'X-Auto-Response-Suppress' => 'OOF, AutoReply'
         ];
 
+        if (NEWSLETTER_DEBUG) {
+            $message->headers['X-Newsletter-Message-Id'] = (string) $message->id;
+        }
+
         $message->headers = apply_filters('newsletter_message_headers', $message->headers, $email, $user);
 
         $message->body = Newsletter::instance()->replace_for_email($email->message, $user, $email);
@@ -304,8 +327,8 @@ class NewsletterEngine {
         $message->body_text = Newsletter::instance()->replace($email->message_text, $user, $email);
         $message->body_text = apply_filters('newsletter_message_text', $message->body_text, $email, $user);
 
-        if ($email->track == 1) {
-            $message->body = NewsletterStatistics::instance()->relink($message->body, $email->id, $user->id, $email->token);
+        if ($email->track) {
+            $message->body = NewsletterStatistics::instance()->relink($message->body, $email, $user, $message);
         }
 
         if (empty($email->subject)) {
@@ -352,13 +375,9 @@ class NewsletterEngine {
     }
 
     /**
-     * @param TNP_Email $email
+     * @param TNP_Email $email (only for autocompletion)
      */
-    private function set_error_state_of_email($email, $message = '') {
-        // Handle only message type at the moment
-        //if ($email->type !== 'message') {
-        //    return;
-        //}
+    public function set_error_state_of_email($email, $message = '') {
 
         do_action('newsletter_error_on_sending', $email, $message);
 
@@ -370,13 +389,18 @@ class NewsletterEngine {
 
         Newsletter::instance()->save_email($edited_email);
 
-        $delay = (int)Newsletter::instance()->get_main_option('autorecovery_delay');
+        $delay = (int) Newsletter::instance()->get_main_option('autorecovery_delay');
 
-        if ($delay && $delay > 0) {
-            wp_schedule_single_event(time() + $delay*60, 'newsletter_send_error_recover', ['id' => (int) $email->id]);
+        if (!NEWSLETTER_TEST) {
+            $delay *= 60;
         }
 
-        Newsletter\Logs::add('newsletter-' . $email->id, 'Error: ' . $message);
+        if ($delay > 0) {
+            wp_schedule_single_event(time() + $delay, 'newsletter_send_error_recover', [(int) $email->id]);
+            Newsletter\Logs::add('newsletter-' . $email->id, 'Error: ' . $message . '. Autorecover in ' . $delay . ' minutes');
+        } else {
+            Newsletter\Logs::add('newsletter-' . $email->id, 'Error: ' . $message . '. Autorecover disabled (see Settings/Sending)');
+        }
     }
 
     /**
@@ -410,26 +434,26 @@ class NewsletterEngine {
 
         $schedule = (int) $this->options['schedule'];
 
-        $this->logger->debug('Global schedule: ' . ($schedule ? 'yes' : 'no'));
+        $this->logger->debug('Global schedule active: ' . ($schedule ? 'yes' : 'no'));
 
         if ($schedule) {
+            $hours = $this->options['schedule_hours'] ?? [];
+            $this->logger->debug('Hours');
+            $this->logger->debug($hours);
 
-            $hour = gmdate('G') + get_option('gmt_offset');
-            $start = (int) $this->options['schedule_start'];
-            $end = (int) $this->options['schedule_end'];
-            // When the end is seto to 00:00, $end becomes -1 and the current hour is always greater than the end so the
-            // end time does not applies as it must be (send without limits for all the day)
-            $end--; // Stop at the starting of the hour
-
-            $this->logger->debug('Start: ' . $start);
-            $this->logger->debug('End: ' . $end);
-
-            $skip = $hour < $start || $hour > $end;
-            $this->logger->debug('Skip: ' . ($skip ? 'true' : 'false'));
+            if (is_array($hours)) {
+                $hour = gmdate('G') + get_option('gmt_offset');
+                $this->logger->debug('Now: ' . $hour);
+                if (!in_array($hour, $hours)) {
+                    $this->logger->debug('Skipping');
+                    return true;
+                }
+            }
         }
 
-        // Used by the speed control obsolete addon
-        return (bool) apply_filters('newsletter_send_skip', $skip, $email);
+        $this->logger->debug('Not skipping');
+
+        return false;
     }
 
     /**
@@ -491,12 +515,23 @@ class NewsletterEngine {
         return $r;
     }
 
+    /**
+     *
+     * @global wpdb $wpdb
+     * @param string $query
+     * @return bool|array flase if an error condition or invalid result type (null, false, ...) is detected
+     */
     function get_results($query) {
         global $wpdb;
+        $wpdb->last_error = '';
+        //$this->logger->debug($query);
         $r = $wpdb->get_results($query);
-        if ($r === false) {
+        //$this->logger->debug($r);
+        // $r can be an empty array, it should always be an array or null on error
+        if ($wpdb->last_error || !is_array($r)) {
             $this->logger->fatal($query);
             $this->logger->fatal($wpdb->last_error);
+            return false;
         }
         return $r;
     }

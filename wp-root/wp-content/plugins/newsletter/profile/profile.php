@@ -1,5 +1,4 @@
 <?php
-
 defined('ABSPATH') || exit;
 
 class NewsletterProfile extends NewsletterModule {
@@ -21,7 +20,12 @@ class NewsletterProfile extends NewsletterModule {
         add_shortcode('newsletter_profile', [$this, 'shortcode_newsletter_profile']);
         add_shortcode('newsletter_profile_field', [$this, 'shortcode_newsletter_profile_field']);
         add_filter('newsletter_replace', [$this, 'hook_newsletter_replace'], 10, 4);
-        add_filter('newsletter_page_text', [$this, 'hook_newsletter_page_text'], 10, 3);
+
+        //add_filter('newsletter_page_text', [$this, 'hook_newsletter_page_text'], 10, 3);
+
+        add_action('newsletter_shortcode', [$this, 'hook_newsletter_shortcode'], 12, 2);
+        add_action('newsletter_shortcode_dummy', [$this, 'hook_newsletter_shortcode_dummy'], 12, 2);
+
         add_action('newsletter_action', [$this, 'hook_newsletter_action'], 12, 3);
         add_action('newsletter_action_dummy', [$this, 'hook_newsletter_action_dummy'], 12, 3);
 
@@ -31,20 +35,37 @@ class NewsletterProfile extends NewsletterModule {
         }
     }
 
+    /**
+     * URL to the subscriber profile edit action. This URL MUST NEVER be changed by
+     * 3rd party plugins. Plugins can change the final URL after the action has been executed using the
+     * <code>newsletter_profile_url</code> filter.
+     *
+     * @param stdClass $user
+     * @return string
+     */
+    function get_profile_url($user) {
+        return $this->build_action_url('p', $user, null, 7 * DAY_IN_SECONDS);
+    }
+
+    /**
+     * Button to start the data export.
+     *
+     * @param array $attrs
+     * @param string $content Ignored
+     * @return string
+     */
     function shortcode_newsletter_export_button($attrs, $content = '') {
         $user = $this->get_current_user();
 
-        if (!$user || !$user->_trusted) {
-            if (NEWSLETTER_DEBUG) {
-                echo 'Not trusted';
-            }
+        if (!$user || $user->status !== TNP_User::STATUS_CONFIRMED) {
             return '';
         }
 
         $label = empty($attrs['label']) ? __('Export your data', 'newsletter') : $attrs['label'];
 
         $b = '<form action="' . esc_attr($this->build_action_url('px')) . '" method="post" class="tnp-button-form tnp-export" target="_blank">';
-        $b .= '<input type="hidden" name="nk" value="' . esc_attr($this->get_user_key($user)) . '">';
+        $b .= $this->get_user_key_field($user, 'px');
+        $b .= wp_nonce_field('newsletter-export', '_wpnonce', true, false);
         $b .= '<button class="tnp-submit">' . esc_html($label) . '</button>';
         $b .= '</form>';
         return $b;
@@ -53,20 +74,21 @@ class NewsletterProfile extends NewsletterModule {
     function shortcode_newsletter_profile_button($attrs, $content = '') {
         $user = $this->get_current_user();
 
-        if (!$user || !$user->_trusted) {
+        if (!$user || $user->status !== TNP_User::STATUS_CONFIRMED) {
             return '';
         }
 
         $label = empty($attrs['label']) ? __('Profile edit', 'newsletter') : $attrs['label'];
-        $b = '<form action="' . esc_attr($this->build_action_url('profile')) . '" method="post" class="tnp-button-form tnp-profile">';
-        $b .= '<input type="hidden" name="nk" value="' . esc_attr($this->get_user_key($user)) . '">';
+        $b = '<form action="' . esc_attr($this->build_action_url('p')) . '" method="post" class="tnp-button-form">';
+        $b .= $this->get_user_key_field($user, 'p');
+        $b .= wp_nonce_field('newsletter-profile', '_wpnonce', true, false);
         $b .= '<button class="tnp-submit">' . esc_html($label) . '</button>';
         $b .= '</form>';
         return $b;
     }
 
     function get_profile_page_url($user, $alert = null) {
-        $this->switch_language($user->language);
+        $this->switch_language($user);
         $url = '';
         $page_id = $this->get_option('page_id');
         if (!empty($page_id)) {
@@ -76,54 +98,26 @@ class NewsletterProfile extends NewsletterModule {
                 $url = get_permalink((int) $page_id);
             }
         }
-        $url = parent::build_message_url($url, 'profile', $user, null, $alert);
+
+        $url = parent::build_message_url($url, 'p', null, null, $alert);
+
         $this->restore_language();
         return $url;
     }
 
     function hook_newsletter_action_dummy($action, $user, $email) {
-        if (!in_array($action, ['p', 'profile', 'profile-save', 'ps', 'px'])) {
+        if (!in_array($action, ['p', 'ps', 'px'], true)) {
             return;
-        }
-
-        switch ($action) {
-            case 'profile':
-            case 'p':
-                $this->redirect($this->get_profile_page_url($user));
-
-            case 'profile-save':
-            case 'ps':
-                $this->redirect($this->get_profile_page_url($user, $this->get_text('saved')));
-        }
-    }
-
-    function hook_newsletter_action($action, $user, $email) {
-
-        if (!in_array($action, ['p', 'profile', 'profile-save', 'ps', 'px'])) {
-            return;
-        }
-
-        if (!$user || $user->status != TNP_User::STATUS_CONFIRMED || !$user->_trusted) {
-            $this->dienow(__('Subscriber not found or not confirmed or started from a test newsletter.', 'newsletter'), 'From a test newsletter or subscriber key not valid or subscriber not confirmed', 404);
         }
 
         $this->set_user_cookie($user);
 
         switch ($action) {
-            case 'profile':
             case 'p':
+                $this->redirect($this->get_profile_page_url($user));
 
-                $profile_url = $this->get_profile_page_url($user);
-                $profile_url = apply_filters('newsletter_profile_url', $profile_url, $user); // Compatibility
-
-                $this->redirect($profile_url);
-
-            case 'profile-save':
             case 'ps':
-                $res = $this->save_profile($user);
-                $alert = is_wp_error($res) ? $res->get_error_message() : $this->get_text('saved');
-
-                $this->redirect($this->get_profile_page_url($user, $alert));
+                $this->redirect($this->get_profile_page_url($user, $this->get_text('saved') . ' [dummy]'));
 
             case 'px':
                 header('Content-Type: application/json;charset=UTF-8');
@@ -132,10 +126,141 @@ class NewsletterProfile extends NewsletterModule {
         }
     }
 
-    function build_export_json($user) {
-        global $wpdb;
+    function hook_newsletter_action($action, $user, $email) {
 
-        $fields = array('name', 'surname', 'sex', 'created', 'ip', 'email');
+        if (!in_array($action, ['p', 'ps', 'px', 'profile-change', 'pc'])) {
+            return;
+        }
+
+        if (!$user) {
+            $this->dienow(__('Subscriber not found or link expired.', 'newsletter'), '', 404);
+        }
+
+        if ($user->status !== TNP_User::STATUS_CONFIRMED) {
+            $this->dienow(__('Subscriber not confirmed.', 'newsletter'), '', 404);
+        }
+
+        $this->set_user_cookie($user);
+
+        switch ($action) {
+            case 'p':
+
+                $profile_url = $this->get_profile_page_url($user);
+                $profile_url = apply_filters('newsletter_profile_url', $profile_url, $user); // Compatibility
+
+                $this->redirect($profile_url);
+
+            case 'ps':
+                $verified = wp_verify_nonce($_REQUEST['_wpnonce'], 'newsletter-profile');
+                if (!$verified) {
+                    die('Unverified request');
+                }
+                $res = $this->save_profile($user);
+                $alert = is_wp_error($res) ? $res->get_error_message() : $this->get_text('saved');
+
+                $this->redirect($this->get_profile_page_url($user, $alert));
+
+            case 'px':
+                $verified = wp_verify_nonce($_REQUEST['_wpnonce'], 'newsletter-export');
+                if (!$verified) {
+                    die('Unverfied request');
+                }
+                header('Content-Type: application/json;charset=UTF-8');
+                echo $this->build_export_json($user);
+                die();
+
+            case 'profile-change':
+            case 'pc':
+                if ($this->antibot_form_check()) {
+
+                    $list_id = (int) ($_REQUEST['list'] ?? 0);
+
+                    // Check if the list is public
+                    $list = $this->get_list($list_id);
+                    if (!$list || $list->status == TNP_List::STATUS_PRIVATE) {
+                        $this->dienow('List change not allowed.', 'Please check if the list is marked as "private".', 400);
+                    }
+
+                    $url = wp_validate_redirect($_REQUEST['redirect'] ?? '', home_url());
+
+                    $this->set_user_list($user, $list_id, (int) $_REQUEST['value']);
+
+                    $user = $this->get_user($user->id);
+                    $this->add_user_log($user, 'cta');
+                    wp_redirect($url);
+                } else {
+                    $this->request_to_antibot_form('Continue');
+                }
+
+                die();
+        }
+    }
+
+    function hook_newsletter_shortcode_dummy($message, $user) {
+        if (!in_array($message, ['p'], true)) {
+            return;
+        }
+
+        if (!$user) {
+            echo 'Missing dummy user?';
+            return;
+        }
+
+        $this->show_admin_notice('Preview of the content with a dummy subscriber.');
+
+        echo $this->get_text('text');
+    }
+
+    /**
+     * Echoes the content for the [newsletter] shortcode when the message required is
+     * the profile page.
+     *
+     * @param string $message Message key (acts only when matching 'p')
+     * @param object $user Required and confirmed
+     */
+    function hook_newsletter_shortcode($message, $user) {
+
+        // Is it for us?
+        if (!in_array($message, ['p'], true)) {
+            return;
+        }
+
+        if (!$user) {
+            $this->show_admin_notice('The link is expired or the subscriber does not exist.');
+            echo __('Subscriber not found.', 'newsletter');
+            return;
+        }
+
+        if ($user->status !== TNP_User::STATUS_CONFIRMED) {
+            $this->show_admin_notice('If reached from a test newsletter it was sent to a not confirmed address. ');
+            echo __('Subscriber not confirmed.', 'newsletter');
+            return;
+        }
+
+        // To help the administrator configuring the messages and reduce the support requests.
+        $this->show_admin_notice('<a href="' . esc_attr($this->get_profile_admin_edit_url()) . '" target="_blank">Edit this content</a>.');
+
+        echo $this->get_text('text');
+    }
+
+    function get_profile_admin_edit_url() {
+        $edit_url = admin_url('admin.php?page=newsletter_profile_index');
+        if ($this->is_multilanguage()) {
+            $language = $this->language();
+            if (empty($language)) {
+                $language = 'all';
+            }
+            $edit_url .= '&lang=' . urldecode($language);
+        }
+        return $edit_url;
+    }
+
+    function build_export_json($user) {
+
+        if (!$user) {
+            return '{}';
+        }
+
         $data = [
             'email' => $user->email,
             'first_name' => $user->name,
@@ -166,17 +291,6 @@ class NewsletterProfile extends NewsletterModule {
         return wp_json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * URL to the subscriber profile edit action. This URL MUST NEVER be changed by
-     * 3rd party plugins. Plugins can change the final URL after the action has been executed using the
-     * <code>newsletter_profile_url</code> filter.
-     *
-     * @param stdClass $user
-     */
-    function get_profile_url($user, $email = null) {
-        return $this->build_action_url('p', $user, $email);
-    }
-
     function hook_newsletter_replace($text, $user, $email, $html = true) {
         if (!$user) {
             $text = $this->replace_url($text, 'profile_url', $this->build_action_url('nul'));
@@ -184,7 +298,7 @@ class NewsletterProfile extends NewsletterModule {
         }
 
         // Profile edit page URL and link
-        $url = $this->get_profile_url($user, $email);
+        $url = $this->get_profile_url($user);
         $text = $this->replace_url($text, 'profile_url', $url);
 
         if (strpos($text, '{profile_form}') !== false) {
@@ -195,53 +309,6 @@ class NewsletterProfile extends NewsletterModule {
             }
         }
         return $text;
-    }
-
-    /**
-     *
-     * @param string $text
-     * @param string $key
-     * @param TNP_User $user
-     * @return string
-     */
-    function hook_newsletter_page_text($text, $key, $user) {
-        if ($key !== 'profile') {
-            return $text;
-        }
-
-        if (!$user) {
-            return __('Subscriber not found.', 'newsletter');
-        }
-
-        $admin_notice = '';
-        if (!$user->_dummy) {
-            if (!$user->_trusted || $user->status === TNP_User::STATUS_UNSUBSCRIBED || $user->status === TNP_User::STATUS_COMPLAINED) {
-                return __('Subscriber not found.', 'newsletter');
-            }
-        }
-
-        $admin_notice = '';
-        if (current_user_can('administrator')) {
-            $edit_url = admin_url('admin.php?page=newsletter_profile_index');
-
-            if ($this->is_multilanguage()) {
-                $language = $this->language();
-                if (empty($language)) {
-                    $language = 'all';
-                }
-                $edit_url .= '&lang=' . urldecode($language);
-            }
-            $admin_notice = '<p style="background-color: #eee; color: #000; padding: 1rem; margin: 1rem 0"><strong>Visible only to administrators</strong>. ';
-            if ($user->_dummy) {
-                $admin_notice .= 'Preview of the content with a dummy subscriber. ';
-            }
-            $admin_notice .= '<a href="' . esc_attr($edit_url) . '" target="_blank">Edit this content</a>.</p>';
-        }
-
-        $text = $this->get_text('text');
-        $text = str_replace('{profile_form}', '[newsletter_profile]', $text);
-
-        return $admin_notice . $text;
     }
 
     function shortcode_newsletter_profile_field($attrs = [], $content = '') {
@@ -416,6 +483,17 @@ class NewsletterProfile extends NewsletterModule {
             }
         }
 
+        if ('track' === $name) {
+            $value = $user->track;
+            $label = $attrs['label'] ?? NewsletterSubscription::instance()->get_form_text('track');
+            $buffer .= '<div class="tnp-field tnp-field-track">';
+            $buffer .= '<label>';
+            $buffer .= '<input class="tnp-track" type="checkbox" name="ntr_cb"' . ($value ? ' checked' : '') . '> ';
+            $buffer .= esc_html($label) . '</label>';
+            $buffer .= '<input type="hidden" name="ntr" value="1">';
+            $buffer .= "</div>\n";
+        }
+
         return $buffer;
     }
 
@@ -426,22 +504,25 @@ class NewsletterProfile extends NewsletterModule {
         return '<p style="background-color: #eee; color: #000; padding: 10px; margin: 10px 0">' . $message . ' <strong>This notice is shown only to administrators to help with configuration.</strong></p>';
     }
 
+    /**
+     * Implementation of the [newsletter_profile] shortcode. Is the shortcode has
+     * content, it's assumed the user added the profile fields in ordine to have a
+     * custom form layout.
+     *
+     * @param array $attrs
+     * @param string $content
+     * @return string
+     */
     function shortcode_newsletter_profile($attrs, $content = '') {
+
         $user = $this->get_current_user();
 
         if (!$user) {
-            //if (empty($content)) {
             return __('Subscriber not found.', 'newsletter');
-            //} else {
-            //    return $content;
-            //}
         }
 
-        if (!$user->_trusted) {
-            if (current_user_can('administrator')) {
-                return '<p style="background-color: #eee; color: #000; padding: 1rem; margin: 1rem 0"><strong>Visible only to administrators</strong>. The subscriber edit form has been hidden. The current subscriber has been recognized but with a non editable token.</p>';
-            }
-            return '';
+        if ($user->status !== TNP_User::STATUS_CONFIRMED) {
+            return __('Subscriber not confirmed.', 'newsletter');
         }
 
         if ($content) {
@@ -449,7 +530,8 @@ class NewsletterProfile extends NewsletterModule {
             $buffer = '';
             $buffer .= '<div class="tnp tnp-form tnp-profile">';
             $buffer .= '<form action="' . esc_attr($this->build_action_url('ps')) . '" method="post">';
-            $buffer .= '<input type="hidden" name="nk" value="' . esc_attr($user->id . '-' . $user->token) . '">';
+            $buffer .= wp_nonce_field('newsletter-profile', '_wpnonce', true, false);
+            $buffer .= $this->get_user_key_field($user, 'ps');
             $buffer .= do_shortcode($content);
             $buffer .= '<div class="tnp-field tnp-field-button">';
             $buffer .= '<input class="tnp-submit" type="submit" value="' . esc_attr($this->get_text('save_label')) . '">';
@@ -492,7 +574,8 @@ class NewsletterProfile extends NewsletterModule {
 
         $buffer .= '<div class="tnp tnp-form tnp-profile">';
         $buffer .= '<form action="' . esc_attr($this->build_action_url('ps')) . '" method="post">';
-        $buffer .= '<input type="hidden" name="nk" value="' . esc_attr($user->id . '-' . $user->token) . '">';
+        $buffer .= $this->get_user_key_field($user, 'ps');
+        $buffer .= wp_nonce_field('newsletter-profile', '_wpnonce', true, false);
 
         if (!empty($options['email'])) {
             $buffer .= '<div class="tnp-field tnp-field-email">';
@@ -611,6 +694,16 @@ class NewsletterProfile extends NewsletterModule {
             if (!empty($tmp)) {
                 $buffer .= '<div class="tnp-lists">' . "\n" . $tmp . "\n" . '</div>';
             }
+        }
+
+        if (!empty($options['track'])) {
+            $value = $user->track ?? 1;
+            $buffer .= '<div class="tnp-field tnp-field-track">';
+            $buffer .= '<label>';
+            $buffer .= '<input class="tnp-track" type="checkbox" name="ntr_cb"' . ($value ? ' checked' : '') . '> ';
+            $buffer .= esc_html($subscription->get_form_text('track')) . '</label>';
+            $buffer .= '<input type="hidden" name="ntr" value="1">';
+            $buffer .= "</div>\n";
         }
 
         // Privacy
@@ -740,6 +833,10 @@ class NewsletterProfile extends NewsletterModule {
             }
         }
 
+        if (isset($posted['ntr'])) {
+            $data['track'] = isset($posted['ntr_cb']) ? 1 : 0;
+        }
+
         if ($user->status == TNP_User::STATUS_NOT_CONFIRMED) {
             $data['status'] = TNP_User::STATUS_CONFIRMED;
         }
@@ -749,22 +846,12 @@ class NewsletterProfile extends NewsletterModule {
 
         // Send the activation again only if we use double opt-in, otherwise it has no meaning
         if ($email_changed && $subscription_module->is_double_optin()) {
-            // @phpstan-ignore-next-line
             $user->email = $email;
             $subscription_module->send_activation_email($user);
             return $this->get_text('email_changed');
         }
 
         return $this->get_text('saved');
-    }
-
-    // Patch to avoid conflicts with the "newsletter_profile" option of the subscription module
-    // TODO: Fix it
-    public function get_prefix($sub = '', $language = '') {
-        if (empty($sub)) {
-            $sub = 'main';
-        }
-        return parent::get_prefix($sub, $language);
     }
 }
 

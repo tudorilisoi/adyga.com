@@ -43,6 +43,7 @@ class Joinchat_Woo_Public {
 		$loader->add_filter( 'joinchat_get_settings', $this, 'product_settings' );
 		$loader->add_filter( 'joinchat_visibility', $this, 'visibility', 10, 2 );
 		$loader->add_filter( 'joinchat_variable_replacements', $this, 'replacements' );
+		$loader->add_filter( 'joinchat_variable_allowed_html', $this, 'allowed_html' );
 		$loader->add_filter( 'joinchat_excluded_fields', $this, 'excluded_fields' );
 		$loader->add_filter( 'joinchat_script_lite_fields', $this, 'lite_fields' );
 
@@ -168,13 +169,12 @@ class Joinchat_Woo_Public {
 	 */
 	public function visibility( $visibility, $options ) {
 
+		if ( ! is_page() && ! is_woocommerce() ) {
+			return $visibility;
+		}
+
 		$global = isset( $options['all'] ) ? 'yes' === $options['all'] : true;
 		$woo    = isset( $options['woocommerce'] ) ? 'yes' === $options['woocommerce'] : $global;
-
-		// Product page.
-		if ( is_product() ) {
-			return isset( $options['product'] ) ? 'yes' === $options['product'] : $woo;
-		}
 
 		// Cart page.
 		if ( is_cart() ) {
@@ -196,11 +196,23 @@ class Joinchat_Woo_Public {
 			return isset( $options['account_page'] ) ? 'yes' === $options['account_page'] : $woo;
 		}
 
-		if ( is_woocommerce() ) {
-			return $woo;
+		if ( is_product() ) {
+			return isset( $options['product'] ) ? 'yes' === $options['product'] : $woo;
 		}
 
-		return $visibility;
+		if ( is_product_category() ) {
+			return isset( $options['product_category'] ) ? 'yes' === $options['product_category'] : $woo;
+		}
+
+		if ( is_product_tag() ) {
+			return isset( $options['product_tag'] ) ? 'yes' === $options['product_tag'] : $woo;
+		}
+
+		if ( is_tax( array( 'product_brand', 'pwb-brand', 'yith_product_brand' ) ) ) {
+			return isset( $options['product_brand'] ) ? 'yes' === $options['product_brand'] : $woo;
+		}
+
+		return is_woocommerce() ? $woo : $visibility;
 
 	}
 
@@ -233,6 +245,21 @@ class Joinchat_Woo_Public {
 		}
 
 		return $replacements;
+	}
+
+	/**
+	 * Add allowed HTML for variable replacements
+	 *
+	 * @since    6.3.2
+	 * @param    array $allowed       current allowed HTML.
+	 * @return   array
+	 */
+	public function allowed_html( $allowed ) {
+
+		$allowed['jc-sku'] = array();
+
+		return $allowed;
+
 	}
 
 	/**

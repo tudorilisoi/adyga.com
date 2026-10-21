@@ -681,13 +681,15 @@ function ampforwp_new_dir( $dir ) {
 			add_filter( 'the_content', 'ampforwp_the_content_filter', 2 );
 		}
 		function ampforwp_the_content_filter( $content ) {
-				 $content = preg_replace('/property=[^>]*/', '', $content);
-				 $content = preg_replace('/vocab=[^>]*/', '', $content);
-				 $content = preg_replace('/noshade=[^>]*/', '', $content);
-				 $content = preg_replace('/contenteditable=[^>]*/', '', $content);
-				 $content = preg_replace('/non-refundable=[^>]*/', '', $content);
-				 $content = preg_replace('/security=[^>]*/', '', $content);
-				 $content = preg_replace('/deposit=[^>]*/', '', $content);
+				 // Match only as HTML attributes (space-prefixed inside a tag) so URL
+				 // query params like selectedproperty= are not corrupted. #5747
+				 $content = preg_replace('/(<[^>]+)(\sproperty=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
+				 $content = preg_replace('/(<[^>]+)(\svocab=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
+				 $content = preg_replace('/(<[^>]+)(\snoshade=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
+				 $content = preg_replace('/(<[^>]+)(\scontenteditable=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
+				 $content = preg_replace('/(<[^>]+)(\snon-refundable=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
+				 $content = preg_replace('/(<[^>]+)(\ssecurity=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
+				 $content = preg_replace('/(<[^>]+)(\sdeposit=(?:"[^"]*"|\'[^\']*\'|[^\s>]*))/', '$1', $content);
 				 $content = preg_replace('/nowrap="nowrap"/', '', $content);
 				 $content = preg_replace('#<comments-count.*?>(.*?)</comments-count>#i', '', $content);
 				 $content = preg_replace('#<badge.*?>(.*?)</badge>#i', '', $content);
@@ -4126,6 +4128,9 @@ function ampforwp_view_nonamp(){
    		$nofollow = 'rel=nofollow';
    	}
 	$amp_url = ampforwp_amphtml_generator();
+	if ( empty( $amp_url ) ) {
+		return;
+	}
 	$amp_url = explode('/', $amp_url);
 	$amp_url = array_flip($amp_url);
 	$endpoint = AMPFORWP_AMP_QUERY_VAR;
@@ -7172,9 +7177,17 @@ if ( ! function_exists('ampforwp_content_sneak_peek') ) {
 function ampforwp_sneak_peek_content_modifier($content){
 	
 	if ( strlen($content) >= 3000 ) {
-		$content = '<div class="fd-h" data-amp-bind-class="contentVisible ? \'show\' : \'fd-h\'">' . $content . '</div>';
-		$content = $content . '<div id="fader" class="content-fader" data-amp-bind-class="contentVisible ? \'content-fader hide\' : \'content-fader\'"></div>';
-		$content = $content . '<div class="fd-b-c" data-amp-bind-class="contentVisible ? \'fd-b-c hide\' : \'fd-b-c\'"><button class="fd-b" data-amp-bind-text="contentVisible ? \'\' : \''.ampforwp_translation(ampforwp_get_setting('content-sneak-peek-btn-text'), 'Show Full Article').'\'" on="tap:AMP.setState({contentVisible: !contentVisible})">'.ampforwp_translation(ampforwp_get_setting('content-sneak-peek-btn-text'), 'Show Full Article').'</button></div>';
+		$btn_text = ampforwp_translation(ampforwp_get_setting('content-sneak-peek-btn-text'), 'Show Full Article');
+		// Redirect to non-AMP when option is enabled #5744
+		if ( ampforwp_get_setting('content-sneak-peek-nonamp') ) {
+			$content = '<div class="fd-h">' . $content . '</div>';
+			$content = $content . '<div id="fader" class="content-fader"></div>';
+			$content = $content . '<div class="fd-b-c"><a class="fd-b" href="'.esc_url( get_permalink() ).'">'.esc_html( $btn_text ).'</a></div>';
+		} else {
+			$content = '<div class="fd-h" data-amp-bind-class="contentVisible ? \'show\' : \'fd-h\'">' . $content . '</div>';
+			$content = $content . '<div id="fader" class="content-fader" data-amp-bind-class="contentVisible ? \'content-fader hide\' : \'content-fader\'"></div>';
+			$content = $content . '<div class="fd-b-c" data-amp-bind-class="contentVisible ? \'fd-b-c hide\' : \'fd-b-c\'"><button class="fd-b" data-amp-bind-text="contentVisible ? \'\' : \''.esc_attr( $btn_text ).'\'" on="tap:AMP.setState({contentVisible: !contentVisible})">'.esc_html( $btn_text ).'</button></div>';
+		}
 	}
 	return $content;
 }
@@ -7192,7 +7205,7 @@ function ampforwp_sneak_peek_css(){
 	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo ampforwp_sanitize_color($txt_color); ?>;font-size: 16px;font-weight: 700;padding: 12px 32px 12px 32px;background-color: <?php 
 	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo ampforwp_sanitize_color($btn_color); ?>;
+	echo ampforwp_sanitize_color($btn_color); ?>;text-decoration:none;display:inline-block;
     }
     .fd-h:after {
 	    content: "";
@@ -7207,6 +7220,10 @@ function ampforwp_sneak_peek_css(){
 <?php }
 // Content Sneak Peek Scripts
 function ampforwp_sneak_peek_scripts($data) {
+	// amp-bind only needed for in-place expand; skip when redirecting to non-AMP #5744
+	if ( ampforwp_get_setting('content-sneak-peek-nonamp') ) {
+		return $data;
+	}
 	if ( empty( $data['amp_component_scripts']['amp-bind'] ) ) {
 		$data['amp_component_scripts']['amp-bind'] = 'https://cdn.ampproject.org/v0/amp-bind-0.1.js';
 	}
@@ -8677,6 +8694,7 @@ function ampforwp_is_gutenberg_active() {
 }
 
 add_filter( 'amp_post_template_data', 'ampforwp_pblayout_head_scripts');
+global $pb_remove_script;
 $pb_remove_script = array();
 function ampforwp_pblayout_head_scripts($data){
    $postId = ampforwp_get_the_ID();
@@ -8726,6 +8744,9 @@ function ampforwp_pblayout_head_scripts($data){
 }
 function ampforwp_remove_unused_pb_amp_script($data){
    global $pb_remove_script;
+   if ( empty( $pb_remove_script ) || ! is_array( $pb_remove_script ) ) {
+      return $data;
+   }
    for($i=0;$i<count($pb_remove_script);$i++){
       $data = preg_replace('/<script(.*?)custom-element=\"'.esc_attr($pb_remove_script[$i]).'\"(.*?)src=\"(.*?)\"(.*?)><\/script>/', '', $data);
    }
@@ -8813,13 +8834,128 @@ function ampforwp_remove_unwanted_code($content){
 		return $content;
 	}
   
-	if(preg_match('/<a(.*?)\slabel\s(.*?)>/', $content)){
-		$content = preg_replace_callback('/<a\b[^>]*>/i', function ($matches) {
-			// Only match standalone 'label' attribute, not 'aria-label' or other attributes containing 'label'
-			return preg_replace('/(?<!aria-)\blabel\s*=\s*"[^"]*"/i', '', $matches[0]);
-		}, $content);
+	// Strip invalid standalone `label` attributes from anchors without crossing attribute
+	// boundaries (previous regex enabled Stored XSS via href="label=" ... title="javascript:...").
+	// Only rewrite tags that actually need label removal or dangerous-protocol scrubbing.
+	if ( preg_match( '/<a\b[^>]*(?:\slabel\s*=|\bhref\s*=\s*[\'"]\s*(?:javascript|vbscript|data)\s*:)/i', $content ) ) {
+		$content = preg_replace_callback( '/<a\b[^>]*>/i', 'ampforwp_sanitize_anchor_opening_tag', $content );
 	}
 	return $content;
+}
+
+/**
+ * Sanitize an opening <a> tag: remove standalone label attrs and block dangerous href protocols.
+ *
+ * @param array $matches Full opening-tag match from preg_replace_callback.
+ * @return string Sanitized opening tag.
+ */
+function ampforwp_sanitize_anchor_opening_tag( $matches ) {
+	$tag = isset( $matches[0] ) ? $matches[0] : '';
+	if ( '' === $tag ) {
+		return $tag;
+	}
+
+	// Skip tags that neither have a real label attribute nor a dangerous href protocol.
+	$needs_label_strip = (bool) preg_match( '/(?<=\s)label\s*=/i', $tag );
+	$needs_href_scrub  = (bool) preg_match( '/\bhref\s*=\s*[\'"]\s*(?:javascript|vbscript|data)\s*:/i', $tag );
+	if ( ! $needs_label_strip && ! $needs_href_scrub ) {
+		return $tag;
+	}
+
+	if ( class_exists( 'DOMDocument' ) ) {
+		$dom = new DOMDocument();
+		$previous = libxml_use_internal_errors( true );
+		// Wrap so loadHTML can parse a single opening tag fragment safely.
+		$loaded = @$dom->loadHTML(
+			'<?xml encoding="utf-8"><div id="ampforwp-a-wrap">' . $tag . '</a></div>',
+			LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+		);
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
+
+		if ( $loaded ) {
+			$anchors = $dom->getElementsByTagName( 'a' );
+			if ( $anchors->length > 0 ) {
+				$anchor = $anchors->item( 0 );
+
+				// Remove only the real `label` attribute (DOM sees attrs distinctly; aria-label is untouched).
+				if ( $anchor->hasAttribute( 'label' ) ) {
+					$anchor->removeAttribute( 'label' );
+				}
+
+				if ( $anchor->hasAttribute( 'href' ) ) {
+					$href  = $anchor->getAttribute( 'href' );
+					$clean = ampforwp_sanitize_anchor_href( $href );
+					if ( '' === $clean ) {
+						$anchor->setAttribute( 'href', '#' );
+					} elseif ( $clean !== $href ) {
+						$anchor->setAttribute( 'href', $clean );
+					}
+				}
+
+				$saved = $dom->saveHTML( $anchor );
+				if ( is_string( $saved ) && '' !== $saved ) {
+					// saveHTML may emit a full <a>...</a>; keep opening tag only.
+					if ( preg_match( '/<a\b[^>]*>/i', $saved, $open ) ) {
+						return $open[0];
+					}
+				}
+			}
+		}
+	}
+
+	// Fallback when DOMDocument is unavailable or parsing fails:
+	// require whitespace before `label=` so values like href="label=" are never matched.
+	$tag = preg_replace( '/(?<=\s)label\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>\/]+)/i', '', $tag );
+	$tag = preg_replace_callback(
+		'/\bhref\s*=\s*(["\'])(.*?)\1/i',
+		function ( $href_match ) {
+			$clean = ampforwp_sanitize_anchor_href( html_entity_decode( $href_match[2], ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+			if ( '' === $clean ) {
+				$clean = '#';
+			}
+			return 'href=' . $href_match[1] . $clean . $href_match[1];
+		},
+		$tag
+	);
+
+	return $tag;
+}
+
+/**
+ * Block javascript:/vbscript:/data: hrefs; optionally use wp_kses_bad_protocol when available.
+ *
+ * @param string $href Raw href value.
+ * @return string Sanitized href, or empty string if the protocol is not allowed.
+ */
+function ampforwp_sanitize_anchor_href( $href ) {
+	$href = is_string( $href ) ? trim( $href ) : '';
+	if ( '' === $href ) {
+		return '';
+	}
+
+	// Normalize for protocol checks (browsers ignore whitespace/control chars in schemes).
+	$normalized = preg_replace( '/[\x00-\x20\x7f]+/', '', $href );
+	$normalized = rawurldecode( $normalized );
+
+	if ( preg_match( '/^(?:javascript|vbscript|data)\s*:/i', $normalized ) ) {
+		return '';
+	}
+
+	if ( function_exists( 'wp_kses_bad_protocol' ) && function_exists( 'wp_allowed_protocols' ) ) {
+		$allowed = wp_allowed_protocols();
+		// Preserve common share deep-links used in AMP templates.
+		$allowed = array_unique(
+			array_merge(
+				(array) $allowed,
+				array( 'fb-messenger', 'viber', 'whatsapp', 'tg', 'sms', 'tel', 'skype', 'intent' )
+			)
+		);
+		$clean = wp_kses_bad_protocol( $href, $allowed );
+		return is_string( $clean ) ? $clean : '';
+	}
+
+	return $href;
 }
 add_filter( 'amp_post_template_css', 'ampforwp_add_penci_block_css' );
 function ampforwp_add_penci_block_css() {
@@ -9626,7 +9762,8 @@ function ampforwp_wp_rocket_compatibility($content){
 	    }else if(isset($cnds_arr['all'])){
 	    	$img_cdn_url = $cnds_arr['all'];
 	    }
-	    if($img_cdn_url!=''){
+	    // Skip empty buffer (e.g. redirects); loadHTML('') throws ValueError on PHP 8. #5745
+	    if($img_cdn_url!='' && !empty($content)){
 	    	$parse_url = parse_url($img_cdn_url);
 			if(!isset($parse_url['scheme'])){
 			     if(!preg_match('/\/\//', $img_cdn_url)){

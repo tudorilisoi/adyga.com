@@ -5,7 +5,7 @@ if(!function_exists('add_action')){
 	exit;
 }
 
-define('LOGINIZER_VERSION', '2.0.8');
+define('LOGINIZER_VERSION', '2.1.2');
 define('LOGINIZER_DIR', dirname(LOGINIZER_FILE));
 define('LOGINIZER_URL', plugins_url('', LOGINIZER_FILE));
 define('LOGINIZER_PRO_URL', 'https://loginizer.com/features#compare');
@@ -226,7 +226,7 @@ global $wpdb;
 	
 }
 
-// Add the action to load the plugin 
+// Add the action to load the plugin
 add_action('plugins_loaded', 'loginizer_load_plugin');
 
 // The function that will be called when the plugin is loaded
@@ -236,6 +236,16 @@ function loginizer_load_plugin(){
 	
 	// Check if the installed version is outdated
 	loginizer_update_check();
+	
+	// There was an issue were for some users update was stuck, and free was able to get updated through auto updater option
+	// removing these filters fixes that issue, and our Pro update blocker was improved in 2.1.1
+	// This check can be removed 1 year from 28.09.2026
+	if(defined('LOGINIZER_PRO_VERSION') && version_compare(LOGINIZER_PRO_VERSION, '2.1.1', '<')){
+		foreach(['site_transient_update_plugins', 'pre_site_transient_update_plugins'] as $hook){
+			remove_filter($hook, 'loginizer_pro_disable_manual_update_for_plugin'); // Older Pro used the default priority
+			remove_filter($hook, 'loginizer_pro_disable_manual_update_for_plugin', 99);
+		}
+	}
 
 	// Set the array
 	if(empty($loginizer)){
@@ -340,13 +350,13 @@ function loginizer_load_plugin(){
 			add_action('wp_login_failed', 'loginizer_ultimatemember_error_handler', 10001);
 		}
 
-		if(!empty($_COOKIE['lz_social_error']) && !empty($loginizer['social_settings']) && !loginizer_is_blacklisted()){
+		if(!empty($_COOKIE['lz_social_error']) && !empty($loginizer['social_settings'])){
 			add_filter('wp_login_errors', 'loginizer_social_login_error_handler', 10000, 2);
 		}
 	}
 	
 	// Social Login Form Actions
-	if(!empty($loginizer['social_settings']) && !loginizer_is_blacklisted()){
+	if(!empty($loginizer['social_settings'])){
 		if(!empty($loginizer['social_settings']['login']['login_form'])){
 			add_action('login_form', 'loginizer_social_btn_login');
 		}
@@ -557,51 +567,76 @@ function loginizer_login_failed($username, $is_2fa = ''){
 	if(empty($lz_cannot_login) && empty($loginizer['ip_is_whitelisted']) && empty($loginizer['no_loginizer_logs'])){
 		
 		// The params which comes when social login returns an error, have some characters, which WordPress could not save.
-		$server_uri = $_SERVER['REQUEST_URI'];
-		if(!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'lz_social_provider') !== FALSE){
-			$request_uri = explode('=', $_SERVER['REQUEST_URI']);
+		// REQUEST_URI / HTTP_HOST are not always set (WP-CLI, some CGI and XML-RPC setups)
+		$server_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+		$http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+		
+		if(!empty($server_uri) && strpos($server_uri, 'lz_social_provider') !== FALSE){
+			$request_uri = explode('=', $server_uri);
 			$server_uri = $request_uri[0];
 		}
 
-		$url = @addslashes((!empty($_SERVER['HTTPS']) ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$server_uri);
-		$url = esc_url($url);
+		// No addslashes() here, $wpdb->prepare() below does the escaping
+		$url = esc_url((!empty($_SERVER['HTTPS']) ? 'https://' : 'http://').$http_host.$server_uri);
 		
+		// Must never be 0, we divide by it below
+		$max_retries = (int) $loginizer['max_retries'] < 1 ? 1 : (int) $loginizer['max_retries'];
+		
+		// This way is atomic now, the earlier one were causing race condition.
+		// NOTE : In the UPDATE part `count` is already the new value, as MySQL / MariaDB
+		// evaluate the assignments from left to right, so lockout must NOT add 1 again
+		$upsert = $wpdb->prepare(
+			"INSERT INTO `".$wpdb->prefix."loginizer_logs`
+				(username, time, count, ip, lockout, url)
+			VALUES
+				(%s, %d, 1, %s, FLOOR(1 / %d), %s)
+			ON DUPLICATE KEY UPDATE
+				username = VALUES(username),
+				time = VALUES(time),
+				count = count + 1,
+				lockout = FLOOR(count / %d),
+				url = VALUES(url)",
+			$username,
+			time(),
+			$loginizer['current_ip'],
+			$max_retries,
+			$url,
+			$max_retries
+		);
+		$wpdb->query($upsert);
+
+		// Re-read the persisted row so email/retries-left reflect the actual count
 		$sel_query = $wpdb->prepare("SELECT * FROM `".$wpdb->prefix."loginizer_logs` WHERE `ip` = %s", $loginizer['current_ip']);
 		$result = lz_selectquery($sel_query);
-		
-		if(!empty($result)){
-			$lockout = floor((($result['count']+1) / $loginizer['max_retries']));
-			
-			$update_data = array('username' => $username, 
-								'time' => time(), 
-								'count' => $result['count']+1, 
-								'lockout' => $lockout, 
-								'url' => $url);
-			
-			$where_data = array('ip' => $loginizer['current_ip']);
-			
-			$format = array('%s','%d','%d','%d','%s');
-			$where_format = array('%s');
-			
-			$wpdb->update($wpdb->prefix.'loginizer_logs', $update_data, $where_data, $format, $where_format);
-			
-			// Do we need to email admin ?
-			if(!empty($loginizer['notify_email']) && $lockout >= $loginizer['notify_email']){
-				
-				$lockout_time = $loginizer['lockout_time'];
-				
-				if($lockout >= $loginizer['max_lockouts']){
-					// extended lockout is in hours so we have to convert to minute
-					$lockout_time = $loginizer['lockouts_extend'];
-				}
-				
-				$sitename = lz_is_multisite() ? get_site_option('site_name') : get_option('blogname');
-				$mail = array();
-				$mail['to'] = $loginizer['notify_email_address'];	
-				$mail['subject'] = 'Failed '.$fail_type.' Attempts from IP '.$loginizer['current_ip'].' ('.$sitename.')';
-				$mail['message'] = 'Hi,
 
-'.($result['count']+1).' failed '.strtolower($fail_type).' attempts and '.$lockout.' lockout(s) from IP '.$loginizer['current_ip'].' on your site :
+		if(empty($result)){
+			$result = array('count' => 0);
+		}
+
+		$count = (int) $result['count'];
+		$lockout = !empty($result['lockout']) ? (int) $result['lockout'] : 0;
+
+		// The lockout goes up only on every max_retries'th failure, which is the
+		// attempt that actually locks the IP out. On the failures in between there
+		// is nothing new to report, so we must not email on each one of them
+		$is_new_lockout = !empty($count) && ($count % $max_retries) == 0;
+
+		// Do we need to email admin ?
+		if(!empty($loginizer['notify_email']) && !empty($is_new_lockout) && $lockout >= $loginizer['notify_email']){
+
+			$lockout_time = $loginizer['lockout_time'];
+
+			if($lockout >= $loginizer['max_lockouts']){
+				$lockout_time = $loginizer['lockouts_extend'];
+			}
+
+			$sitename = lz_is_multisite() ? get_site_option('site_name') : get_option('blogname');
+			$mail = array();
+			$mail['to'] = $loginizer['notify_email_address'];
+			$mail['subject'] = 'Failed '.$fail_type.' Attempts from IP '.$loginizer['current_ip'].' ('.$sitename.')';
+			$mail['message'] = 'Hi,
+
+'.(int) $result['count'].' failed '.strtolower($fail_type).' attempts and '.$lockout.' lockout(s) from IP '.$loginizer['current_ip'].' on your site :
 '.home_url().'
 
 Last '.$fail_type.' Attempt : '.date('d/M/Y H:i:s P', time()).'
@@ -611,29 +646,12 @@ IP has been blocked until : '.date('d/M/Y H:i:s P', time() + $lockout_time).'
 Regards,
 Loginizer';
 
-				@wp_mail($mail['to'], $mail['subject'], $mail['message']);
-			}
-		}else{
-			$result = array();
-			$result['count'] = 0;
-			
-			$insert_data = array('username' => $username, 
-								'time' => time(), 
-								'count' => 1, 
-								'ip' => $loginizer['current_ip'], 
-								'lockout' => 0, 
-								'url' => $url);
-								
-			$format = array('%s','%d','%d','%s','%d','%s');
-			
-			$wpdb->insert($wpdb->prefix.'loginizer_logs', $insert_data, $format);
+			@wp_mail($mail['to'], $mail['subject'], $mail['message']);
 		}
-	
-		// We need to add one as this is a failed attempt as well
-		$result['count'] = $result['count'] + 1;
+
 		loginizer_update_attempt_stats(0);
-		$loginizer['retries_left'] = ($loginizer['max_retries'] - ($result['count'] % $loginizer['max_retries']));
-		$loginizer['retries_left'] = $loginizer['retries_left'] == $loginizer['max_retries'] ? 0 : $loginizer['retries_left'];
+		$loginizer['retries_left'] = $max_retries - ($count % $max_retries);
+		$loginizer['retries_left'] = $loginizer['retries_left'] == $max_retries ? 0 : $loginizer['retries_left'];
 		
 	}
 }
@@ -807,6 +825,10 @@ function loginizer_ultimatemember_error_handler(){
 // Handles social login URL
 function loginizer_social_login_error_handler($errors = '', $redirect_to = ''){
 	global $loginizer;
+	
+	if(loginizer_is_blacklisted()){
+		return $errors;
+	}
 
 	loginizer_get_social_error();
 

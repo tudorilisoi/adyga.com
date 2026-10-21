@@ -292,6 +292,7 @@ class Requirements {
 			self::LICENSE => self::PLUS_PRO_AND_TOP,
 		],
 		'wpforms-make/wpforms-make.php'                                 => [],
+		'wpforms-mercado-pago/wpforms-mercado-pago.php'                 => [],
 		'wpforms-n8n/wpforms-n8n.php'                                   => [
 			self::LICENSE => self::PRO_AND_TOP,
 		],
@@ -301,6 +302,7 @@ class Requirements {
 		'wpforms-offline-forms/wpforms-offline-forms.php'               => [],
 		'wpforms-paypal-commerce/wpforms-paypal-commerce.php'           => [],
 		'wpforms-paypal-standard/wpforms-paypal-standard.php'           => [],
+		'wpforms-paystack/wpforms-paystack.php'                         => [],
 		'wpforms-pdf/wpforms-pdf.php'                                   => [],
 		'wpforms-pipedrive/wpforms-pipedrive.php'                       => [
 			self::LICENSE => self::TOP,
@@ -328,7 +330,7 @@ class Requirements {
 		'wpforms-square/wpforms-square.php'                             => [],
 		'wpforms-stripe/wpforms-stripe.php'                             => [],
 		'wpforms-surveys-polls/wpforms-surveys-polls.php'               => [
-			self::ADDON => '1.15.0',
+			self::ADDON => '1.20.0',
 		],
 		'wpforms-twilio/wpforms-twilio.php'                             => [
 			self::LICENSE => self::PLUS_PRO_AND_TOP,
